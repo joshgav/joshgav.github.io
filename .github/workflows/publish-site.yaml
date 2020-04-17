@@ -3,7 +3,7 @@ name: publish-site
 on:
   push:
     branches:
-      - master
+      - source
 jobs:
   publish-site:
     name: publish-site
@@ -16,7 +16,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}[]
+          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
+          GITHUB_PUBLISH_BRANCH: master
         run: |-
           bundle install
           JEKYLL_ENV=production bundle exec jekyll build
@@ -27,4 +28,4 @@ jobs:
           git add .
           git commit -m "commited in GitHub Actions on $(date)"
           repo_url="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push --force $repo_url master:gh-pages
+          git push --force $repo_url master:${GITHUB_PUBLISH_BRANCH}
