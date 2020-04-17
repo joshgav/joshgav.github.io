@@ -8,7 +8,7 @@ title: Partly Cloudy
 author: Josh Gavant
 email: joshgavant@gmail.com
 description: >-
-  Discussion of cloud-native patterns, practices and tools for your consideration.
+  Discussion of cloud-native patterns, practices and tools.
 baseurl: ""
 url: "https://joshgav.github.io"
 twitter_username: joshugav
@@ -26,7 +26,7 @@ show_excerpts: true
 # Moving date format
 # refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
 moving:
-  avatar_url: "https://s.gravatar.com/avatar/4e9e294333eddf6f05320292efa1e009"
+  avatar_url: "https://s.gravatar.com/avatar/4e9e294333eddf6f05320292efa1e009?s=2048"
   about_you: Cloud architect and product manager
   date_format: "%b %d" # date format of posts in home page
   back_to: "Home"
