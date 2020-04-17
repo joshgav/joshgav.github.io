@@ -5,6 +5,7 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Partly Cloudy
+author: Josh Gavant
 email: joshgavant@gmail.com
 description: >-
   Discussion of cloud-native patterns, practices and tools for your consideration.
@@ -14,9 +15,21 @@ twitter_username: joshugav
 github_username:  joshgav
 
 # Build settings
-theme: minima
+theme: moving
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+
+# show excerpts on the homepage
+show_excerpts: true
+
+# Moving date format
+# refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
+moving:
+  avatar_url: "https://s.gravatar.com/avatar/4e9e294333eddf6f05320292efa1e009"
+  about_you: Cloud architect and product manager
+  date_format: "%b %d" # date format of posts in home page
+  back_to: "Home"
 
 # Exclude from processing.
 # The following items will not be processed, by default.

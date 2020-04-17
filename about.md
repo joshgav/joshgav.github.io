@@ -1,7 +1,6 @@
 ---
-layout: page
+layout: about
 title: About
-permalink: /about/
+permalink: /about
 ---
-
-This is a blog for discussion of cloud-native patterns, practices and tools.
+A blog about cloud-native patterns, practices and tools.
