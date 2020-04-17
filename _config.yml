@@ -4,7 +4,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Cloud with a Meatball
+title: Partly Cloudy
 email: joshgavant@gmail.com
 description: >-
   Discussion of cloud-native patterns, practices and tools for your consideration.
