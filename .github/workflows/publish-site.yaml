@@ -1,0 +1,30 @@
+# publish-site is the name of the workflow and main job
+name: publish-site
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish-site:
+    name: publish-site
+    runs-on: ubuntu-latest
+    container: 
+      image: docker.io/library/ruby:2
+    steps:
+      - uses: actions/checkout@v2
+      - name: publish site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
+          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}[]
+        run: |-
+          bundle install
+          JEKYLL_ENV=production bundle exec jekyll build
+          cd _site
+          git init
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git add .
+          git commit -m "commited in GitHub Actions on $(date)"
+          repo_url="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force $repo_url master:gh-pages
