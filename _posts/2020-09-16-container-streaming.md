@@ -19,7 +19,7 @@ Amongst the procedures offered by CRI's [RuntimeService](https://github.com/kube
 
 First let's walk through what happens when you run `kubectl exec -it ${pod_name} sh --container ${container_name}` to run a shell in the context of an existing container. We'll borrow and refer to the following diagram from [this k8s enhancement proposal](https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md).
 
-<img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" />
+<img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" />
 
 ## 1. client
 
