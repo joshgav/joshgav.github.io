@@ -1,31 +1,50 @@
-# publish-site is the name of the workflow and main job
 name: publish-site
 on:
   push:
     branches:
-      - source
+      - master
+  workflow_dispatch: {}
 jobs:
   publish-site:
     name: publish-site
     runs-on: ubuntu-latest
-    container: 
-      image: docker.io/library/ruby:2
+    container:
+      image: 'docker.io/library/ruby:latest'
+    env:
+      GITHUB_PUBLISH_BRANCH: publish
     steps:
-      - uses: actions/checkout@v2
-      - name: publish site
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
-          GITHUB_PUBLISH_BRANCH: master
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Publish site
+        shell: bash
         run: |-
+          ## setup
+          export REPO_URL="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}"
+          master_commit_hash=$(git log --format='%H' -1)
+          master_commit_subject=$(git log --format='%s' -1)
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+          echo "---> get currently-deployed site"
+          git clone ${REPO_URL} --branch ${GITHUB_PUBLISH_BRANCH} _site
+          pushd _site
+          set +e
+          git log -1 --oneline | grep -q "${master_commit_hash}"
+          if [[ $? == 0 ]]; then
+              echo "latest commit already published"
+              exit 0
+          else
+              echo "new commit to publish!"
+          fi
+          set -e
+          popd
+
+          echo "---> generate fresh version of static site"
+          export JEKYLL_ENV=production
           bundle install
-          JEKYLL_ENV=production bundle exec jekyll build
-          cd _site
-          git init
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          bundle exec jekyll build
+
+          pushd _site
           git add .
-          git commit -m "commited in GitHub Actions on $(date)"
-          repo_url="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push --force $repo_url master:${GITHUB_PUBLISH_BRANCH}
+          git commit -m "source commit: ${master_commit_hash}" -m "original subject: ${master_commit_subject}"
+          git push $REPO_URL ${GITHUB_PUBLISH_BRANCH}
