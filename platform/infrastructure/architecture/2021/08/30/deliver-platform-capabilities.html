@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Deliver platform capabilities" />
+<meta name="author" content="Josh Gavant" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Deliver platform capabilities" />
+<meta property="og:description" content="Deliver platform capabilities" />
+<link rel="canonical" href="https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html" />
+<meta property="og:url" content="https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html" />
+<meta property="og:site_name" content="Partly Cloudy" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-30T13:00:00+00:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Josh Gavant"},"description":"Deliver platform capabilities","url":"https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html","@type":"BlogPosting","headline":"Deliver platform capabilities","dateModified":"2021-08-30T13:00:00+00:00","datePublished":"2021-08-30T13:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="https://joshgav.github.io/assets/css/main.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  <link rel="stylesheet" href="https://joshgav.github.io/assets/css/agate.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script><link type="application/atom+xml" rel="alternate" href="https://joshgav.github.io/feed.xml" title="Partly Cloudy" /></head><body>
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article
+  class="post h-entry"
+  itemscope
+  itemtype="http://schema.org/BlogPosting"
+>
+  <head>
+    <title>Deliver platform capabilities</title>
+  </head>
+  <header class="post-header">
+    <div class="post-back">
+      <a class="black-link" href="https://joshgav.github.io">
+        ← Home
+      </a>
+    </div>
+
+    <h1 class="post-title p-name" itemprop="name headline">
+      Deliver platform capabilities
+    </h1>
+    <p class="post-meta">
+      <time
+        class="dt-published"
+        datetime="2021-08-30T13:00:00+00:00"
+        itemprop="datePublished"
+      >Aug 30, 2021
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="deliver-platform-capabilities">Deliver platform capabilities</h1>
+
+<p>Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.</p>
+
+<p>This post describes how a platform team may develop and manage these <strong>platform capabilities</strong> and gradually evolve a capabilities development and delivery <em>framework</em>. The framework should not be designed up front, but platform architects should help it emerge by building prototypical application services and developing initial capabilities for them, as described herein.</p>
+
+<h2 id="develop-prototype-application-services">Develop prototype application services</h2>
+
+<p>A prerequisite for developing a platform-level shared capability is a representative prototype of the application services wherein the capability will be used. For example, to research and develop service-to-service authentication and authorization mechanisms, two communicating application-level services must exist first; to develop a traffic management capability, one must have application services to route traffic to.</p>
+
+<p>And so we come to the first step in developing platform capabilities: <strong>platform developers and application developers must cooperate to develop prototype application services that are truly representative of application-level scenarios</strong>. Not only must the two groups develop <em>initial</em> prototypes, they must also continuously improve and expand such prototypes to cover more scenarios and adapt to inevitable changes in the organization’s environment.</p>
+
+<p>Architects and product managers should do the following to develop prototype application services:</p>
+
+<ul>
+  <li>Interview leads, reverse-engineer codebases and conduct experiments to identify and prioritize the most important and most typical scenarios and required capabilities for the organization’s application services</li>
+  <li>Ensure all prototype application service code is parameterized and names are extracted</li>
+  <li>Ensure that any senior developer can automatically reify a development environment with a single command; and conduct research and development using the prototypes</li>
+</ul>
+
+<p>Several iterations with several application service teams and platform capability teams will probably be required to refine prototype code and ensure coverage of essential scenarios.</p>
+
+<h2 id="develop-and-deliver-capabilities">Develop and deliver capabilities</h2>
+
+<p>As development of prototype application services begins, development of initial individual capabilities may also begin, as well as early planning for a standard capability development and delivery framework. Early capability development should focus on individual capabilities rather than a general framework; experiments using these initial individual capabilities will guide and inform planning and design of the greater framework. Just as prototype application services guide development of individual capabilities, so too individual capabilities guide development of a capability framework.</p>
+
+<h3 id="develop-capabilities">Develop capabilities</h3>
+
+<p>Capabilities should be developed and released as follows:</p>
+
+<ol>
+  <li>Define or refine definition of desired capability</li>
+  <li>Research and develop implementations for capability</li>
+  <li>Deliver capability</li>
+  <li>Gather feedback and learnings and go to 1</li>
+</ol>
+
+<p>For example, a capability for managing secret configuration might follow this storyline:</p>
+
+<ol>
+  <li>Define desired capability:
+    <ul>
+      <li>inject secret configuration as key-value pairs at service start time</li>
+    </ul>
+  </li>
+  <li>Research and develop implementations for capability
+    <ul>
+      <li>inject Vault agent configuration as pod sidecar using Helm charts</li>
+      <li>deploy Vault admission controller system</li>
+      <li>integrate Vault secrets with Kubernetes Secrets using <a href="https://secrets-store-csi-driver.sigs.k8s.io/">Secrets Store CSI Driver</a></li>
+    </ul>
+  </li>
+  <li>Deliver capability
+    <ul>
+      <li>document how to configure Vault agent in a pod sidecar</li>
+      <li>automatically configure Vault agent with default configuration via a Helm chart</li>
+      <li>automatically configure Vault agent via an admission controller</li>
+    </ul>
+  </li>
+  <li>Gather feedback and learnings and iterate
+    <ul>
+      <li>adjust exposed configuration options and APIs</li>
+      <li>change implementation</li>
+      <li>support TLS secrets specially</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Every capability team will require its members to have expert-level domain knowledge in that capability, alleviating the need for developers in application teams to be expert in the domain. Developers on the team will develop the internal implementation of the capability based on their expertise in it, application service requirements, and the constraints imposed by the organization’s environment. PMs will share that knowledge with other partners and users. Team members will participate in external industry communities related to their domain as well to keep abreast of new opportunities and developments.</p>
+
+<p>Capabilities themselves may be implemented in many ways. They have often been built as programming language libraries to be imported into applications in source code, at build time and/or at run time. In cloud-native applications, capabilities are often built as independent processes which communicate with a service’s main process via transports like HTTP, GRPC or TCP. In Kubernetes, supporting processes are typically deployed as sidecars in a pod or daemonsets on every node. Mutating admission controllers can also modify capabilities of a pod by modifying their configuration.</p>
+
+<p>As capabilities are developed, a development framework should also emerge to assist with and coordinate fruitful patterns and should include the following:</p>
+
+<ul>
+  <li>Several viable options and examples for developing platform capabilities within the organization, such as operators, templating tools, daemonsets or pod sidecars</li>
+  <li>Ability to provision a productive development environment for app and platform research and development</li>
+</ul>
+
+<h3 id="deliver-capabilities">Deliver capabilities</h3>
+
+<p>When ready, platform teams must package and deliver their capability to be used by application teams. To this end, platform architects must gradually develop and manage a standard framework to guide capability developers in delivering and supporting their capabilities, and to provide a rational, consistent experience for application developers using them.</p>
+
+<p>Once a given capability has been initially developed, it should be integrated and tested in application services in the following progression, which a framework should emerge to guide and facilitate:</p>
+
+<ol>
+  <li>Document required capability configuration and inform users how to set up the capability manually
+    <ol>
+      <li>Verify that application developers are satisfied with the <em>functionality</em> of the capability</li>
+    </ol>
+  </li>
+  <li>Inject capability and default configuration via toggles and tags
+    <ol>
+      <li>Verify that application developers are satisfied with the exposed configuration options</li>
+    </ol>
+  </li>
+  <li>Inject capability automatically and transparently
+    <ol>
+      <li>At build time with e.g., <code class="highlighter-rouge">helm</code>, <code class="highlighter-rouge">kustomize</code></li>
+      <li>At deploy time with e.g., mutating admission controllers</li>
+      <li>At run time with e.g., daemonsets and network proxies</li>
+    </ol>
+  </li>
+</ol>
+
+<p>Just as <em>application</em> delivery is only complete when customers begin using the application, platform <em>capability</em> delivery is only complete when application teams begin using the capability in production. The top goal of a platform capability framework should be to provide guided, standard ways to deliver platform capabilities to application developers. As individual capabilities are developed and tested, good general designs and strategies for capability delivery and integration will emerge and should influence development and evolution of the general framework.</p>
+
+<p>Dimensions a platform capability delivery framework should consider making possible include the following:</p>
+
+<ul>
+  <li>To enable the capability, must the capability team team a) deploy and manage a service such as an operator; or b) package and publish a library; or c) something else?</li>
+  <li>To enable a capability, must application developers a) explicitly integrate the capability in source code or infrastructure configuration or b) is it transparently injected?</li>
+  <li>May application developers a) toggle and configure a capability or b) not?</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>
+
+  </div>
+
+  <a class="u-url" href="/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html" hidden></a>
+</article>
+
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+    <div class="wrapper">
+      <div class="footer-col-wrapper">
+        <div class="footer-col">
+          <ul class="contact-list">
+            <li class="p-name"><a class="black-link" href="https://joshgav.github.io/about.html">
+                  Josh Gavant 
+                </a></li><li>
+              <a class="u-email black-link" href="mailto:joshgavant@gmail.com">joshgavant@gmail.com</a></li></ul>
+        </div>
+      </div>
+    </div>
+  </footer></body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="How container streaming (exec, port-forward) works in Kubernetes" />
+<meta name="author" content="Josh Gavant" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview of Kubelet" />
+<meta property="og:description" content="Overview of Kubelet" />
+<link rel="canonical" href="https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html" />
+<meta property="og:url" content="https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html" />
+<meta property="og:site_name" content="Partly Cloudy" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-16T16:30:00+00:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Josh Gavant"},"description":"Overview of Kubelet","url":"https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html","@type":"BlogPosting","headline":"How container streaming (exec, port-forward) works in Kubernetes","dateModified":"2020-09-16T16:30:00+00:00","datePublished":"2020-09-16T16:30:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="https://joshgav.github.io/assets/css/main.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  <link rel="stylesheet" href="https://joshgav.github.io/assets/css/agate.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script><link type="application/atom+xml" rel="alternate" href="https://joshgav.github.io/feed.xml" title="Partly Cloudy" /></head><body>
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article
+  class="post h-entry"
+  itemscope
+  itemtype="http://schema.org/BlogPosting"
+>
+  <head>
+    <title>How container streaming (exec, port-forward) works in Kubernetes</title>
+  </head>
+  <header class="post-header">
+    <div class="post-back">
+      <a class="black-link" href="https://joshgav.github.io">
+        ← Home
+      </a>
+    </div>
+
+    <h1 class="post-title p-name" itemprop="name headline">
+      How container streaming (exec, port-forward) works in Kubernetes
+    </h1>
+    <p class="post-meta">
+      <time
+        class="dt-published"
+        datetime="2020-09-16T16:30:00+00:00"
+        itemprop="datePublished"
+      >Sep 16, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="overview-of-kubelet">Overview of Kubelet</h1>
+
+<p>Kubernetes’ <strong>kubelet</strong> is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by <strong>PodSpec</strong>s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.</p>
+
+<blockquote>
+  <p>For more on kubelet’s standalone mode check out <a href="https://coreos.com/blog/introducing-the-kubelet-in-coreos.html">this article</a> and <a href="https://github.com/kelseyhightower/standalone-kubelet-tutorial">this tutorial</a> from Kelsey Hightower.</p>
+</blockquote>
+
+<p>Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a <strong>container runtime</strong> like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in <a href="https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto">this protobuf spec</a>. A shim for CRI from Docker’s native API is <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim">included</a> in the kubelet, or you can follow <a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">these instructions</a> to install and use another runtime like CRI-O.</p>
+
+<p>Amongst the procedures offered by CRI’s <a href="https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110">RuntimeService</a> one finds <strong>Exec</strong>, <strong>Attach</strong> and <strong>PortForward</strong>, likely familiar to anyone who works with containers. These ultimately are core to the <code class="highlighter-rouge">kubectl exec ...</code>, <code class="highlighter-rouge">kubectl run -it ...</code>, <code class="highlighter-rouge">kubectl port-forward</code> and even the new <code class="highlighter-rouge">kubectl [alpha] debug ...</code> commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.</p>
+
+<h1 id="exec">exec</h1>
+
+<p>First let’s walk through what happens when you run <code class="highlighter-rouge">kubectl exec -it ${pod_name} sh --container ${container_name}</code> to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md">this k8s enhancement proposal</a>.</p>
+
+<p><img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" /></p>
+
+<h2 id="1-client">1. client</h2>
+
+<p>Based on its arguments, <code class="highlighter-rouge">kubectl exec</code> builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is <code class="highlighter-rouge">http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;stdout=true&amp;stderr=true&amp;tty=true&amp;container=${container_name}&amp;command=sh</code>.</p>
+
+<h3 id="source-refs">Source refs:</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">kubectl exec</code> [<a href="https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go">1</a>]</li>
+</ul>
+
+<h2 id="2-apiserver">2. apiserver</h2>
+
+<p>The corev1/pods APIService accepts the incoming request and handles it per <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod">its registration</a>. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.</p>
+
+<p>The URL for the kubelet server is of form <code class="highlighter-rouge">http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}</code> where <code class="highlighter-rouge">${subresource}</code> can be <code class="highlighter-rouge">exec</code>, <code class="highlighter-rouge">attach</code>, <code class="highlighter-rouge">portforward</code> or a few others.</p>
+
+<h3 id="source-refs-1">Source refs:</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">registry/core/pod.streamLocation</code> [<a href="https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511">1</a>]</li>
+</ul>
+
+<h2 id="3-kubelet">3. kubelet</h2>
+
+<p>The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.</p>
+
+<p>The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting <a href="https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262">EnableDebuggingHandlers</a> to <code class="highlighter-rouge">false</code> in the global kubelet configuration, or by setting the flag <code class="highlighter-rouge">--enable-debugging-handlers=false</code> on an individual kubelet. <strong>Note</strong> that this will disable container logs via <code class="highlighter-rouge">kubectl logs</code> as well!</p>
+
+<h3 id="source-refs-2">Source refs:</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">kubelet/server/NewServer(enableDebuggingHandlers)</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411">2</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.getExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821">3</a>]</li>
+</ul>
+
+<h2 id="4-cri">4. CRI</h2>
+
+<p>Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling <a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">github.com/moby/moby/client#Client.ContainerExecCreate</a>.</p>
+
+<p>In truth <code class="highlighter-rouge">exec</code> itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify <code class="highlighter-rouge">-i -t</code> with <code class="highlighter-rouge">exec</code> an attach action is executed immediately after exec to provide a persistent connection.</p>
+
+<h3 id="source-refs-3">Source refs:</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming.NewServer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/server.serveExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297">2</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/remotecommand/ServeExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44">3</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/dockershim/NativeExecHandler.ExecInContainer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64">4</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/dockershim/libdocker/kubeDockerClient.StartExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461">5</a>]</li>
+  <li><code class="highlighter-rouge">moby/moby/client/Client.ContainerExecCreate</code> [<a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">6</a>]</li>
+</ul>
+
+<h1 id="port-forward">port-forward</h1>
+
+<p>Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.</p>
+
+<p><code class="highlighter-rouge">nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}</code></p>
+
+<h3 id="source-refs-4">Source Refs</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/portforward.ServePortForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelete/dockershim/streamingRuntime.portForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go">2</a>]</li>
+</ul>
+
+<h1 id="logs">logs</h1>
+
+<p>Requests for container logs also pass through the kubelet to the CRI and are streamed back to the client.</p>
+
+<h3 id="source-refs-5">Source Refs</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
+  <li><code class="highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
+</ul>
+
+  </div>
+
+  <a class="u-url" href="/kubernetes/kubelet/exec/2020/09/16/container-streaming.html" hidden></a>
+</article>
+
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+    <div class="wrapper">
+      <div class="footer-col-wrapper">
+        <div class="footer-col">
+          <ul class="contact-list">
+            <li class="p-name"><a class="black-link" href="https://joshgav.github.io/about.html">
+                  Josh Gavant 
+                </a></li><li>
+              <a class="u-email black-link" href="mailto:joshgavant@gmail.com">joshgavant@gmail.com</a></li></ul>
+        </div>
+      </div>
+    </div>
+  </footer></body>
+</html>

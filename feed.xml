@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2021-08-30T16:49:45+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Deliver platform capabilities</title><link href="https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities</id><content type="html" xml:base="https://joshgav.github.io/platform/infrastructure/architecture/2021/08/30/deliver-platform-capabilities.html">&lt;h1 id=&quot;deliver-platform-capabilities&quot;&gt;Deliver platform capabilities&lt;/h1&gt;
+
+&lt;p&gt;Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.&lt;/p&gt;
+
+&lt;p&gt;This post describes how a platform team may develop and manage these &lt;strong&gt;platform capabilities&lt;/strong&gt; and gradually evolve a capabilities development and delivery &lt;em&gt;framework&lt;/em&gt;. The framework should not be designed up front, but platform architects should help it emerge by building prototypical application services and developing initial capabilities for them, as described herein.&lt;/p&gt;
+
+&lt;h2 id=&quot;develop-prototype-application-services&quot;&gt;Develop prototype application services&lt;/h2&gt;
+
+&lt;p&gt;A prerequisite for developing a platform-level shared capability is a representative prototype of the application services wherein the capability will be used. For example, to research and develop service-to-service authentication and authorization mechanisms, two communicating application-level services must exist first; to develop a traffic management capability, one must have application services to route traffic to.&lt;/p&gt;
+
+&lt;p&gt;And so we come to the first step in developing platform capabilities: &lt;strong&gt;platform developers and application developers must cooperate to develop prototype application services that are truly representative of application-level scenarios&lt;/strong&gt;. Not only must the two groups develop &lt;em&gt;initial&lt;/em&gt; prototypes, they must also continuously improve and expand such prototypes to cover more scenarios and adapt to inevitable changes in the organization’s environment.&lt;/p&gt;
+
+&lt;p&gt;Architects and product managers should do the following to develop prototype application services:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Interview leads, reverse-engineer codebases and conduct experiments to identify and prioritize the most important and most typical scenarios and required capabilities for the organization’s application services&lt;/li&gt;
+  &lt;li&gt;Ensure all prototype application service code is parameterized and names are extracted&lt;/li&gt;
+  &lt;li&gt;Ensure that any senior developer can automatically reify a development environment with a single command; and conduct research and development using the prototypes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Several iterations with several application service teams and platform capability teams will probably be required to refine prototype code and ensure coverage of essential scenarios.&lt;/p&gt;
+
+&lt;h2 id=&quot;develop-and-deliver-capabilities&quot;&gt;Develop and deliver capabilities&lt;/h2&gt;
+
+&lt;p&gt;As development of prototype application services begins, development of initial individual capabilities may also begin, as well as early planning for a standard capability development and delivery framework. Early capability development should focus on individual capabilities rather than a general framework; experiments using these initial individual capabilities will guide and inform planning and design of the greater framework. Just as prototype application services guide development of individual capabilities, so too individual capabilities guide development of a capability framework.&lt;/p&gt;
+
+&lt;h3 id=&quot;develop-capabilities&quot;&gt;Develop capabilities&lt;/h3&gt;
+
+&lt;p&gt;Capabilities should be developed and released as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Define or refine definition of desired capability&lt;/li&gt;
+  &lt;li&gt;Research and develop implementations for capability&lt;/li&gt;
+  &lt;li&gt;Deliver capability&lt;/li&gt;
+  &lt;li&gt;Gather feedback and learnings and go to 1&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For example, a capability for managing secret configuration might follow this storyline:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Define desired capability:
+    &lt;ul&gt;
+      &lt;li&gt;inject secret configuration as key-value pairs at service start time&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Research and develop implementations for capability
+    &lt;ul&gt;
+      &lt;li&gt;inject Vault agent configuration as pod sidecar using Helm charts&lt;/li&gt;
+      &lt;li&gt;deploy Vault admission controller system&lt;/li&gt;
+      &lt;li&gt;integrate Vault secrets with Kubernetes Secrets using &lt;a href=&quot;https://secrets-store-csi-driver.sigs.k8s.io/&quot;&gt;Secrets Store CSI Driver&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Deliver capability
+    &lt;ul&gt;
+      &lt;li&gt;document how to configure Vault agent in a pod sidecar&lt;/li&gt;
+      &lt;li&gt;automatically configure Vault agent with default configuration via a Helm chart&lt;/li&gt;
+      &lt;li&gt;automatically configure Vault agent via an admission controller&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Gather feedback and learnings and iterate
+    &lt;ul&gt;
+      &lt;li&gt;adjust exposed configuration options and APIs&lt;/li&gt;
+      &lt;li&gt;change implementation&lt;/li&gt;
+      &lt;li&gt;support TLS secrets specially&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Every capability team will require its members to have expert-level domain knowledge in that capability, alleviating the need for developers in application teams to be expert in the domain. Developers on the team will develop the internal implementation of the capability based on their expertise in it, application service requirements, and the constraints imposed by the organization’s environment. PMs will share that knowledge with other partners and users. Team members will participate in external industry communities related to their domain as well to keep abreast of new opportunities and developments.&lt;/p&gt;
+
+&lt;p&gt;Capabilities themselves may be implemented in many ways. They have often been built as programming language libraries to be imported into applications in source code, at build time and/or at run time. In cloud-native applications, capabilities are often built as independent processes which communicate with a service’s main process via transports like HTTP, GRPC or TCP. In Kubernetes, supporting processes are typically deployed as sidecars in a pod or daemonsets on every node. Mutating admission controllers can also modify capabilities of a pod by modifying their configuration.&lt;/p&gt;
+
+&lt;p&gt;As capabilities are developed, a development framework should also emerge to assist with and coordinate fruitful patterns and should include the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Several viable options and examples for developing platform capabilities within the organization, such as operators, templating tools, daemonsets or pod sidecars&lt;/li&gt;
+  &lt;li&gt;Ability to provision a productive development environment for app and platform research and development&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;deliver-capabilities&quot;&gt;Deliver capabilities&lt;/h3&gt;
+
+&lt;p&gt;When ready, platform teams must package and deliver their capability to be used by application teams. To this end, platform architects must gradually develop and manage a standard framework to guide capability developers in delivering and supporting their capabilities, and to provide a rational, consistent experience for application developers using them.&lt;/p&gt;
+
+&lt;p&gt;Once a given capability has been initially developed, it should be integrated and tested in application services in the following progression, which a framework should emerge to guide and facilitate:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Document required capability configuration and inform users how to set up the capability manually
+    &lt;ol&gt;
+      &lt;li&gt;Verify that application developers are satisfied with the &lt;em&gt;functionality&lt;/em&gt; of the capability&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Inject capability and default configuration via toggles and tags
+    &lt;ol&gt;
+      &lt;li&gt;Verify that application developers are satisfied with the exposed configuration options&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Inject capability automatically and transparently
+    &lt;ol&gt;
+      &lt;li&gt;At build time with e.g., &lt;code class=&quot;highlighter-rouge&quot;&gt;helm&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kustomize&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;At deploy time with e.g., mutating admission controllers&lt;/li&gt;
+      &lt;li&gt;At run time with e.g., daemonsets and network proxies&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Just as &lt;em&gt;application&lt;/em&gt; delivery is only complete when customers begin using the application, platform &lt;em&gt;capability&lt;/em&gt; delivery is only complete when application teams begin using the capability in production. The top goal of a platform capability framework should be to provide guided, standard ways to deliver platform capabilities to application developers. As individual capabilities are developed and tested, good general designs and strategies for capability delivery and integration will emerge and should influence development and evolution of the general framework.&lt;/p&gt;
+
+&lt;p&gt;Dimensions a platform capability delivery framework should consider making possible include the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;To enable the capability, must the capability team team a) deploy and manage a service such as an operator; or b) package and publish a library; or c) something else?&lt;/li&gt;
+  &lt;li&gt;To enable a capability, must application developers a) explicitly integrate the capability in source code or infrastructure configuration or b) is it transparently injected?&lt;/li&gt;
+  &lt;li&gt;May application developers a) toggle and configure a capability or b) not?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><summary type="html">Deliver platform capabilities</summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming</id><content type="html" xml:base="https://joshgav.github.io/kubernetes/kubelet/exec/2020/09/16/container-streaming.html">&lt;h1 id=&quot;overview-of-kubelet&quot;&gt;Overview of Kubelet&lt;/h1&gt;
+
+&lt;p&gt;Kubernetes’ &lt;strong&gt;kubelet&lt;/strong&gt; is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by &lt;strong&gt;PodSpec&lt;/strong&gt;s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;For more on kubelet’s standalone mode check out &lt;a href=&quot;https://coreos.com/blog/introducing-the-kubelet-in-coreos.html&quot;&gt;this article&lt;/a&gt; and &lt;a href=&quot;https://github.com/kelseyhightower/standalone-kubelet-tutorial&quot;&gt;this tutorial&lt;/a&gt; from Kelsey Hightower.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a &lt;strong&gt;container runtime&lt;/strong&gt; like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in &lt;a href=&quot;https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto&quot;&gt;this protobuf spec&lt;/a&gt;. A shim for CRI from Docker’s native API is &lt;a href=&quot;https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim&quot;&gt;included&lt;/a&gt; in the kubelet, or you can follow &lt;a href=&quot;https://kubernetes.io/docs/setup/production-environment/container-runtimes/&quot;&gt;these instructions&lt;/a&gt; to install and use another runtime like CRI-O.&lt;/p&gt;
+
+&lt;p&gt;Amongst the procedures offered by CRI’s &lt;a href=&quot;https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110&quot;&gt;RuntimeService&lt;/a&gt; one finds &lt;strong&gt;Exec&lt;/strong&gt;, &lt;strong&gt;Attach&lt;/strong&gt; and &lt;strong&gt;PortForward&lt;/strong&gt;, likely familiar to anyone who works with containers. These ultimately are core to the &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec ...&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl run -it ...&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl port-forward&lt;/code&gt; and even the new &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl [alpha] debug ...&lt;/code&gt; commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.&lt;/p&gt;
+
+&lt;h1 id=&quot;exec&quot;&gt;exec&lt;/h1&gt;
+
+&lt;p&gt;First let’s walk through what happens when you run &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec -it ${pod_name} sh --container ${container_name}&lt;/code&gt; to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from &lt;a href=&quot;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md&quot;&gt;this k8s enhancement proposal&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png&quot; style=&quot;margin-left: 40px;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1-client&quot;&gt;1. client&lt;/h2&gt;
+
+&lt;p&gt;Based on its arguments, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec&lt;/code&gt; builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is &lt;code class=&quot;highlighter-rouge&quot;&gt;http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;amp;stdout=true&amp;amp;stderr=true&amp;amp;tty=true&amp;amp;container=${container_name}&amp;amp;command=sh&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs&quot;&gt;Source refs:&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;2-apiserver&quot;&gt;2. apiserver&lt;/h2&gt;
+
+&lt;p&gt;The corev1/pods APIService accepts the incoming request and handles it per &lt;a href=&quot;https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod&quot;&gt;its registration&lt;/a&gt;. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.&lt;/p&gt;
+
+&lt;p&gt;The URL for the kubelet server is of form &lt;code class=&quot;highlighter-rouge&quot;&gt;http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}&lt;/code&gt; where &lt;code class=&quot;highlighter-rouge&quot;&gt;${subresource}&lt;/code&gt; can be &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;attach&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;portforward&lt;/code&gt; or a few others.&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs-1&quot;&gt;Source refs:&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;registry/core/pod.streamLocation&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;3-kubelet&quot;&gt;3. kubelet&lt;/h2&gt;
+
+&lt;p&gt;The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.&lt;/p&gt;
+
+&lt;p&gt;The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting &lt;a href=&quot;https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262&quot;&gt;EnableDebuggingHandlers&lt;/a&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt; in the global kubelet configuration, or by setting the flag &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-debugging-handlers=false&lt;/code&gt; on an individual kubelet. &lt;strong&gt;Note&lt;/strong&gt; that this will disable container logs via &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl logs&lt;/code&gt; as well!&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs-2&quot;&gt;Source refs:&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/NewServer(enableDebuggingHandlers)&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.InstallDebuggingHandlers&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.getExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;4-cri&quot;&gt;4. CRI&lt;/h2&gt;
+
+&lt;p&gt;Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling &lt;a href=&quot;https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate&quot;&gt;github.com/moby/moby/client#Client.ContainerExecCreate&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In truth &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify &lt;code class=&quot;highlighter-rouge&quot;&gt;-i -t&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; an attach action is executed immediately after exec to provide a persistent connection.&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs-3&quot;&gt;Source refs:&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming.NewServer&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/server.serveExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/remotecommand/ServeExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/dockershim/NativeExecHandler.ExecInContainer&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64&quot;&gt;4&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/dockershim/libdocker/kubeDockerClient.StartExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461&quot;&gt;5&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;moby/moby/client/Client.ContainerExecCreate&lt;/code&gt; [&lt;a href=&quot;https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate&quot;&gt;6&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;port-forward&quot;&gt;port-forward&lt;/h1&gt;
+
+&lt;p&gt;Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs-4&quot;&gt;Source Refs&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/portforward.ServePortForward&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelete/dockershim/streamingRuntime.portForward&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;logs&quot;&gt;logs&lt;/h1&gt;
+
+&lt;p&gt;Requests for container logs also pass through the kubelet to the CRI and are streamed back to the client.&lt;/p&gt;
+
+&lt;h3 id=&quot;source-refs-5&quot;&gt;Source Refs&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.InstallDebuggingHandlers&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.getContainerLogs&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dockershim/dockerService.GetContainerLogs&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Josh Gavant</name></author><summary type="html">Overview of Kubelet</summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://joshgav.github.io/info/blog/2020/04/17/welcome-to-partly-cloudy.html" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://joshgav.github.io/info/blog/2020/04/17/welcome-to-partly-cloudy</id><content type="html" xml:base="https://joshgav.github.io/info/blog/2020/04/17/welcome-to-partly-cloudy.html">&lt;p&gt;So called because I’ll be writing posts about cloud-native patterns, practices and tools.&lt;/p&gt;
+
+&lt;p&gt;I chose to start by maintaining the site with &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;, though I almost reconsidered upon discovering that the latest version of Jekyll &lt;a href=&quot;https://github.com/github/pages-gem/issues/651&quot;&gt;isn’t fully supported&lt;/a&gt; for automatically-built GitHub Pages sites. That led me to write &lt;a href=&quot;https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml&quot;&gt;a GitHub Action to build and publish the site&lt;/a&gt;, inspired by &lt;a href=&quot;https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions&quot;&gt;this post&lt;/a&gt;. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages &lt;em&gt;did&lt;/em&gt; automatically build the site. Good thing too cause my custom Action originally pushed the built site to the &lt;code class=&quot;highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt; branch, which wouldn’t work for a user’s top-level user site - &lt;code class=&quot;highlighter-rouge&quot;&gt;joshgav.github.io&lt;/code&gt; in my case.&lt;/p&gt;
+
+&lt;p&gt;I wasn’t happy with the unpolished feel of the default &lt;code class=&quot;highlighter-rouge&quot;&gt;minima&lt;/code&gt; theme, so I reviewed some others at &lt;a href=&quot;https://jekyllthemes.io/&quot;&gt;jekyllthemes.io&lt;/a&gt;. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “&lt;a href=&quot;https://github.com/huangyz0918/moving&quot;&gt;moving&lt;/a&gt;” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with &lt;a href=&quot;https://pages.github.com/themes/&quot;&gt;this subset of Jekyll themes&lt;/a&gt;. Great, an opportunity to tweak and use the Action action!&lt;/p&gt;
+
+&lt;p&gt;So to use my chosen theme I went back and tweaked my action to listen for pushes to the &lt;code class=&quot;highlighter-rouge&quot;&gt;source&lt;/code&gt; branch and push changes to the &lt;code class=&quot;highlighter-rouge&quot;&gt;master&lt;/code&gt; branch, as required for the “top-level” GitHub Page. It seems to be working now.&lt;/p&gt;
+
+&lt;p&gt;Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><summary type="html">So called because I’ll be writing posts about cloud-native patterns, practices and tools.</summary></entry></feed>
