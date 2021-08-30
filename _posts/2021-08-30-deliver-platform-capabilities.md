@@ -2,10 +2,8 @@
 layout: post
 title: Deliver platform capabilities
 date: 2021-08-30 08:00:00 -0500
-categories: platform infrastructure architecture
+tags: platform infrastructure architecture
 ---
-
-# Deliver platform capabilities
 
 Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.
 

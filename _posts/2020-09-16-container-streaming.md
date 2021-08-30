@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "How container streaming (exec, port-forward) works in Kubernetes"
-date:   2020-09-16 11:30:00 -0500
-categories: kubernetes kubelet exec
+title: "How container streaming (exec, port-forward) works in Kubernetes"
+date: 2020-09-16 11:30:00 -0500
+tags: kubernetes kubelet exec
 ---
 
 # Overview of Kubelet
