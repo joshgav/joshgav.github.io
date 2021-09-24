@@ -5,6 +5,8 @@ date: 2021-08-30 08:00:00 -0500
 tags: platform infrastructure architecture
 ---
 
+![Platform and capabilities](/assets/city-platform.jpg)
+
 Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.
 
 This post describes how a platform team may develop and manage these **platform capabilities** and gradually evolve a capabilities development and delivery _framework_. The framework should not be designed up front, but platform architects should help it emerge by building prototypical application services and developing initial capabilities for them, as described herein.

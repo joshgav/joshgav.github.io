@@ -13,38 +13,8 @@ jobs:
     env:
       GITHUB_PUBLISH_BRANCH: publish
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: Publish site
+      - name: Publish
         shell: bash
-        run: |-
-          ## setup
-          export REPO_URL="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}"
-          master_commit_hash=$(git log --format='%H' -1)
-          master_commit_subject=$(git log --format='%s' -1)
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-          echo "---> get currently-deployed site"
-          git clone ${REPO_URL} --branch ${GITHUB_PUBLISH_BRANCH} _site
-          pushd _site
-          set +e
-          git log -1 --oneline | grep -q "${master_commit_hash}"
-          if [[ $? == 0 ]]; then
-              echo "latest commit already published"
-              exit 0
-          else
-              echo "new commit to publish!"
-          fi
-          set -e
-          popd
-
-          echo "---> generate fresh version of static site"
-          export JEKYLL_ENV=production
-          bundle install
-          bundle exec jekyll build
-
-          pushd _site
-          git add .
-          git commit -m "source commit: ${master_commit_hash}" -m "original subject: ${master_commit_subject}"
-          git push $REPO_URL ${GITHUB_PUBLISH_BRANCH}
+        run: ./scripts/publish-site.sh ${{ github.repository }} ${{ github.actor }} ${{ github.token }}
