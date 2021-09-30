@@ -1,4 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2021-09-24T14:53:56+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Deliver platform capabilities</title><link href="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/08/30/deliver-platform-capabilities</id><content type="html" xml:base="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html">&lt;p&gt;&lt;img src=&quot;/assets/city-platform.jpg&quot; alt=&quot;Platform and capabilities&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2021-09-30T22:25:22+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Cloud redefined enterprise infrastructure</title><link href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" rel="alternate" type="text/html" title="Cloud redefined enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure</id><content type="html" xml:base="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html">&lt;p&gt;Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the &lt;a href=&quot;https://github.com/cncf/toc/blob/main/DEFINITION.md&quot;&gt;words of the CNCF&lt;/a&gt; (emphasis added):&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cloud native technologies empower organizations to build and run &lt;strong&gt;scalable&lt;/strong&gt; applications in modern, &lt;strong&gt;dynamic&lt;/strong&gt; environments…  These techniques enable loosely coupled systems that are &lt;strong&gt;resilient&lt;/strong&gt;, &lt;strong&gt;manageable&lt;/strong&gt;, and &lt;strong&gt;observable&lt;/strong&gt;… They allow engineers to make high-impact changes &lt;strong&gt;frequently&lt;/strong&gt; and predictably with minimal toil.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;But what is “cloud” itself, provider of all these desirable attributes? Particularly in our era of hybrid, multi, and private “clouds” we should clearly define the term. And how does “cloud” relate to the rest of our infrastructure?&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-cloud&quot;&gt;What is cloud?&lt;/h2&gt;
+
+&lt;p&gt;Let us describe “cloud” by induction from existing ones: a &lt;strong&gt;cloud&lt;/strong&gt; is a collection of automatable &lt;em&gt;infrastructure services&lt;/em&gt; managed via a consistent set of interfaces - APIs, Web UIs, and CLIs. An &lt;strong&gt;infrastructure service&lt;/strong&gt; is a service which serves other services which in turn serve users - an infrastructure service serves end users only indirectly. Stated a bit differently, &lt;strong&gt;an infrastructure service serves applications&lt;/strong&gt; and their developers and &lt;strong&gt;a cloud is a collection of such services&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. “Multi-cloud” environments are those using infrastructure services from several providers. A “private cloud” is a collection of infrastructure services offered via an internal, perhaps custom interface.&lt;/p&gt;
+
+&lt;p&gt;With this in mind let’s now describe how cloud is changing enterprise infrastructure.&lt;/p&gt;
+
+&lt;h3 id=&quot;from-servers-to-serverless&quot;&gt;From servers to serverless&lt;/h3&gt;
+
+&lt;p&gt;Before “cloud” many infrastructure specialists managed hardware servers, datacenters, network devices and operating system configurations. But “cloud” is replacing most such physical components with programmable, software-defined ones - virtual machines, virtual networks, dynamic datastores and queues, and much more. The job of infrastructure specialists is now to &lt;strong&gt;program virtual infrastructure&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;A consistent, thorough, app-centric interface is one reasonable ultimate realization of cloud as defined, so “serverless” is a good example of a cloud interface for infrastructure driven strictly by app requirements. The most common paradigm though for programming virtual infrastructure today is to virtualize and automate existing architectural patterns - such as describing a router, a pod, and a datastore as software-defined Kubernetes resources and having a controller reify them.&lt;/p&gt;
+
+&lt;p&gt;Whatever the interface though, &lt;strong&gt;infrastructure is not about hardware anymore, it’s about software&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;from-services-to-platform&quot;&gt;From services to platform&lt;/h3&gt;
+
+&lt;p&gt;Another change is that before “cloud” infrastructure services were often offered by different teams via different interfaces. An identity or TLS certificate was issued by one team; another would provision a collector for logs and metrics; and another would deploy servers, networks and operating systems. Each would collect metadata and implement requirements from app teams in their own ways.&lt;/p&gt;
+
+&lt;p&gt;But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.&lt;/p&gt;
+
+&lt;p&gt;In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent &lt;strong&gt;platform&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;In graphic form, cloud takes us from:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/infra_current_state.png&quot; alt=&quot;infra-current-state&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;to&quot;&gt;to:&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/infra_desired_state.png&quot; alt=&quot;infra-desired-state&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;from-dependency-to-partner&quot;&gt;From dependency to partner&lt;/h3&gt;
+
+&lt;p&gt;As infrastructure becomes more flexible and more capable of quickly fulfilling app developers’ needs, infrastructure teams are enabled to partner and agilely develop services together with application developers. The agility enabled by software allows infrastructure teams to deliver their set of services as a cohesive product to app developers, gathering and iterating quickly on feedback and new requirements.&lt;/p&gt;
+
+&lt;p&gt;With cloud, &lt;strong&gt;infrastructure becomes an active partner to product teams in delivering business value&lt;/strong&gt; to customers and reacting to new circumstances.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;A “cloud” is &lt;em&gt;not&lt;/em&gt; just something run by big tech companies like Microsoft and Amazon. Rather, “cloud” is &lt;em&gt;the&lt;/em&gt; new paradigm of enterprise infrastructure itself: providing a consistent collection of automatable infrastructure services to apps and developers.&lt;/p&gt;
+
+&lt;p&gt;How are you providing “cloud” at your organization?&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><summary type="html">Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the words of the CNCF (emphasis added):</summary></entry><entry><title type="html">Deliver platform capabilities</title><link href="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/08/30/deliver-platform-capabilities</id><content type="html" xml:base="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html">&lt;p&gt;&lt;img src=&quot;/assets/city-platform.jpg&quot; alt=&quot;Platform and capabilities&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.&lt;/p&gt;
 

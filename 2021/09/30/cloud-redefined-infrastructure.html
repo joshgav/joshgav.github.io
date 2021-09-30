@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.0.1" />
+<meta property="og:title" content="Cloud redefined enterprise infrastructure" />
+<meta name="author" content="Josh Gavant" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the words of the CNCF (emphasis added):" />
+<meta property="og:description" content="Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the words of the CNCF (emphasis added):" />
+<link rel="canonical" href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" />
+<meta property="og:url" content="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" />
+<meta property="og:site_name" content="Partly Cloudy" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-30T13:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Cloud redefined enterprise infrastructure" />
+<script type="application/ld+json">
+{"headline":"Cloud redefined enterprise infrastructure","dateModified":"2021-09-30T13:00:00+00:00","datePublished":"2021-09-30T13:00:00+00:00","description":"Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the words of the CNCF (emphasis added):","mainEntityOfPage":{"@type":"WebPage","@id":"https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html"},"url":"https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html","author":{"@type":"Person","name":"Josh Gavant"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="https://joshgav.github.io/assets/css/main.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  <link rel="stylesheet" href="https://joshgav.github.io/assets/css/agate.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script><link type="application/atom+xml" rel="alternate" href="https://joshgav.github.io/feed.xml" title="Partly Cloudy" /></head><body>
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article
+  class="post h-entry"
+  itemscope
+  itemtype="http://schema.org/BlogPosting"
+>
+  <head>
+    <title>Cloud redefined enterprise infrastructure</title>
+  </head>
+  <header class="post-header">
+    <div class="post-back">
+      <a class="black-link" href="https://joshgav.github.io">
+        ← Home
+      </a>
+    </div>
+
+    <h1 class="post-title p-name" itemprop="name headline">
+      Cloud redefined enterprise infrastructure
+    </h1>
+    <p class="post-meta">
+      <time
+        class="dt-published"
+        datetime="2021-09-30T13:00:00+00:00"
+        itemprop="datePublished"
+      >Sep 30, 2021
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the <a href="https://github.com/cncf/toc/blob/main/DEFINITION.md">words of the CNCF</a> (emphasis added):</p>
+
+<blockquote>
+  <p>Cloud native technologies empower organizations to build and run <strong>scalable</strong> applications in modern, <strong>dynamic</strong> environments…  These techniques enable loosely coupled systems that are <strong>resilient</strong>, <strong>manageable</strong>, and <strong>observable</strong>… They allow engineers to make high-impact changes <strong>frequently</strong> and predictably with minimal toil.</p>
+</blockquote>
+
+<p>But what is “cloud” itself, provider of all these desirable attributes? Particularly in our era of hybrid, multi, and private “clouds” we should clearly define the term. And how does “cloud” relate to the rest of our infrastructure?</p>
+
+<h2 id="what-is-cloud">What is cloud?</h2>
+
+<p>Let us describe “cloud” by induction from existing ones: a <strong>cloud</strong> is a collection of automatable <em>infrastructure services</em> managed via a consistent set of interfaces - APIs, Web UIs, and CLIs. An <strong>infrastructure service</strong> is a service which serves other services which in turn serve users - an infrastructure service serves end users only indirectly. Stated a bit differently, <strong>an infrastructure service serves applications</strong> and their developers and <strong>a cloud is a collection of such services</strong>.</p>
+
+<p>Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. “Multi-cloud” environments are those using infrastructure services from several providers. A “private cloud” is a collection of infrastructure services offered via an internal, perhaps custom interface.</p>
+
+<p>With this in mind let’s now describe how cloud is changing enterprise infrastructure.</p>
+
+<h3 id="from-servers-to-serverless">From servers to serverless</h3>
+
+<p>Before “cloud” many infrastructure specialists managed hardware servers, datacenters, network devices and operating system configurations. But “cloud” is replacing most such physical components with programmable, software-defined ones - virtual machines, virtual networks, dynamic datastores and queues, and much more. The job of infrastructure specialists is now to <strong>program virtual infrastructure</strong>.</p>
+
+<p>A consistent, thorough, app-centric interface is one reasonable ultimate realization of cloud as defined, so “serverless” is a good example of a cloud interface for infrastructure driven strictly by app requirements. The most common paradigm though for programming virtual infrastructure today is to virtualize and automate existing architectural patterns - such as describing a router, a pod, and a datastore as software-defined Kubernetes resources and having a controller reify them.</p>
+
+<p>Whatever the interface though, <strong>infrastructure is not about hardware anymore, it’s about software</strong>.</p>
+
+<h3 id="from-services-to-platform">From services to platform</h3>
+
+<p>Another change is that before “cloud” infrastructure services were often offered by different teams via different interfaces. An identity or TLS certificate was issued by one team; another would provision a collector for logs and metrics; and another would deploy servers, networks and operating systems. Each would collect metadata and implement requirements from app teams in their own ways.</p>
+
+<p>But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.</p>
+
+<p>In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent <strong>platform</strong>.</p>
+
+<p>In graphic form, cloud takes us from:</p>
+
+<p><img src="/assets/infra_current_state.png" alt="infra-current-state" /></p>
+
+<h4 id="to">to:</h4>
+
+<p><img src="/assets/infra_desired_state.png" alt="infra-desired-state" /></p>
+
+<h3 id="from-dependency-to-partner">From dependency to partner</h3>
+
+<p>As infrastructure becomes more flexible and more capable of quickly fulfilling app developers’ needs, infrastructure teams are enabled to partner and agilely develop services together with application developers. The agility enabled by software allows infrastructure teams to deliver their set of services as a cohesive product to app developers, gathering and iterating quickly on feedback and new requirements.</p>
+
+<p>With cloud, <strong>infrastructure becomes an active partner to product teams in delivering business value</strong> to customers and reacting to new circumstances.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>A “cloud” is <em>not</em> just something run by big tech companies like Microsoft and Amazon. Rather, “cloud” is <em>the</em> new paradigm of enterprise infrastructure itself: providing a consistent collection of automatable infrastructure services to apps and developers.</p>
+
+<p>How are you providing “cloud” at your organization?</p>
+
+  </div>
+
+  <a class="u-url" href="/2021/09/30/cloud-redefined-infrastructure.html" hidden></a>
+</article>
+
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+    <div class="wrapper">
+      <div class="footer-col-wrapper">
+        <div class="footer-col">
+          <ul class="contact-list">
+            <li class="p-name"><a class="black-link" href="https://joshgav.github.io/about.html">
+                  Josh Gavant 
+                </a></li><li>
+              <a class="u-email black-link" href="mailto:joshgavant@gmail.com">joshgavant@gmail.com</a></li></ul>
+        </div>
+      </div>
+    </div>
+  </footer></body>
+</html>
