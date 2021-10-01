@@ -1,9 +1,11 @@
 ---
 layout: post
-title: Cloud redefined enterprise infrastructure
+title: Cloud redefines enterprise infrastructure
 date: 2021-09-30 08:00:00 -0500
 tags: platform infrastructure
 ---
+
+![clouds](/assets/clouds.png)
 
 Cloud computing has been around for well over a decade, so we ought to know what "cloud" is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the [words of the CNCF](https://github.com/cncf/toc/blob/main/DEFINITION.md) (emphasis added):
 
