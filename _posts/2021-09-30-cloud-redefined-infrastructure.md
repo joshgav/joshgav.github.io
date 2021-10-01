@@ -5,7 +5,7 @@ date: 2021-09-30 08:00:00 -0500
 tags: platform infrastructure
 ---
 
-![clouds](/assets/clouds.png)
+![infrastructure platform](/assets/infra_desired_state.png)
 
 Cloud computing has been around for well over a decade, so we ought to know what "cloud" is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the [words of the CNCF](https://github.com/cncf/toc/blob/main/DEFINITION.md) (emphasis added):
 
@@ -19,7 +19,7 @@ Let us describe "cloud" by induction from existing ones: a **cloud** is a collec
 
 Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. "Multi-cloud" environments are those using infrastructure services from several providers. A "private cloud" is a collection of infrastructure services offered via an internal, perhaps custom interface.
 
-With this in mind let's now describe how cloud is changing enterprise infrastructure.
+With this in mind let's now describe how cloud is changing enterprise infrastructure. The graphic above illustrates these.
 
 ### From servers to serverless
 
@@ -36,14 +36,6 @@ Another change is that before "cloud" infrastructure services were often offered
 But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.
 
 In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent **platform**.
-
-In graphic form, cloud takes us from:
-
-![infra-current-state](/assets/infra_current_state.png)
-
-#### to:
-
-![infra-desired-state](/assets/infra_desired_state.png)
 
 ### From dependency to partner
 
