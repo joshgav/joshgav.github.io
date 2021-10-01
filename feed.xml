@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2021-10-01T02:32:06+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure</id><content type="html" xml:base="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html">&lt;p&gt;&lt;img src=&quot;/assets/clouds.png&quot; alt=&quot;clouds&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2021-10-01T14:40:05+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure</id><content type="html" xml:base="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html">&lt;p&gt;&lt;img src=&quot;/assets/infra_desired_state.png&quot; alt=&quot;infrastructure platform&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the &lt;a href=&quot;https://github.com/cncf/toc/blob/main/DEFINITION.md&quot;&gt;words of the CNCF&lt;/a&gt; (emphasis added):&lt;/p&gt;
 
@@ -14,7 +14,7 @@
 
 &lt;p&gt;Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. “Multi-cloud” environments are those using infrastructure services from several providers. A “private cloud” is a collection of infrastructure services offered via an internal, perhaps custom interface.&lt;/p&gt;
 
-&lt;p&gt;With this in mind let’s now describe how cloud is changing enterprise infrastructure.&lt;/p&gt;
+&lt;p&gt;With this in mind let’s now describe how cloud is changing enterprise infrastructure. The graphic above illustrates these.&lt;/p&gt;
 
 &lt;h3 id=&quot;from-servers-to-serverless&quot;&gt;From servers to serverless&lt;/h3&gt;
 
@@ -31,14 +31,6 @@
 &lt;p&gt;But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.&lt;/p&gt;
 
 &lt;p&gt;In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent &lt;strong&gt;platform&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;In graphic form, cloud takes us from:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/infra_current_state.png&quot; alt=&quot;infra-current-state&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;to&quot;&gt;to:&lt;/h4&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/infra_desired_state.png&quot; alt=&quot;infra-desired-state&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;from-dependency-to-partner&quot;&gt;From dependency to partner&lt;/h3&gt;
 
