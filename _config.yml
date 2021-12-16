@@ -18,6 +18,6 @@ show_excerpts: true
 # refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
 moving:
   avatar_url: "https://s.gravatar.com/avatar/4e9e294333eddf6f05320292efa1e009?s=2048"
-  about_you: Cloud architect and product manager
+  about_you: Cloud architect
   date_format: "%b %d" # date format of posts in home page
   back_to: "Home"
