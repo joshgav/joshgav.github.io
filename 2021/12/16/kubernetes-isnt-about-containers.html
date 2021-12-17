@@ -58,8 +58,6 @@
   <div class="post-content e-content" itemprop="articleBody">
     <p>It’s about APIs; we’ll get to that shortly.</p>
 
-<p><img src="/assets/always_has_been_apis.jpeg" alt="always has been APIs" /></p>
-
 <h2 id="first-there-were-containers">First there were containers</h2>
 
 <p>Now Docker <em>is</em> about containers: running complex software with a simple <code class="highlighter-rouge">docker run postgres</code> command was a revelation to software developers in 2013, unlocking agile infrastructure that they’d never known. And happily, as developers adopted containers as a standard build and run target, the industry realized that the same encapsulation fits nicely for workloads to be scheduled in compute clusters by orchestrators like Kubernetes and Apache Mesos. Containers have become the most important workload type managed by these schedulers, but as the title says that’s not what’s most valuable about Kubernetes.</p>
@@ -67,6 +65,8 @@
 <p>Kubernetes is not about more general workload <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">scheduling</a> either (sorry <a href="https://krustlet.dev/">Krustlet</a> fans). While scheduling various workloads efficiently is an important value Kubernetes provides, it’s not the reason for its success.</p>
 
 <h2 id="then-there-were-apis">Then there were APIs</h2>
+
+<p><img width="400" alt="Always has been APIs" src="/assets/always_has_been_apis.jpeg" /></p>
 
 <p>Rather, the attribute of Kubernetes that’s made it so successful and valuable is that <strong>it provides a set of standard programming interfaces for writing and using software-defined infrastructure services</strong>. Kubernetes provides specifications and implementations - a complete framework - for designing, implementing, operating and using infrastructure services of all shapes and sizes based on the same core structures and semantics: typed resources watched and reconciled by controllers.</p>
 
