@@ -37,6 +37,7 @@ echo "----> generate fresh version of static site"
 export JEKYLL_ENV=production
 bundle install
 bundle exec jekyll build
+if [[ -e "CNAME" ]]; then cp "CNAME" "_site/CNAME"; fi
 
 pushd _site
 echo "----> push fresh version of static site"
