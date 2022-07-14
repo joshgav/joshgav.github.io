@@ -84,7 +84,7 @@
 
 <p>In vcluster and the following solutions, the virtual cluster is a “metadata-only” cluster, in that resources in it are persisted to a backing store like etcd, but no schedulers act to reify the persisted resources - ultimately as pods. Instead, a “syncer” synchronization service copies and transforms reifiable resources - podspecs - from the virtual cluster to the hosting namespace of the hosting cluster. Schedulers in the hosting cluster then detect and reify these resources in the same underlying tenant namespace where the virtual cluster’s control plane runs.</p>
 
-<p>An advantage of vcluster’s approach of scheduling pods in the hosting namespace is that the hosting cluster ultimately handles all workloads and applies namespace quotas - all work happens within the namespace allocated to the tenant by the hosting cluster administrator. A disadvantage is that schedulers cannot be configured in the virtual cluster since pods aren’t actually run there.</p>
+<p>An advantage of vcluster’s approach of scheduling pods in the hosting namespace is that the hosting cluster ultimately handles all workloads and applies namespace quotas - all work happens within the namespace allocated to the tenant by the hosting cluster administrator. A disadvantage is that schedulers cannot be configured in the virtual cluster since pods aren’t actually run there. (Update: vcluster now supports a virtual scheduler, see <a href="https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler">https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler</a>.)</p>
 
 <ul>
   <li><a href="https://github.com/loft-sh/vcluster">vcluster on GitHub</a></li>
