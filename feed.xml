@@ -1,368 +1,368 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://joshgav.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://joshgav.github.io/" rel="alternate" type="text/html" /><updated>2022-07-14T17:26:29+00:00</updated><id>https://joshgav.github.io/feed.xml</id><title type="html">Partly Cloudy</title><subtitle>Discussion of cloud-native patterns, practices and tools.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Clusters for all!</title><link href="https://joshgav.github.io/2022/05/16/cluster-level-multitenancy.html" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://joshgav.github.io/2022/05/16/cluster-level-multitenancy</id><content type="html" xml:base="https://joshgav.github.io/2022/05/16/cluster-level-multitenancy.html">&lt;p&gt;&lt;img src=&quot;/assets/virtual_cluster/pleiades.jpg&quot; alt=&quot;Pleiades star clusters&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-07-26T17:41:00+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Clusters for all!</title><link href="https://blog.joshgav.com//2022/05/16/cluster-level-multitenancy.html" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://blog.joshgav.com//2022/05/16/cluster-level-multitenancy</id><content type="html" xml:base="https://blog.joshgav.com//2022/05/16/cluster-level-multitenancy.html"><![CDATA[<p><img src="/assets/virtual_cluster/pleiades.jpg" alt="Pleiades star clusters" /></p>
 
-&lt;p&gt;A decision which faces many large organizations as they adopt cloud architecture is how to provide isolated spaces within the same environments and clusters for various teams and purposes. For example, marketing and sales applications may need to be isolated from an organization’s customer-facing applications; and development teams building any app usually require extra spaces for tests and verification.&lt;/p&gt;
+<p>A decision which faces many large organizations as they adopt cloud architecture is how to provide isolated spaces within the same environments and clusters for various teams and purposes. For example, marketing and sales applications may need to be isolated from an organization’s customer-facing applications; and development teams building any app usually require extra spaces for tests and verification.</p>
 
-&lt;h2 id=&quot;namespace-as-unit-of-tenancy&quot;&gt;Namespace as unit of tenancy&lt;/h2&gt;
+<h2 id="namespace-as-unit-of-tenancy">Namespace as unit of tenancy</h2>
 
-&lt;p&gt;To address this need, many organizations have started to use namespaces as units of isolation and tenancy, a pattern previously described by &lt;a href=&quot;https://cloud.google.com/kubernetes-engine/docs/concepts/multitenancy-overview&quot;&gt;Google&lt;/a&gt; and &lt;a href=&quot;https://kubernetes.io/blog/2021/04/15/three-tenancy-models-for-kubernetes/&quot;&gt;Kubernetes contributors&lt;/a&gt;. But namespace-scoped isolation is often insufficient because some concerns are managed at cluster scope. In particular, installing new resource types (CRDs) is a cluster-scoped activity; and today independent teams often want to install custom resource types and operators. Also, more developers are themselves writing software operators and custom resource types and find themselves requiring cluster-scoped access for research and tests.&lt;/p&gt;
+<p>To address this need, many organizations have started to use namespaces as units of isolation and tenancy, a pattern previously described by <a href="https://cloud.google.com/kubernetes-engine/docs/concepts/multitenancy-overview">Google</a> and <a href="https://kubernetes.io/blog/2021/04/15/three-tenancy-models-for-kubernetes/">Kubernetes contributors</a>. But namespace-scoped isolation is often insufficient because some concerns are managed at cluster scope. In particular, installing new resource types (CRDs) is a cluster-scoped activity; and today independent teams often want to install custom resource types and operators. Also, more developers are themselves writing software operators and custom resource types and find themselves requiring cluster-scoped access for research and tests.</p>
 
-&lt;h2 id=&quot;cluster-as-unit-of-tenancy&quot;&gt;Cluster as unit of tenancy&lt;/h2&gt;
+<h2 id="cluster-as-unit-of-tenancy">Cluster as unit of tenancy</h2>
 
-&lt;p&gt;For these reasons and others, tenants often require their own isolated clusters with unconstrained access rights. In an isolated cluster, a tenant gets its own Kubernetes API server and persistence store and fully manages all namespaces and custom resource types in its cluster.&lt;/p&gt;
+<p>For these reasons and others, tenants often require their own isolated clusters with unconstrained access rights. In an isolated cluster, a tenant gets its own Kubernetes API server and persistence store and fully manages all namespaces and custom resource types in its cluster.</p>
 
-&lt;p&gt;But deploying physical or even virtual machines for many clusters is inefficient and difficult to manage, so organizations have struggled to provide clusters to tenant teams. Happily :smile:, to meet these organizations’ and users’ needs, leading Kubernetes vendors have been researching and developing lighter weight mechanisms to provide isolated clusters for an organization’s tenants. In this post we’ll compare and contrast several of these emergent efforts.&lt;/p&gt;
+<p>But deploying physical or even virtual machines for many clusters is inefficient and difficult to manage, so organizations have struggled to provide clusters to tenant teams. Happily :smile:, to meet these organizations’ and users’ needs, leading Kubernetes vendors have been researching and developing lighter weight mechanisms to provide isolated clusters for an organization’s tenants. In this post we’ll compare and contrast several of these emergent efforts.</p>
 
-&lt;p&gt;Do you have other projects and ideas to enhance multitenancy for cloud architecture? Then please join CNCF’s App Delivery advisory group in discussing these &lt;a href=&quot;https://github.com/cncf/tag-app-delivery/issues/193&quot;&gt;here&lt;/a&gt;; thank you!&lt;/p&gt;
+<p>Do you have other projects and ideas to enhance multitenancy for cloud architecture? Then please join CNCF’s App Delivery advisory group in discussing these <a href="https://github.com/cncf/tag-app-delivery/issues/193">here</a>; thank you!</p>
 
-&lt;h3 id=&quot;vcluster&quot;&gt;vcluster&lt;/h3&gt;
+<h3 id="vcluster">vcluster</h3>
 
-&lt;p&gt;&lt;a href=&quot;https://www.vcluster.com/&quot;&gt;vcluster&lt;/a&gt; is &lt;a href=&quot;https://www.google.com/search?q=vcluster&amp;amp;tbm=nws&quot;&gt;a prominent project&lt;/a&gt; and CLI tool maintained by &lt;a href=&quot;https://loft.sh/&quot;&gt;loft.sh&lt;/a&gt; that provisions a virtual cluster as a StatefulSet within a tenant namespace. Access rights from the hosting namespace are propogated to the hosted virtual cluster such that the namespace tenant becomes the cluster’s only tenant. As cluster admins, tenant members can create cluster-scoped resources like CRDs and ClusterRoles.&lt;/p&gt;
+<p><a href="https://www.vcluster.com/">vcluster</a> is <a href="https://www.google.com/search?q=vcluster&amp;tbm=nws">a prominent project</a> and CLI tool maintained by <a href="https://loft.sh/">loft.sh</a> that provisions a virtual cluster as a StatefulSet within a tenant namespace. Access rights from the hosting namespace are propogated to the hosted virtual cluster such that the namespace tenant becomes the cluster’s only tenant. As cluster admins, tenant members can create cluster-scoped resources like CRDs and ClusterRoles.</p>
 
-&lt;p&gt;The virtual cluster runs its own Kubernetes API service and persistence store independent of those of the hosting cluster. It can be published by the hosting cluster as a LoadBalancer-type service and accessed directly with kubectl and other Kubernetes API-compliant tools. This enables users of the tenant cluster to work with it directly with little or no knowledge of its host.&lt;/p&gt;
+<p>The virtual cluster runs its own Kubernetes API service and persistence store independent of those of the hosting cluster. It can be published by the hosting cluster as a LoadBalancer-type service and accessed directly with kubectl and other Kubernetes API-compliant tools. This enables users of the tenant cluster to work with it directly with little or no knowledge of its host.</p>
 
-&lt;p&gt;&lt;img src=&quot;/assets/virtual_cluster/vcluster.png&quot; alt=&quot;vcluster architecture&quot; /&gt;&lt;/p&gt;
+<p><img src="/assets/virtual_cluster/vcluster.png" alt="vcluster architecture" /></p>
 
-&lt;p&gt;A high-level perspective of vcluster’s architecture.&lt;/p&gt;
+<p>A high-level perspective of vcluster’s architecture.</p>
 
-&lt;p&gt;In vcluster and the following solutions, the virtual cluster is a “metadata-only” cluster, in that resources in it are persisted to a backing store like etcd, but no schedulers act to reify the persisted resources - ultimately as pods. Instead, a “syncer” synchronization service copies and transforms reifiable resources - podspecs - from the virtual cluster to the hosting namespace of the hosting cluster. Schedulers in the hosting cluster then detect and reify these resources in the same underlying tenant namespace where the virtual cluster’s control plane runs.&lt;/p&gt;
+<p>In vcluster and the following solutions, the virtual cluster is a “metadata-only” cluster, in that resources in it are persisted to a backing store like etcd, but no schedulers act to reify the persisted resources - ultimately as pods. Instead, a “syncer” synchronization service copies and transforms reifiable resources - podspecs - from the virtual cluster to the hosting namespace of the hosting cluster. Schedulers in the hosting cluster then detect and reify these resources in the same underlying tenant namespace where the virtual cluster’s control plane runs.</p>
 
-&lt;p&gt;An advantage of vcluster’s approach of scheduling pods in the hosting namespace is that the hosting cluster ultimately handles all workloads and applies namespace quotas - all work happens within the namespace allocated to the tenant by the hosting cluster administrator. A disadvantage is that schedulers cannot be configured in the virtual cluster since pods aren’t actually run there. (Update: vcluster now supports a virtual scheduler, see &lt;a href=&quot;https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler&quot;&gt;https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler&lt;/a&gt;.)&lt;/p&gt;
+<p>An advantage of vcluster’s approach of scheduling pods in the hosting namespace is that the hosting cluster ultimately handles all workloads and applies namespace quotas - all work happens within the namespace allocated to the tenant by the hosting cluster administrator. A disadvantage is that schedulers cannot be configured in the virtual cluster since pods aren’t actually run there. (Update: vcluster now supports a virtual scheduler, see <a href="https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler">https://www.vcluster.com/docs/architecture/scheduling#separate-vcluster-scheduler</a>.)</p>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/loft-sh/vcluster&quot;&gt;vcluster on GitHub&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><a href="https://github.com/loft-sh/vcluster">vcluster on GitHub</a></li>
+</ul>
 
-&lt;h3 id=&quot;cluster-api-provider-nested-capn&quot;&gt;Cluster API Provider Nested (CAPN)&lt;/h3&gt;
+<h3 id="cluster-api-provider-nested-capn">Cluster API Provider Nested (CAPN)</h3>
 
-&lt;p&gt;In vcluster, bespoke support for control plane implementations is required; as of this writing, vcluster supports k3s, k0s and vanilla k8s distributions.&lt;/p&gt;
+<p>In vcluster, bespoke support for control plane implementations is required; as of this writing, vcluster supports k3s, k0s and vanilla k8s distributions.</p>
 
-&lt;p&gt;To support &lt;em&gt;any&lt;/em&gt; control plane implementation, the &lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api-provider-nested&quot;&gt;Cluster API Provider Nested&lt;/a&gt; project implements an architecture similar to that of vcluster, including a metadata-only cluster and a syncer, but provisions the control plane using a Cluster API provider rather than a bespoke distribution.&lt;/p&gt;
+<p>To support <em>any</em> control plane implementation, the <a href="https://github.com/kubernetes-sigs/cluster-api-provider-nested">Cluster API Provider Nested</a> project implements an architecture similar to that of vcluster, including a metadata-only cluster and a syncer, but provisions the control plane using a Cluster API provider rather than a bespoke distribution.</p>
 
-&lt;p&gt;&lt;img src=&quot;/assets/virtual_cluster/capn.png&quot; alt=&quot;capn architecture&quot; /&gt;&lt;/p&gt;
+<p><img src="/assets/virtual_cluster/capn.png" alt="capn architecture" /></p>
 
-&lt;p&gt;A high-level perspective of CAPN’s architecture.&lt;/p&gt;
+<p>A high-level perspective of CAPN’s architecture.</p>
 
-&lt;p&gt;CAPN promises to enable control planes implementable via Cluster API to serve virtual clusters.&lt;/p&gt;
+<p>CAPN promises to enable control planes implementable via Cluster API to serve virtual clusters.</p>
 
-&lt;h3 id=&quot;hypershift&quot;&gt;HyperShift&lt;/h3&gt;
+<h3 id="hypershift">HyperShift</h3>
 
-&lt;p&gt;Similar to the previous two, &lt;a href=&quot;https://www.redhat.com/&quot;&gt;Red Hat&lt;/a&gt;’s &lt;a href=&quot;https://github.com/openshift/hypershift&quot;&gt;HyperShift&lt;/a&gt; project provisions an OpenShift (Red Hat’s Kubernetes distro) control plane as a collection of pods in a host namespace. But rather than running workloads within the hosting cluster and namespace like vcluster, HyperShift control planes are connected to a pool of dedicated worker nodes where pods are synced and scheduled.&lt;/p&gt;
+<p>Similar to the previous two, <a href="https://www.redhat.com/">Red Hat</a>’s <a href="https://github.com/openshift/hypershift">HyperShift</a> project provisions an OpenShift (Red Hat’s Kubernetes distro) control plane as a collection of pods in a host namespace. But rather than running workloads within the hosting cluster and namespace like vcluster, HyperShift control planes are connected to a pool of dedicated worker nodes where pods are synced and scheduled.</p>
 
-&lt;p&gt;&lt;img src=&quot;/assets/virtual_cluster/hypershift.png&quot; alt=&quot;HyperShift architecture&quot; /&gt;&lt;/p&gt;
+<p><img src="/assets/virtual_cluster/hypershift.png" alt="HyperShift architecture" /></p>
 
-&lt;p&gt;A high-level perspective of HyperShift’s architecture.&lt;/p&gt;
+<p>A high-level perspective of HyperShift’s architecture.</p>
 
-&lt;p&gt;HyperShift’s model may be most appropriate for a hosting provider like Red Hat which desires to abstract control plane management from their customers and allow them to just manage worker nodes.&lt;/p&gt;
+<p>HyperShift’s model may be most appropriate for a hosting provider like Red Hat which desires to abstract control plane management from their customers and allow them to just manage worker nodes.</p>
 
-&lt;h3 id=&quot;kcp&quot;&gt;kcp&lt;/h3&gt;
+<h3 id="kcp">kcp</h3>
 
-&lt;p&gt;Finally, &lt;a href=&quot;https://github.com/kcp-dev/kcp&quot;&gt;kcp&lt;/a&gt; is another proposal and project from &lt;a href=&quot;https://www.redhat.com/&quot;&gt;Red Hat&lt;/a&gt; inspired by and reimagined from all of the previous ideas. Whereas the above virtual clusters run &lt;em&gt;within&lt;/em&gt; a host cluster and turn to the host cluster to run pods, manage networks and provision volumes, kcp reverses this paradigm and makes the &lt;em&gt;hosting&lt;/em&gt; cluster a metadata-only cluster. &lt;em&gt;Child&lt;/em&gt; clusters - &lt;em&gt;workspaces&lt;/em&gt; in the kcp project - are registered with the hub metadata-only cluster and work is delegated to these children based on labels on resources in the hub.&lt;/p&gt;
+<p>Finally, <a href="https://github.com/kcp-dev/kcp">kcp</a> is another proposal and project from <a href="https://www.redhat.com/">Red Hat</a> inspired by and reimagined from all of the previous ideas. Whereas the above virtual clusters run <em>within</em> a host cluster and turn to the host cluster to run pods, manage networks and provision volumes, kcp reverses this paradigm and makes the <em>hosting</em> cluster a metadata-only cluster. <em>Child</em> clusters - <em>workspaces</em> in the kcp project - are registered with the hub metadata-only cluster and work is delegated to these children based on labels on resources in the hub.</p>
 
-&lt;p&gt;&lt;img src=&quot;/assets/virtual_cluster/kcp.png&quot; alt=&quot;kcp architecture&quot; /&gt;&lt;/p&gt;
+<p><img src="/assets/virtual_cluster/kcp.png" alt="kcp architecture" /></p>
 
-&lt;p&gt;A high-level perspective of kcp’s architecture.&lt;/p&gt;
+<p>A high-level perspective of kcp’s architecture.</p>
 
-&lt;p&gt;As opposed to hosted virtual clusters, child clusters in kcp &lt;em&gt;could&lt;/em&gt; manage their own schedulers. Another advantage of kcp’s paradigm inversion is centralized awareness and management of child clusters. In particular, this enables simpler centralized policies and standards for custom resource types to be propogated to all children.&lt;/p&gt;
+<p>As opposed to hosted virtual clusters, child clusters in kcp <em>could</em> manage their own schedulers. Another advantage of kcp’s paradigm inversion is centralized awareness and management of child clusters. In particular, this enables simpler centralized policies and standards for custom resource types to be propogated to all children.</p>
 
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+<h2 id="conclusion">Conclusion</h2>
 
-&lt;p&gt;vcluster, CAPN, HyperShift, and kcp are emerging projects and ideas to meet cloud users’ needs for multitenancy with &lt;em&gt;clusters&lt;/em&gt; as the unit of tenancy. Early adopters are already providing feedback on good and better parts of these approaches and new ideas emerge daily.&lt;/p&gt;
+<p>vcluster, CAPN, HyperShift, and kcp are emerging projects and ideas to meet cloud users’ needs for multitenancy with <em>clusters</em> as the unit of tenancy. Early adopters are already providing feedback on good and better parts of these approaches and new ideas emerge daily.</p>
 
-&lt;p&gt;Want to help drive new ideas for cloud multitenancy? Want to help cloud users understand and give feedback on emerging paradigms in this domain? Then join &lt;a href=&quot;https://github.com/cncf/tag-app-delivery/issues/193&quot;&gt;the discussion&lt;/a&gt; in CNCF’s TAG App Delivery. Thank you!&lt;/p&gt;
+<p>Want to help drive new ideas for cloud multitenancy? Want to help cloud users understand and give feedback on emerging paradigms in this domain? Then join <a href="https://github.com/cncf/tag-app-delivery/issues/193">the discussion</a> in CNCF’s TAG App Delivery. Thank you!</p>
 
-&lt;h4 id=&quot;colophon&quot;&gt;Colophon&lt;/h4&gt;
+<h4 id="colophon">Colophon</h4>
 
-&lt;p&gt;The image at the top is of star clusters in &lt;a href=&quot;https://en.wikipedia.org/wiki/Pleiades&quot;&gt;Pleiades&lt;/a&gt; and the picture was copied from that article.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="multitenancy" /><category term="clusters" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes isn’t about containers</title><link href="https://joshgav.github.io/2021/12/16/kubernetes-isnt-about-containers.html" rel="alternate" type="text/html" title="Kubernetes isn’t about containers" /><published>2021-12-16T19:00:00+00:00</published><updated>2021-12-16T19:00:00+00:00</updated><id>https://joshgav.github.io/2021/12/16/kubernetes-isnt-about-containers</id><content type="html" xml:base="https://joshgav.github.io/2021/12/16/kubernetes-isnt-about-containers.html">&lt;p&gt;It’s about APIs; we’ll get to that shortly.&lt;/p&gt;
+<p>The image at the top is of star clusters in <a href="https://en.wikipedia.org/wiki/Pleiades">Pleiades</a> and the picture was copied from that article.</p>]]></content><author><name>Josh Gavant</name></author><category term="multitenancy" /><category term="clusters" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Kubernetes isn’t about containers</title><link href="https://blog.joshgav.com//2021/12/16/kubernetes-isnt-about-containers.html" rel="alternate" type="text/html" title="Kubernetes isn’t about containers" /><published>2021-12-16T19:00:00+00:00</published><updated>2021-12-16T19:00:00+00:00</updated><id>https://blog.joshgav.com//2021/12/16/kubernetes-isnt-about-containers</id><content type="html" xml:base="https://blog.joshgav.com//2021/12/16/kubernetes-isnt-about-containers.html"><![CDATA[<p>It’s about APIs; we’ll get to that shortly.</p>
 
-&lt;h2 id=&quot;first-there-were-containers&quot;&gt;First there were containers&lt;/h2&gt;
+<h2 id="first-there-were-containers">First there were containers</h2>
 
-&lt;p&gt;Now Docker &lt;em&gt;is&lt;/em&gt; about containers: running complex software with a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run postgres&lt;/code&gt; command was a revelation to software developers in 2013, unlocking agile infrastructure that they’d never known. And happily, as developers adopted containers as a standard build and run target, the industry realized that the same encapsulation fits nicely for workloads to be scheduled in compute clusters by orchestrators like Kubernetes and Apache Mesos. Containers have become the most important workload type managed by these schedulers, but as the title says that’s not what’s most valuable about Kubernetes.&lt;/p&gt;
+<p>Now Docker <em>is</em> about containers: running complex software with a simple <code class="highlighter-rouge">docker run postgres</code> command was a revelation to software developers in 2013, unlocking agile infrastructure that they’d never known. And happily, as developers adopted containers as a standard build and run target, the industry realized that the same encapsulation fits nicely for workloads to be scheduled in compute clusters by orchestrators like Kubernetes and Apache Mesos. Containers have become the most important workload type managed by these schedulers, but as the title says that’s not what’s most valuable about Kubernetes.</p>
 
-&lt;p&gt;Kubernetes is not about more general workload &lt;a href=&quot;https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/&quot;&gt;scheduling&lt;/a&gt; either (sorry &lt;a href=&quot;https://krustlet.dev/&quot;&gt;Krustlet&lt;/a&gt; fans). While scheduling various workloads efficiently is an important value Kubernetes provides, it’s not the reason for its success.&lt;/p&gt;
+<p>Kubernetes is not about more general workload <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">scheduling</a> either (sorry <a href="https://krustlet.dev/">Krustlet</a> fans). While scheduling various workloads efficiently is an important value Kubernetes provides, it’s not the reason for its success.</p>
 
-&lt;h2 id=&quot;then-there-were-apis&quot;&gt;Then there were APIs&lt;/h2&gt;
+<h2 id="then-there-were-apis">Then there were APIs</h2>
 
-&lt;p&gt;&lt;img width=&quot;400&quot; alt=&quot;Always has been APIs&quot; src=&quot;/assets/always_has_been_apis.jpeg&quot; /&gt;&lt;/p&gt;
+<p><img width="400" alt="Always has been APIs" src="/assets/always_has_been_apis.jpeg" /></p>
 
-&lt;p&gt;Rather, the attribute of Kubernetes that’s made it so successful and valuable is that &lt;strong&gt;it provides a set of standard programming interfaces for writing and using software-defined infrastructure services&lt;/strong&gt;. Kubernetes provides specifications and implementations - a complete framework - for designing, implementing, operating and using infrastructure services of all shapes and sizes based on the same core structures and semantics: typed resources watched and reconciled by controllers.&lt;/p&gt;
+<p>Rather, the attribute of Kubernetes that’s made it so successful and valuable is that <strong>it provides a set of standard programming interfaces for writing and using software-defined infrastructure services</strong>. Kubernetes provides specifications and implementations - a complete framework - for designing, implementing, operating and using infrastructure services of all shapes and sizes based on the same core structures and semantics: typed resources watched and reconciled by controllers.</p>
 
-&lt;p&gt;To elaborate, consider what preceded Kubernetes: a hodge-podge of hosted “cloud” services with different APIs, descriptor formats, and semantic patterns. We’d piece together compute instances, block storage, virtual networks and object stores in one cloud; and in another we’d create the same using entirely different structures and APIs. Tools like Terraform came along and offered a common format across providers, but the original structures and semantics remained as variegated as ever - a Terraform descriptor targeting AWS stands no chance in Azure!&lt;/p&gt;
+<p>To elaborate, consider what preceded Kubernetes: a hodge-podge of hosted “cloud” services with different APIs, descriptor formats, and semantic patterns. We’d piece together compute instances, block storage, virtual networks and object stores in one cloud; and in another we’d create the same using entirely different structures and APIs. Tools like Terraform came along and offered a common format across providers, but the original structures and semantics remained as variegated as ever - a Terraform descriptor targeting AWS stands no chance in Azure!</p>
 
-&lt;p&gt;Now consider what Kubernetes provided from its earliest releases: standard APIs for describing compute requirements as pods and containers; virtual networking as services and eventually ingresses; persistent storage as volumes; and even workload identities as attestable service accounts. These formats and APIs work smoothly within Kubernetes distributions running everywhere, from public clouds to private datacenters. Internally, each provider maps the Kubernetes structures and semantics to that hodge-podge of native APIs mentioned in the previous paragraph.&lt;/p&gt;
+<p>Now consider what Kubernetes provided from its earliest releases: standard APIs for describing compute requirements as pods and containers; virtual networking as services and eventually ingresses; persistent storage as volumes; and even workload identities as attestable service accounts. These formats and APIs work smoothly within Kubernetes distributions running everywhere, from public clouds to private datacenters. Internally, each provider maps the Kubernetes structures and semantics to that hodge-podge of native APIs mentioned in the previous paragraph.</p>
 
-&lt;p&gt;Kubernetes offers a standard interface for managing software-defined infrastructure - &lt;a href=&quot;https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html&quot;&gt;cloud&lt;/a&gt;, in other words. &lt;strong&gt;Kubernetes is a standard API framework for cloud services.&lt;/strong&gt;&lt;/p&gt;
+<p>Kubernetes offers a standard interface for managing software-defined infrastructure - <a href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html">cloud</a>, in other words. <strong>Kubernetes is a standard API framework for cloud services.</strong></p>
 
-&lt;h2 id=&quot;and-then-there-were-more-apis&quot;&gt;And then there were more APIs&lt;/h2&gt;
+<h2 id="and-then-there-were-more-apis">And then there were more APIs</h2>
 
-&lt;p&gt;Providing a fixed set of standard structures and semantics is the foundation of Kubernetes’ success. Following on this, its next act is to extend that structure to &lt;em&gt;any and all&lt;/em&gt; infrastructure resources. &lt;a href=&quot;https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/&quot;&gt;Custom Resource Definitions&lt;/a&gt; (CRDs) were introduced in version 1.7 to allow other types of services to reuse Kubernetes’ programming framework. CRDs make it possible to request not only predefined compute, storage and network services from the Kubernetes API, but also databases, task runners, message buses, digital certificates, and whatever else a provider can imagine!&lt;/p&gt;
+<p>Providing a fixed set of standard structures and semantics is the foundation of Kubernetes’ success. Following on this, its next act is to extend that structure to <em>any and all</em> infrastructure resources. <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Custom Resource Definitions</a> (CRDs) were introduced in version 1.7 to allow other types of services to reuse Kubernetes’ programming framework. CRDs make it possible to request not only predefined compute, storage and network services from the Kubernetes API, but also databases, task runners, message buses, digital certificates, and whatever else a provider can imagine!</p>
 
-&lt;p&gt;As providers have sought to offer their services via the Kubernetes API as custom resources, the &lt;a href=&quot;https://operatorframework.io/&quot;&gt;Operator Framework&lt;/a&gt; and related projects from &lt;a href=&quot;https://github.com/kubernetes/community/tree/master/sig-api-machinery&quot;&gt;SIG API Machinery&lt;/a&gt; have emerged to provide tools and guidance that minimize work required and maximize standardization across all these shiny new resource types. Projects like &lt;a href=&quot;https://crossplane.io&quot;&gt;Crossplane&lt;/a&gt; have formed to map other provider resources like RDS databases and SQS queues into the Kubernetes API just like network interfaces and disks are handled by core Kubernetes controllers today. And Kubernetes distributors like &lt;a href=&quot;https://cloud.google.com/blog/topics/developers-practitioners/build-platform-krm-part-2-how-kubernetes-resource-model-works&quot;&gt;Google&lt;/a&gt; and &lt;a href=&quot;https://docs.openshift.com/container-platform/4.9/operators/understanding/crds/crd-managing-resources-from-crds.html&quot;&gt;Red Hat&lt;/a&gt; are providing more and more custom resource types in their base Kubernetes distributions.&lt;/p&gt;
+<p>As providers have sought to offer their services via the Kubernetes API as custom resources, the <a href="https://operatorframework.io/">Operator Framework</a> and related projects from <a href="https://github.com/kubernetes/community/tree/master/sig-api-machinery">SIG API Machinery</a> have emerged to provide tools and guidance that minimize work required and maximize standardization across all these shiny new resource types. Projects like <a href="https://crossplane.io">Crossplane</a> have formed to map other provider resources like RDS databases and SQS queues into the Kubernetes API just like network interfaces and disks are handled by core Kubernetes controllers today. And Kubernetes distributors like <a href="https://cloud.google.com/blog/topics/developers-practitioners/build-platform-krm-part-2-how-kubernetes-resource-model-works">Google</a> and <a href="https://docs.openshift.com/container-platform/4.9/operators/understanding/crds/crd-managing-resources-from-crds.html">Red Hat</a> are providing more and more custom resource types in their base Kubernetes distributions.</p>
 
-&lt;p&gt;All of this isn’t to say that the Kubernetes API framework is perfect. Rather it’s to say that &lt;em&gt;it doesn’t matter&lt;/em&gt; (much) because the Kubernetes model has become a de facto standard. Many developers understand it, many tools speak it, and many providers use it. Even with warts, Kubernetes’ broad adoption, user awareness and interoperability mostly outweigh other considerations.&lt;/p&gt;
+<p>All of this isn’t to say that the Kubernetes API framework is perfect. Rather it’s to say that <em>it doesn’t matter</em> (much) because the Kubernetes model has become a de facto standard. Many developers understand it, many tools speak it, and many providers use it. Even with warts, Kubernetes’ broad adoption, user awareness and interoperability mostly outweigh other considerations.</p>
 
-&lt;p&gt;With the spread of the Kubernetes resource model it’s already possible to describe an entire software-defined computing environment as a collection of Kubernetes resources. Like running a single artifact with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run ...&lt;/code&gt;, distributed applications can be deployed and run with a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl apply -f ...&lt;/code&gt;. And unlike the custom formats and tools offered by individual cloud service providers, the Kubernetes’ descriptors are much more likely to run in many different provider and datacenter environments, because &lt;strong&gt;they all implement the same APIs&lt;/strong&gt;.&lt;/p&gt;
+<p>With the spread of the Kubernetes resource model it’s already possible to describe an entire software-defined computing environment as a collection of Kubernetes resources. Like running a single artifact with <code class="highlighter-rouge">docker run ...</code>, distributed applications can be deployed and run with a simple <code class="highlighter-rouge">kubectl apply -f ...</code>. And unlike the custom formats and tools offered by individual cloud service providers, the Kubernetes’ descriptors are much more likely to run in many different provider and datacenter environments, because <strong>they all implement the same APIs</strong>.</p>
 
-&lt;p&gt;Kubernetes isn’t about containers after all. It’s about APIs.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="containers" /><category term="kubernetes" /><category term="apis" /><category term="infrastructure" /><summary type="html">It’s about APIs; we’ll get to that shortly.</summary></entry><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure</id><content type="html" xml:base="https://joshgav.github.io/2021/09/30/cloud-redefined-infrastructure.html">&lt;p&gt;&lt;img src=&quot;/assets/infra_desired_state.png&quot; alt=&quot;infrastructure platform&quot; /&gt;&lt;/p&gt;
+<p>Kubernetes isn’t about containers after all. It’s about APIs.</p>]]></content><author><name>Josh Gavant</name></author><category term="containers" /><category term="kubernetes" /><category term="apis" /><category term="infrastructure" /><summary type="html"><![CDATA[It’s about APIs; we’ll get to that shortly.]]></summary></entry><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://blog.joshgav.com//2021/09/30/cloud-redefined-infrastructure.html" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//2021/09/30/cloud-redefined-infrastructure</id><content type="html" xml:base="https://blog.joshgav.com//2021/09/30/cloud-redefined-infrastructure.html"><![CDATA[<p><img src="/assets/infra_desired_state.png" alt="infrastructure platform" /></p>
 
-&lt;p&gt;Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the &lt;a href=&quot;https://github.com/cncf/toc/blob/main/DEFINITION.md&quot;&gt;words of the CNCF&lt;/a&gt; (emphasis added):&lt;/p&gt;
+<p>Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the <a href="https://github.com/cncf/toc/blob/main/DEFINITION.md">words of the CNCF</a> (emphasis added):</p>
 
-&lt;blockquote&gt;
-  &lt;p&gt;Cloud native technologies empower organizations to build and run &lt;strong&gt;scalable&lt;/strong&gt; applications in modern, &lt;strong&gt;dynamic&lt;/strong&gt; environments…  These techniques enable loosely coupled systems that are &lt;strong&gt;resilient&lt;/strong&gt;, &lt;strong&gt;manageable&lt;/strong&gt;, and &lt;strong&gt;observable&lt;/strong&gt;… They allow engineers to make high-impact changes &lt;strong&gt;frequently&lt;/strong&gt; and predictably with minimal toil.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>Cloud native technologies empower organizations to build and run <strong>scalable</strong> applications in modern, <strong>dynamic</strong> environments…  These techniques enable loosely coupled systems that are <strong>resilient</strong>, <strong>manageable</strong>, and <strong>observable</strong>… They allow engineers to make high-impact changes <strong>frequently</strong> and predictably with minimal toil.</p>
+</blockquote>
 
-&lt;p&gt;But what is “cloud” itself, provider of all these desirable attributes? Particularly in our era of hybrid, multi, and private “clouds” we should clearly define the term. And how does “cloud” relate to the rest of our infrastructure?&lt;/p&gt;
+<p>But what is “cloud” itself, provider of all these desirable attributes? Particularly in our era of hybrid, multi, and private “clouds” we should clearly define the term. And how does “cloud” relate to the rest of our infrastructure?</p>
 
-&lt;h2 id=&quot;what-is-cloud&quot;&gt;What is cloud?&lt;/h2&gt;
+<h2 id="what-is-cloud">What is cloud?</h2>
 
-&lt;p&gt;Let us describe “cloud” by induction from existing ones: a &lt;strong&gt;cloud&lt;/strong&gt; is a collection of automatable &lt;em&gt;infrastructure services&lt;/em&gt; managed via a consistent set of interfaces - APIs, Web UIs, and CLIs. An &lt;strong&gt;infrastructure service&lt;/strong&gt; is a service which serves other services which in turn serve users - an infrastructure service serves end users only indirectly. Stated a bit differently, &lt;strong&gt;an infrastructure service serves applications&lt;/strong&gt; and their developers and &lt;strong&gt;a cloud is a collection of such services&lt;/strong&gt;.&lt;/p&gt;
+<p>Let us describe “cloud” by induction from existing ones: a <strong>cloud</strong> is a collection of automatable <em>infrastructure services</em> managed via a consistent set of interfaces - APIs, Web UIs, and CLIs. An <strong>infrastructure service</strong> is a service which serves other services which in turn serve users - an infrastructure service serves end users only indirectly. Stated a bit differently, <strong>an infrastructure service serves applications</strong> and their developers and <strong>a cloud is a collection of such services</strong>.</p>
 
-&lt;p&gt;Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. “Multi-cloud” environments are those using infrastructure services from several providers. A “private cloud” is a collection of infrastructure services offered via an internal, perhaps custom interface.&lt;/p&gt;
+<p>Per this definition, any provider of infrastructure services might be considered a cloud provider, though generally we reserve the title for providers that offer many diverse service types. “Multi-cloud” environments are those using infrastructure services from several providers. A “private cloud” is a collection of infrastructure services offered via an internal, perhaps custom interface.</p>
 
-&lt;p&gt;With this in mind let’s now describe how cloud is changing enterprise infrastructure. The graphic above illustrates these.&lt;/p&gt;
+<p>With this in mind let’s now describe how cloud is changing enterprise infrastructure. The graphic above illustrates these.</p>
 
-&lt;h3 id=&quot;from-servers-to-serverless&quot;&gt;From servers to serverless&lt;/h3&gt;
+<h3 id="from-servers-to-serverless">From servers to serverless</h3>
 
-&lt;p&gt;Before “cloud” many infrastructure specialists managed hardware servers, datacenters, network devices and operating system configurations. But “cloud” is replacing most such physical components with programmable, software-defined ones - virtual machines, virtual networks, dynamic datastores and queues, and much more. The job of infrastructure specialists is now to &lt;strong&gt;program virtual infrastructure&lt;/strong&gt;.&lt;/p&gt;
+<p>Before “cloud” many infrastructure specialists managed hardware servers, datacenters, network devices and operating system configurations. But “cloud” is replacing most such physical components with programmable, software-defined ones - virtual machines, virtual networks, dynamic datastores and queues, and much more. The job of infrastructure specialists is now to <strong>program virtual infrastructure</strong>.</p>
 
-&lt;p&gt;A consistent, thorough, app-centric interface is one reasonable ultimate realization of cloud as defined, so “serverless” is a good example of a cloud interface for infrastructure driven strictly by app requirements. The most common paradigm though for programming virtual infrastructure today is to virtualize and automate existing architectural patterns - such as describing a router, a pod, and a datastore as software-defined Kubernetes resources and having a controller reify them.&lt;/p&gt;
+<p>A consistent, thorough, app-centric interface is one reasonable ultimate realization of cloud as defined, so “serverless” is a good example of a cloud interface for infrastructure driven strictly by app requirements. The most common paradigm though for programming virtual infrastructure today is to virtualize and automate existing architectural patterns - such as describing a router, a pod, and a datastore as software-defined Kubernetes resources and having a controller reify them.</p>
 
-&lt;p&gt;Whatever the interface though, &lt;strong&gt;infrastructure is not about hardware anymore, it’s about software&lt;/strong&gt;.&lt;/p&gt;
+<p>Whatever the interface though, <strong>infrastructure is not about hardware anymore, it’s about software</strong>.</p>
 
-&lt;h3 id=&quot;from-services-to-platform&quot;&gt;From services to platform&lt;/h3&gt;
+<h3 id="from-services-to-platform">From services to platform</h3>
 
-&lt;p&gt;Another change is that before “cloud” infrastructure services were often offered by different teams via different interfaces. An identity or TLS certificate was issued by one team; another would provision a collector for logs and metrics; and another would deploy servers, networks and operating systems. Each would collect metadata and implement requirements from app teams in their own ways.&lt;/p&gt;
+<p>Another change is that before “cloud” infrastructure services were often offered by different teams via different interfaces. An identity or TLS certificate was issued by one team; another would provision a collector for logs and metrics; and another would deploy servers, networks and operating systems. Each would collect metadata and implement requirements from app teams in their own ways.</p>
 
-&lt;p&gt;But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.&lt;/p&gt;
+<p>But as infrastructure services become software-defined, interfaces and processes for acquiring those services can become more consistent, easier and faster for apps and developers to use and manage. For example, a set of Kubernetes resources or Terraform manifests could describe every infrastructure service required by an application.</p>
 
-&lt;p&gt;In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent &lt;strong&gt;platform&lt;/strong&gt;.&lt;/p&gt;
+<p>In other words, cloud is an opportunity to bring together a bunch of disparate services and interfaces into a consistent <strong>platform</strong>.</p>
 
-&lt;h3 id=&quot;from-dependency-to-partner&quot;&gt;From dependency to partner&lt;/h3&gt;
+<h3 id="from-dependency-to-partner">From dependency to partner</h3>
 
-&lt;p&gt;As infrastructure becomes more flexible and more capable of quickly fulfilling app developers’ needs, infrastructure teams are enabled to partner and agilely develop services together with application developers. The agility enabled by software allows infrastructure teams to deliver their set of services as a cohesive product to app developers, gathering and iterating quickly on feedback and new requirements.&lt;/p&gt;
+<p>As infrastructure becomes more flexible and more capable of quickly fulfilling app developers’ needs, infrastructure teams are enabled to partner and agilely develop services together with application developers. The agility enabled by software allows infrastructure teams to deliver their set of services as a cohesive product to app developers, gathering and iterating quickly on feedback and new requirements.</p>
 
-&lt;p&gt;With cloud, &lt;strong&gt;infrastructure becomes an active partner to product teams in delivering business value&lt;/strong&gt; to customers and reacting to new circumstances.&lt;/p&gt;
+<p>With cloud, <strong>infrastructure becomes an active partner to product teams in delivering business value</strong> to customers and reacting to new circumstances.</p>
 
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+<h2 id="conclusion">Conclusion</h2>
 
-&lt;p&gt;A “cloud” is &lt;em&gt;not&lt;/em&gt; just something run by big tech companies like Microsoft and Amazon. Rather, “cloud” is &lt;em&gt;the&lt;/em&gt; new paradigm of enterprise infrastructure itself: providing a consistent collection of automatable infrastructure services to apps and developers.&lt;/p&gt;
+<p>A “cloud” is <em>not</em> just something run by big tech companies like Microsoft and Amazon. Rather, “cloud” is <em>the</em> new paradigm of enterprise infrastructure itself: providing a consistent collection of automatable infrastructure services to apps and developers.</p>
 
-&lt;p&gt;How are you providing “cloud” at your organization?&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><summary type="html"></summary></entry><entry><title type="html">Deliver platform capabilities</title><link href="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://joshgav.github.io/2021/08/30/deliver-platform-capabilities</id><content type="html" xml:base="https://joshgav.github.io/2021/08/30/deliver-platform-capabilities.html">&lt;p&gt;&lt;img src=&quot;/assets/city-platform.jpg&quot; alt=&quot;Platform and capabilities&quot; /&gt;&lt;/p&gt;
+<p>How are you providing “cloud” at your organization?</p>]]></content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Deliver platform capabilities</title><link href="https://blog.joshgav.com//2021/08/30/deliver-platform-capabilities.html" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//2021/08/30/deliver-platform-capabilities</id><content type="html" xml:base="https://blog.joshgav.com//2021/08/30/deliver-platform-capabilities.html"><![CDATA[<p><img src="/assets/city-platform.jpg" alt="Platform and capabilities" /></p>
 
-&lt;p&gt;Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.&lt;/p&gt;
+<p>Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.</p>
 
-&lt;p&gt;This post describes how a platform team may develop and manage these &lt;strong&gt;platform capabilities&lt;/strong&gt; and gradually evolve a capabilities development and delivery &lt;em&gt;framework&lt;/em&gt;. The framework should not be designed up front, but platform architects should help it emerge by building prototypical application services and developing initial capabilities for them, as described herein.&lt;/p&gt;
+<p>This post describes how a platform team may develop and manage these <strong>platform capabilities</strong> and gradually evolve a capabilities development and delivery <em>framework</em>. The framework should not be designed up front, but platform architects should help it emerge by building prototypical application services and developing initial capabilities for them, as described herein.</p>
 
-&lt;h2 id=&quot;develop-prototype-application-services&quot;&gt;Develop prototype application services&lt;/h2&gt;
+<h2 id="develop-prototype-application-services">Develop prototype application services</h2>
 
-&lt;p&gt;A prerequisite for developing a platform-level shared capability is a representative prototype of the application services wherein the capability will be used. For example, to research and develop service-to-service authentication and authorization mechanisms, two communicating application-level services must exist first; to develop a traffic management capability, one must have application services to route traffic to.&lt;/p&gt;
+<p>A prerequisite for developing a platform-level shared capability is a representative prototype of the application services wherein the capability will be used. For example, to research and develop service-to-service authentication and authorization mechanisms, two communicating application-level services must exist first; to develop a traffic management capability, one must have application services to route traffic to.</p>
 
-&lt;p&gt;And so we come to the first step in developing platform capabilities: &lt;strong&gt;platform developers and application developers must cooperate to develop prototype application services that are truly representative of application-level scenarios&lt;/strong&gt;. Not only must the two groups develop &lt;em&gt;initial&lt;/em&gt; prototypes, they must also continuously improve and expand such prototypes to cover more scenarios and adapt to inevitable changes in the organization’s environment.&lt;/p&gt;
+<p>And so we come to the first step in developing platform capabilities: <strong>platform developers and application developers must cooperate to develop prototype application services that are truly representative of application-level scenarios</strong>. Not only must the two groups develop <em>initial</em> prototypes, they must also continuously improve and expand such prototypes to cover more scenarios and adapt to inevitable changes in the organization’s environment.</p>
 
-&lt;p&gt;Architects and product managers should do the following to develop prototype application services:&lt;/p&gt;
+<p>Architects and product managers should do the following to develop prototype application services:</p>
 
-&lt;ul&gt;
-  &lt;li&gt;Interview leads, reverse-engineer codebases and conduct experiments to identify and prioritize the most important and most typical scenarios and required capabilities for the organization’s application services&lt;/li&gt;
-  &lt;li&gt;Ensure all prototype application service code is parameterized and names are extracted&lt;/li&gt;
-  &lt;li&gt;Ensure that any senior developer can automatically reify a development environment with a single command; and conduct research and development using the prototypes&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li>Interview leads, reverse-engineer codebases and conduct experiments to identify and prioritize the most important and most typical scenarios and required capabilities for the organization’s application services</li>
+  <li>Ensure all prototype application service code is parameterized and names are extracted</li>
+  <li>Ensure that any senior developer can automatically reify a development environment with a single command; and conduct research and development using the prototypes</li>
+</ul>
 
-&lt;p&gt;Several iterations with several application service teams and platform capability teams will probably be required to refine prototype code and ensure coverage of essential scenarios.&lt;/p&gt;
+<p>Several iterations with several application service teams and platform capability teams will probably be required to refine prototype code and ensure coverage of essential scenarios.</p>
 
-&lt;h2 id=&quot;develop-and-deliver-capabilities&quot;&gt;Develop and deliver capabilities&lt;/h2&gt;
+<h2 id="develop-and-deliver-capabilities">Develop and deliver capabilities</h2>
 
-&lt;p&gt;As development of prototype application services begins, development of initial individual capabilities may also begin, as well as early planning for a standard capability development and delivery framework. Early capability development should focus on individual capabilities rather than a general framework; experiments using these initial individual capabilities will guide and inform planning and design of the greater framework. Just as prototype application services guide development of individual capabilities, so too individual capabilities guide development of a capability framework.&lt;/p&gt;
+<p>As development of prototype application services begins, development of initial individual capabilities may also begin, as well as early planning for a standard capability development and delivery framework. Early capability development should focus on individual capabilities rather than a general framework; experiments using these initial individual capabilities will guide and inform planning and design of the greater framework. Just as prototype application services guide development of individual capabilities, so too individual capabilities guide development of a capability framework.</p>
 
-&lt;h3 id=&quot;develop-capabilities&quot;&gt;Develop capabilities&lt;/h3&gt;
+<h3 id="develop-capabilities">Develop capabilities</h3>
 
-&lt;p&gt;Capabilities should be developed and released as follows:&lt;/p&gt;
+<p>Capabilities should be developed and released as follows:</p>
 
-&lt;ol&gt;
-  &lt;li&gt;Define or refine definition of desired capability&lt;/li&gt;
-  &lt;li&gt;Research and develop implementations for capability&lt;/li&gt;
-  &lt;li&gt;Deliver capability&lt;/li&gt;
-  &lt;li&gt;Gather feedback and learnings and go to 1&lt;/li&gt;
-&lt;/ol&gt;
+<ol>
+  <li>Define or refine definition of desired capability</li>
+  <li>Research and develop implementations for capability</li>
+  <li>Deliver capability</li>
+  <li>Gather feedback and learnings and go to 1</li>
+</ol>
 
-&lt;p&gt;For example, a capability for managing secret configuration might follow this storyline:&lt;/p&gt;
+<p>For example, a capability for managing secret configuration might follow this storyline:</p>
 
-&lt;ol&gt;
-  &lt;li&gt;Define desired capability:
-    &lt;ul&gt;
-      &lt;li&gt;inject secret configuration as key-value pairs at service start time&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Research and develop implementations for capability
-    &lt;ul&gt;
-      &lt;li&gt;inject Vault agent configuration as pod sidecar using Helm charts&lt;/li&gt;
-      &lt;li&gt;deploy Vault admission controller system&lt;/li&gt;
-      &lt;li&gt;integrate Vault secrets with Kubernetes Secrets using &lt;a href=&quot;https://secrets-store-csi-driver.sigs.k8s.io/&quot;&gt;Secrets Store CSI Driver&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Deliver capability
-    &lt;ul&gt;
-      &lt;li&gt;document how to configure Vault agent in a pod sidecar&lt;/li&gt;
-      &lt;li&gt;automatically configure Vault agent with default configuration via a Helm chart&lt;/li&gt;
-      &lt;li&gt;automatically configure Vault agent via an admission controller&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Gather feedback and learnings and iterate
-    &lt;ul&gt;
-      &lt;li&gt;adjust exposed configuration options and APIs&lt;/li&gt;
-      &lt;li&gt;change implementation&lt;/li&gt;
-      &lt;li&gt;support TLS secrets specially&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
+<ol>
+  <li>Define desired capability:
+    <ul>
+      <li>inject secret configuration as key-value pairs at service start time</li>
+    </ul>
+  </li>
+  <li>Research and develop implementations for capability
+    <ul>
+      <li>inject Vault agent configuration as pod sidecar using Helm charts</li>
+      <li>deploy Vault admission controller system</li>
+      <li>integrate Vault secrets with Kubernetes Secrets using <a href="https://secrets-store-csi-driver.sigs.k8s.io/">Secrets Store CSI Driver</a></li>
+    </ul>
+  </li>
+  <li>Deliver capability
+    <ul>
+      <li>document how to configure Vault agent in a pod sidecar</li>
+      <li>automatically configure Vault agent with default configuration via a Helm chart</li>
+      <li>automatically configure Vault agent via an admission controller</li>
+    </ul>
+  </li>
+  <li>Gather feedback and learnings and iterate
+    <ul>
+      <li>adjust exposed configuration options and APIs</li>
+      <li>change implementation</li>
+      <li>support TLS secrets specially</li>
+    </ul>
+  </li>
+</ol>
 
-&lt;p&gt;Every capability team will require its members to have expert-level domain knowledge in that capability, alleviating the need for developers in application teams to be expert in the domain. Developers on the team will develop the internal implementation of the capability based on their expertise in it, application service requirements, and the constraints imposed by the organization’s environment. PMs will share that knowledge with other partners and users. Team members will participate in external industry communities related to their domain as well to keep abreast of new opportunities and developments.&lt;/p&gt;
+<p>Every capability team will require its members to have expert-level domain knowledge in that capability, alleviating the need for developers in application teams to be expert in the domain. Developers on the team will develop the internal implementation of the capability based on their expertise in it, application service requirements, and the constraints imposed by the organization’s environment. PMs will share that knowledge with other partners and users. Team members will participate in external industry communities related to their domain as well to keep abreast of new opportunities and developments.</p>
 
-&lt;p&gt;Capabilities themselves may be implemented in many ways. They have often been built as programming language libraries to be imported into applications in source code, at build time and/or at run time. In cloud-native applications, capabilities are often built as independent processes which communicate with a service’s main process via transports like HTTP, GRPC or TCP. In Kubernetes, supporting processes are typically deployed as sidecars in a pod or daemonsets on every node. Mutating admission controllers can also modify capabilities of a pod by modifying their configuration.&lt;/p&gt;
+<p>Capabilities themselves may be implemented in many ways. They have often been built as programming language libraries to be imported into applications in source code, at build time and/or at run time. In cloud-native applications, capabilities are often built as independent processes which communicate with a service’s main process via transports like HTTP, GRPC or TCP. In Kubernetes, supporting processes are typically deployed as sidecars in a pod or daemonsets on every node. Mutating admission controllers can also modify capabilities of a pod by modifying their configuration.</p>
 
-&lt;p&gt;As capabilities are developed, a development framework should also emerge to assist with and coordinate fruitful patterns and should include the following:&lt;/p&gt;
+<p>As capabilities are developed, a development framework should also emerge to assist with and coordinate fruitful patterns and should include the following:</p>
 
-&lt;ul&gt;
-  &lt;li&gt;Several viable options and examples for developing platform capabilities within the organization, such as operators, templating tools, daemonsets or pod sidecars&lt;/li&gt;
-  &lt;li&gt;Ability to provision a productive development environment for app and platform research and development&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li>Several viable options and examples for developing platform capabilities within the organization, such as operators, templating tools, daemonsets or pod sidecars</li>
+  <li>Ability to provision a productive development environment for app and platform research and development</li>
+</ul>
 
-&lt;h3 id=&quot;deliver-capabilities&quot;&gt;Deliver capabilities&lt;/h3&gt;
+<h3 id="deliver-capabilities">Deliver capabilities</h3>
 
-&lt;p&gt;When ready, platform teams must package and deliver their capability to be used by application teams. To this end, platform architects must gradually develop and manage a standard framework to guide capability developers in delivering and supporting their capabilities, and to provide a rational, consistent experience for application developers using them.&lt;/p&gt;
+<p>When ready, platform teams must package and deliver their capability to be used by application teams. To this end, platform architects must gradually develop and manage a standard framework to guide capability developers in delivering and supporting their capabilities, and to provide a rational, consistent experience for application developers using them.</p>
 
-&lt;p&gt;Once a given capability has been initially developed, it should be integrated and tested in application services in the following progression, which a framework should emerge to guide and facilitate:&lt;/p&gt;
+<p>Once a given capability has been initially developed, it should be integrated and tested in application services in the following progression, which a framework should emerge to guide and facilitate:</p>
 
-&lt;ol&gt;
-  &lt;li&gt;Document required capability configuration and inform users how to set up the capability manually
-    &lt;ol&gt;
-      &lt;li&gt;Verify that application developers are satisfied with the &lt;em&gt;functionality&lt;/em&gt; of the capability&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Inject capability and default configuration via toggles and tags
-    &lt;ol&gt;
-      &lt;li&gt;Verify that application developers are satisfied with the exposed configuration options&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Inject capability automatically and transparently
-    &lt;ol&gt;
-      &lt;li&gt;At build time with e.g., &lt;code class=&quot;highlighter-rouge&quot;&gt;helm&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kustomize&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;At deploy time with e.g., mutating admission controllers&lt;/li&gt;
-      &lt;li&gt;At run time with e.g., daemonsets and network proxies&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
+<ol>
+  <li>Document required capability configuration and inform users how to set up the capability manually
+    <ol>
+      <li>Verify that application developers are satisfied with the <em>functionality</em> of the capability</li>
+    </ol>
+  </li>
+  <li>Inject capability and default configuration via toggles and tags
+    <ol>
+      <li>Verify that application developers are satisfied with the exposed configuration options</li>
+    </ol>
+  </li>
+  <li>Inject capability automatically and transparently
+    <ol>
+      <li>At build time with e.g., <code class="highlighter-rouge">helm</code>, <code class="highlighter-rouge">kustomize</code></li>
+      <li>At deploy time with e.g., mutating admission controllers</li>
+      <li>At run time with e.g., daemonsets and network proxies</li>
+    </ol>
+  </li>
+</ol>
 
-&lt;p&gt;Just as &lt;em&gt;application&lt;/em&gt; delivery is only complete when customers begin using the application, platform &lt;em&gt;capability&lt;/em&gt; delivery is only complete when application teams begin using the capability in production. The top goal of a platform capability framework should be to provide guided, standard ways to deliver platform capabilities to application developers. As individual capabilities are developed and tested, good general designs and strategies for capability delivery and integration will emerge and should influence development and evolution of the general framework.&lt;/p&gt;
+<p>Just as <em>application</em> delivery is only complete when customers begin using the application, platform <em>capability</em> delivery is only complete when application teams begin using the capability in production. The top goal of a platform capability framework should be to provide guided, standard ways to deliver platform capabilities to application developers. As individual capabilities are developed and tested, good general designs and strategies for capability delivery and integration will emerge and should influence development and evolution of the general framework.</p>
 
-&lt;p&gt;Dimensions a platform capability delivery framework should consider making possible include the following:&lt;/p&gt;
+<p>Dimensions a platform capability delivery framework should consider making possible include the following:</p>
 
-&lt;ul&gt;
-  &lt;li&gt;To enable the capability, must the capability team team a) deploy and manage a service such as an operator; or b) package and publish a library; or c) something else?&lt;/li&gt;
-  &lt;li&gt;To enable a capability, must application developers a) explicitly integrate the capability in source code or infrastructure configuration or b) is it transparently injected?&lt;/li&gt;
-  &lt;li&gt;May application developers a) toggle and configure a capability or b) not?&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li>To enable the capability, must the capability team team a) deploy and manage a service such as an operator; or b) package and publish a library; or c) something else?</li>
+  <li>To enable a capability, must application developers a) explicitly integrate the capability in source code or infrastructure configuration or b) is it transparently injected?</li>
+  <li>May application developers a) toggle and configure a capability or b) not?</li>
+</ul>
 
-&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+<h2 id="summary">Summary</h2>
 
-&lt;p&gt;Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"></summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://joshgav.github.io/2020/09/16/container-streaming.html" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://joshgav.github.io/2020/09/16/container-streaming</id><content type="html" xml:base="https://joshgav.github.io/2020/09/16/container-streaming.html">&lt;h1 id=&quot;overview-of-kubelet&quot;&gt;Overview of Kubelet&lt;/h1&gt;
+<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>]]></content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://blog.joshgav.com//2020/09/16/container-streaming.html" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://blog.joshgav.com//2020/09/16/container-streaming</id><content type="html" xml:base="https://blog.joshgav.com//2020/09/16/container-streaming.html"><![CDATA[<h1 id="overview-of-kubelet">Overview of Kubelet</h1>
 
-&lt;p&gt;Kubernetes’ &lt;strong&gt;kubelet&lt;/strong&gt; is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by &lt;strong&gt;PodSpec&lt;/strong&gt;s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.&lt;/p&gt;
+<p>Kubernetes’ <strong>kubelet</strong> is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by <strong>PodSpec</strong>s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.</p>
 
-&lt;blockquote&gt;
-  &lt;p&gt;For more on kubelet’s standalone mode check out &lt;a href=&quot;https://coreos.com/blog/introducing-the-kubelet-in-coreos.html&quot;&gt;this article&lt;/a&gt; and &lt;a href=&quot;https://github.com/kelseyhightower/standalone-kubelet-tutorial&quot;&gt;this tutorial&lt;/a&gt; from Kelsey Hightower.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>For more on kubelet’s standalone mode check out <a href="https://coreos.com/blog/introducing-the-kubelet-in-coreos.html">this article</a> and <a href="https://github.com/kelseyhightower/standalone-kubelet-tutorial">this tutorial</a> from Kelsey Hightower.</p>
+</blockquote>
 
-&lt;p&gt;Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a &lt;strong&gt;container runtime&lt;/strong&gt; like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in &lt;a href=&quot;https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto&quot;&gt;this protobuf spec&lt;/a&gt;. A shim for CRI from Docker’s native API is &lt;a href=&quot;https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim&quot;&gt;included&lt;/a&gt; in the kubelet, or you can follow &lt;a href=&quot;https://kubernetes.io/docs/setup/production-environment/container-runtimes/&quot;&gt;these instructions&lt;/a&gt; to install and use another runtime like CRI-O.&lt;/p&gt;
+<p>Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a <strong>container runtime</strong> like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in <a href="https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto">this protobuf spec</a>. A shim for CRI from Docker’s native API is <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim">included</a> in the kubelet, or you can follow <a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">these instructions</a> to install and use another runtime like CRI-O.</p>
 
-&lt;p&gt;Amongst the procedures offered by CRI’s &lt;a href=&quot;https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110&quot;&gt;RuntimeService&lt;/a&gt; one finds &lt;strong&gt;Exec&lt;/strong&gt;, &lt;strong&gt;Attach&lt;/strong&gt; and &lt;strong&gt;PortForward&lt;/strong&gt;, likely familiar to anyone who works with containers. These ultimately are core to the &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec ...&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl run -it ...&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl port-forward&lt;/code&gt; and even the new &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl [alpha] debug ...&lt;/code&gt; commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.&lt;/p&gt;
+<p>Amongst the procedures offered by CRI’s <a href="https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110">RuntimeService</a> one finds <strong>Exec</strong>, <strong>Attach</strong> and <strong>PortForward</strong>, likely familiar to anyone who works with containers. These ultimately are core to the <code class="highlighter-rouge">kubectl exec ...</code>, <code class="highlighter-rouge">kubectl run -it ...</code>, <code class="highlighter-rouge">kubectl port-forward</code> and even the new <code class="highlighter-rouge">kubectl [alpha] debug ...</code> commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.</p>
 
-&lt;h1 id=&quot;exec&quot;&gt;exec&lt;/h1&gt;
+<h1 id="exec">exec</h1>
 
-&lt;p&gt;First let’s walk through what happens when you run &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec -it ${pod_name} sh --container ${container_name}&lt;/code&gt; to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from &lt;a href=&quot;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md&quot;&gt;this k8s enhancement proposal&lt;/a&gt;.&lt;/p&gt;
+<p>First let’s walk through what happens when you run <code class="highlighter-rouge">kubectl exec -it ${pod_name} sh --container ${container_name}</code> to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md">this k8s enhancement proposal</a>.</p>
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png&quot; style=&quot;margin-left: 40px;&quot; /&gt;&lt;/p&gt;
+<p><img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" /></p>
 
-&lt;h2 id=&quot;1-client&quot;&gt;1. client&lt;/h2&gt;
+<h2 id="1-client">1. client</h2>
 
-&lt;p&gt;Based on its arguments, &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec&lt;/code&gt; builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is &lt;code class=&quot;highlighter-rouge&quot;&gt;http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;amp;stdout=true&amp;amp;stderr=true&amp;amp;tty=true&amp;amp;container=${container_name}&amp;amp;command=sh&lt;/code&gt;.&lt;/p&gt;
+<p>Based on its arguments, <code class="highlighter-rouge">kubectl exec</code> builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is <code class="highlighter-rouge">http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;stdout=true&amp;stderr=true&amp;tty=true&amp;container=${container_name}&amp;command=sh</code>.</p>
 
-&lt;h3 id=&quot;source-refs&quot;&gt;Source refs:&lt;/h3&gt;
+<h3 id="source-refs">Source refs:</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl exec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><code class="highlighter-rouge">kubectl exec</code> [<a href="https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go">1</a>]</li>
+</ul>
 
-&lt;h2 id=&quot;2-apiserver&quot;&gt;2. apiserver&lt;/h2&gt;
+<h2 id="2-apiserver">2. apiserver</h2>
 
-&lt;p&gt;The corev1/pods APIService accepts the incoming request and handles it per &lt;a href=&quot;https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod&quot;&gt;its registration&lt;/a&gt;. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.&lt;/p&gt;
+<p>The corev1/pods APIService accepts the incoming request and handles it per <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod">its registration</a>. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.</p>
 
-&lt;p&gt;The URL for the kubelet server is of form &lt;code class=&quot;highlighter-rouge&quot;&gt;http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}&lt;/code&gt; where &lt;code class=&quot;highlighter-rouge&quot;&gt;${subresource}&lt;/code&gt; can be &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;attach&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;portforward&lt;/code&gt; or a few others.&lt;/p&gt;
+<p>The URL for the kubelet server is of form <code class="highlighter-rouge">http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}</code> where <code class="highlighter-rouge">${subresource}</code> can be <code class="highlighter-rouge">exec</code>, <code class="highlighter-rouge">attach</code>, <code class="highlighter-rouge">portforward</code> or a few others.</p>
 
-&lt;h3 id=&quot;source-refs-1&quot;&gt;Source refs:&lt;/h3&gt;
+<h3 id="source-refs-1">Source refs:</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;registry/core/pod.streamLocation&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><code class="highlighter-rouge">registry/core/pod.streamLocation</code> [<a href="https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511">1</a>]</li>
+</ul>
 
-&lt;h2 id=&quot;3-kubelet&quot;&gt;3. kubelet&lt;/h2&gt;
+<h2 id="3-kubelet">3. kubelet</h2>
 
-&lt;p&gt;The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.&lt;/p&gt;
+<p>The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.</p>
 
-&lt;p&gt;The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting &lt;a href=&quot;https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262&quot;&gt;EnableDebuggingHandlers&lt;/a&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt; in the global kubelet configuration, or by setting the flag &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-debugging-handlers=false&lt;/code&gt; on an individual kubelet. &lt;strong&gt;Note&lt;/strong&gt; that this will disable container logs via &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl logs&lt;/code&gt; as well!&lt;/p&gt;
+<p>The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting <a href="https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262">EnableDebuggingHandlers</a> to <code class="highlighter-rouge">false</code> in the global kubelet configuration, or by setting the flag <code class="highlighter-rouge">--enable-debugging-handlers=false</code> on an individual kubelet. <strong>Note</strong> that this will disable container logs via <code class="highlighter-rouge">kubectl logs</code> as well!</p>
 
-&lt;h3 id=&quot;source-refs-2&quot;&gt;Source refs:&lt;/h3&gt;
+<h3 id="source-refs-2">Source refs:</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/NewServer(enableDebuggingHandlers)&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.InstallDebuggingHandlers&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.getExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><code class="highlighter-rouge">kubelet/server/NewServer(enableDebuggingHandlers)</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411">2</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.getExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821">3</a>]</li>
+</ul>
 
-&lt;h2 id=&quot;4-cri&quot;&gt;4. CRI&lt;/h2&gt;
+<h2 id="4-cri">4. CRI</h2>
 
-&lt;p&gt;Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling &lt;a href=&quot;https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate&quot;&gt;github.com/moby/moby/client#Client.ContainerExecCreate&lt;/a&gt;.&lt;/p&gt;
+<p>Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling <a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">github.com/moby/moby/client#Client.ContainerExecCreate</a>.</p>
 
-&lt;p&gt;In truth &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify &lt;code class=&quot;highlighter-rouge&quot;&gt;-i -t&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; an attach action is executed immediately after exec to provide a persistent connection.&lt;/p&gt;
+<p>In truth <code class="highlighter-rouge">exec</code> itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify <code class="highlighter-rouge">-i -t</code> with <code class="highlighter-rouge">exec</code> an attach action is executed immediately after exec to provide a persistent connection.</p>
 
-&lt;h3 id=&quot;source-refs-3&quot;&gt;Source refs:&lt;/h3&gt;
+<h3 id="source-refs-3">Source refs:</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming.NewServer&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/server.serveExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/remotecommand/ServeExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/dockershim/NativeExecHandler.ExecInContainer&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64&quot;&gt;4&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/dockershim/libdocker/kubeDockerClient.StartExec&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461&quot;&gt;5&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;moby/moby/client/Client.ContainerExecCreate&lt;/code&gt; [&lt;a href=&quot;https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate&quot;&gt;6&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming.NewServer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/server.serveExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297">2</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/remotecommand/ServeExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44">3</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/dockershim/NativeExecHandler.ExecInContainer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64">4</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/dockershim/libdocker/kubeDockerClient.StartExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461">5</a>]</li>
+  <li><code class="highlighter-rouge">moby/moby/client/Client.ContainerExecCreate</code> [<a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">6</a>]</li>
+</ul>
 
-&lt;h1 id=&quot;port-forward&quot;&gt;port-forward&lt;/h1&gt;
+<h1 id="port-forward">port-forward</h1>
 
-&lt;p&gt;Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.&lt;/p&gt;
+<p>Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.</p>
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}&lt;/code&gt;&lt;/p&gt;
+<p><code class="highlighter-rouge">nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}</code></p>
 
-&lt;h3 id=&quot;source-refs-4&quot;&gt;Source Refs&lt;/h3&gt;
+<h3 id="source-refs-4">Source Refs</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/cri/streaming/portforward.ServePortForward&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelete/dockershim/streamingRuntime.portForward&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li><code class="highlighter-rouge">kubelet/cri/streaming/portforward.ServePortForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelete/dockershim/streamingRuntime.portForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go">2</a>]</li>
+</ul>
 
-&lt;h1 id=&quot;logs&quot;&gt;logs&lt;/h1&gt;
+<h1 id="logs">logs</h1>
 
-&lt;p&gt;Requests for container logs also pass through the kubelet to the CRI and are streamed back to the client.&lt;/p&gt;
+<p>Requests for container logs also pass through the kubelet to the CRI and are streamed back to the client.</p>
 
-&lt;h3 id=&quot;source-refs-5&quot;&gt;Source Refs&lt;/h3&gt;
+<h3 id="source-refs-5">Source Refs</h3>
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.InstallDebuggingHandlers&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488&quot;&gt;1&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet/server/server.getContainerLogs&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661&quot;&gt;2&lt;/a&gt;]&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dockershim/dockerService.GetContainerLogs&lt;/code&gt; [&lt;a href=&quot;https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92&quot;&gt;3&lt;/a&gt;]&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Josh Gavant</name></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html">Overview of Kubelet</summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://joshgav.github.io/2020/04/17/welcome-to-partly-cloudy.html" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://joshgav.github.io/2020/04/17/welcome-to-partly-cloudy</id><content type="html" xml:base="https://joshgav.github.io/2020/04/17/welcome-to-partly-cloudy.html">&lt;p&gt;So called because I’ll be writing posts about cloud-native patterns, practices and tools.&lt;/p&gt;
+<ul>
+  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
+  <li><code class="highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
+  <li><code class="highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
+</ul>]]></content><author><name>Josh Gavant</name></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://blog.joshgav.com//2020/04/17/welcome-to-partly-cloudy.html" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://blog.joshgav.com//2020/04/17/welcome-to-partly-cloudy</id><content type="html" xml:base="https://blog.joshgav.com//2020/04/17/welcome-to-partly-cloudy.html"><![CDATA[<p>So called because I’ll be writing posts about cloud-native patterns, practices and tools.</p>
 
-&lt;p&gt;I chose to start by maintaining the site with &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;, though I almost reconsidered upon discovering that the latest version of Jekyll &lt;a href=&quot;https://github.com/github/pages-gem/issues/651&quot;&gt;isn’t fully supported&lt;/a&gt; for automatically-built GitHub Pages sites. That led me to write &lt;a href=&quot;https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml&quot;&gt;a GitHub Action to build and publish the site&lt;/a&gt;, inspired by &lt;a href=&quot;https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions&quot;&gt;this post&lt;/a&gt;. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages &lt;em&gt;did&lt;/em&gt; automatically build the site. Good thing too cause my custom Action originally pushed the built site to the &lt;code class=&quot;highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt; branch, which wouldn’t work for a user’s top-level user site - &lt;code class=&quot;highlighter-rouge&quot;&gt;joshgav.github.io&lt;/code&gt; in my case.&lt;/p&gt;
+<p>I chose to start by maintaining the site with <a href="https://jekyllrb.com/">Jekyll</a>, though I almost reconsidered upon discovering that the latest version of Jekyll <a href="https://github.com/github/pages-gem/issues/651">isn’t fully supported</a> for automatically-built GitHub Pages sites. That led me to write <a href="https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml">a GitHub Action to build and publish the site</a>, inspired by <a href="https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions">this post</a>. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages <em>did</em> automatically build the site. Good thing too cause my custom Action originally pushed the built site to the <code class="highlighter-rouge">gh-pages</code> branch, which wouldn’t work for a user’s top-level user site - <code class="highlighter-rouge">joshgav.github.io</code> in my case.</p>
 
-&lt;p&gt;I wasn’t happy with the unpolished feel of the default &lt;code class=&quot;highlighter-rouge&quot;&gt;minima&lt;/code&gt; theme, so I reviewed some others at &lt;a href=&quot;https://jekyllthemes.io/&quot;&gt;jekyllthemes.io&lt;/a&gt;. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “&lt;a href=&quot;https://github.com/huangyz0918/moving&quot;&gt;moving&lt;/a&gt;” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with &lt;a href=&quot;https://pages.github.com/themes/&quot;&gt;this subset of Jekyll themes&lt;/a&gt;. Great, an opportunity to tweak and use the Action action!&lt;/p&gt;
+<p>I wasn’t happy with the unpolished feel of the default <code class="highlighter-rouge">minima</code> theme, so I reviewed some others at <a href="https://jekyllthemes.io/">jekyllthemes.io</a>. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “<a href="https://github.com/huangyz0918/moving">moving</a>” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with <a href="https://pages.github.com/themes/">this subset of Jekyll themes</a>. Great, an opportunity to tweak and use the Action action!</p>
 
-&lt;p&gt;So to use my chosen theme I went back and tweaked my action to listen for pushes to the &lt;code class=&quot;highlighter-rouge&quot;&gt;source&lt;/code&gt; branch and push changes to the &lt;code class=&quot;highlighter-rouge&quot;&gt;master&lt;/code&gt; branch, as required for the “top-level” GitHub Page. It seems to be working now.&lt;/p&gt;
+<p>So to use my chosen theme I went back and tweaked my action to listen for pushes to the <code class="highlighter-rouge">source</code> branch and push changes to the <code class="highlighter-rouge">master</code> branch, as required for the “top-level” GitHub Page. It seems to be working now.</p>
 
-&lt;p&gt;Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.&lt;/p&gt;</content><author><name>Josh Gavant</name></author><category term="info" /><category term="blog" /><summary type="html">So called because I’ll be writing posts about cloud-native patterns, practices and tools.</summary></entry></feed>
+<p>Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.</p>]]></content><author><name>Josh Gavant</name></author><category term="info" /><category term="blog" /><summary type="html"><![CDATA[So called because I’ll be writing posts about cloud-native patterns, practices and tools.]]></summary></entry></feed>
