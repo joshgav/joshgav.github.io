@@ -2,6 +2,7 @@ source "https://rubygems.org"
 gem "jekyll", "~> 4.0.0"
 gem "minima", "~> 2.5"
 gem "moving", "~> 0.3"
+gem "webrick", "~> 1.7"
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do

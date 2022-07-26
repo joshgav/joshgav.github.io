@@ -2,22 +2,23 @@ title: Partly Cloudy
 author: Josh Gavant
 email: joshgavant@gmail.com
 description: >-
-  Discussion of cloud-native patterns, practices and tools.
+  A blog about cloud infrastructure and cloud-native application patterns and
+  practices.
 baseurl: ""
-url: "https://joshgav.github.io"
+url: "https://blog.joshgav.com/"
 twitter_username: joshugav
 github_username:  joshgav
 
-theme: moving
+theme: minima
 plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
+ - jekyll-feed
+ - jekyll-seo-tag
+header_pages:
+ - about.md
+minima:
+  social_links:
+    twitter: joshugav
+    github: joshgav
+    linkedin: joshgav
 
-show_excerpts: true
-
-# refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
-moving:
-  avatar_url: "https://s.gravatar.com/avatar/4e9e294333eddf6f05320292efa1e009?s=2048"
-  about_you: Cloud architect
-  date_format: "%b %d" # date format of posts in home page
-  back_to: "Home"
+show_excerpts: false
