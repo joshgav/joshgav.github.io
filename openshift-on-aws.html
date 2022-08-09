@@ -71,6 +71,17 @@ provider like Amazon Web Services.</p>
 then we’ll contrast these with deploying upstream Kubernetes with kubespray.
 Follow along with code at <a href="https://github.com/joshgav/openshift-on-aws.git">https://github.com/joshgav/openshift-on-aws.git</a>.</p>
 
+<h2 id="contents">Contents</h2>
+
+<ol>
+  <li><a href="#rosa">Red Hat OpenShift Service on AWS (ROSA)</a></li>
+  <li><a href="#ipi">OpenShift Installer-provisioned infrastructure</a></li>
+  <li><a href="#upi">OpenShift User-provisioned infrastructure</a></li>
+  <li><a href="#kubespray">Kubernetes with Kubespray</a></li>
+</ol>
+
+<p><a id="rosa"></a></p>
+
 <h2 id="rosa-red-hat-openshift-service-on-aws">ROSA: Red Hat OpenShift Service on AWS</h2>
 
 <p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/rosa">the scripts</a>.</p>
@@ -185,6 +196,8 @@ to the ROSA offering, as in the following screenshot:</p>
 (by its ID) on the first page of the wizard. Follow the prompts to configure and
 install a cluster.</p>
 
+<p><a id="ipi"></a></p>
+
 <h2 id="installer-provisioned-infrastructure-ipi">Installer-provisioned infrastructure (IPI)</h2>
 
 <p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/ipi">the scripts</a>.</p>
@@ -296,6 +309,8 @@ oc login <span class="nt">--user</span> kubeadmin <span class="nt">--password</s
 oc get pods <span class="nt">-A</span>
 </code></pre></div></div>
 
+<p><a id="upi"></a></p>
+
 <h2 id="user-provisioned-infrastructure-upi">User-provisioned infrastructure (UPI)</h2>
 
 <p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/upi">the scripts</a>.</p>
@@ -350,6 +365,8 @@ your KUBECONFIG env var to the path <code class="highlighter-rouge">${workdir}/a
 
 <p>Once ready reach the console of your cluster at
 <code class="highlighter-rouge">https://console-openshift-console.apps.${CLUSTER_NAME}.${BASE_DOMAIN}/</code>.</p>
+
+<p><a id="kubespray"></a></p>
 
 <h2 id="kubespray">Kubespray</h2>
 
