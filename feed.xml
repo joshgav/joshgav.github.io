@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-09T15:30:01+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Run OpenShift on AWS</title><link href="https://blog.joshgav.com//openshift-on-aws" rel="alternate" type="text/html" title="Run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//openshift-on-aws"><![CDATA[<p>OpenShift is a Kubernetes distribution with batteries included - it’s ready for
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-09T15:35:33+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Run OpenShift on AWS</title><link href="https://blog.joshgav.com//openshift-on-aws" rel="alternate" type="text/html" title="Run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//openshift-on-aws"><![CDATA[<p>OpenShift is a Kubernetes distribution with batteries included - it’s ready for
 many use cases out of the box. For example, a default installation includes a
 network provider (CNI), container builder and registry, external ingress
 provider and a cluster lifecycle management system. Contrast this with a cluster
@@ -19,7 +19,7 @@ provider like Amazon Web Services.</p>
 
 <p>In this article we’ll discuss three ways to deploy and run OpenShift on AWS,
 then we’ll contrast these with deploying upstream Kubernetes with kubespray.
-Follow along with the code at https://github.com/joshgav/openshift-on-aws.git.</p>
+Follow along with code at <a href="https://github.com/joshgav/openshift-on-aws.git">https://github.com/joshgav/openshift-on-aws.git</a>.</p>
 
 <h2 id="rosa-red-hat-openshift-service-on-aws">ROSA: Red Hat OpenShift Service on AWS</h2>
 
