@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Zero to OpenShift on AWS
-date: 2022-08-07 11:00:00 -0500
+title: Run OpenShift on AWS
+date: 2022-08-09 11:00:00 -0500
 tags: clusters openshift
 ---
 
@@ -29,6 +29,8 @@ then we'll contrast these with deploying upstream Kubernetes with kubespray.
 Follow along with the code at https://github.com/joshgav/openshift-on-aws.git.
 
 ## ROSA: Red Hat OpenShift Service on AWS
+
+Follow along with [the scripts](https://github.com/joshgav/openshift-on-aws/tree/main/rosa).
 
 Let's start with the simplest option: Red Hat OpenShift Service on AWS, ROSA.
 Deployment of a ROSA cluster includes deployment and correct configuration of
@@ -59,8 +61,8 @@ line) and run `rosa login --token="${your_token}"`. If successful you will see
 this message (with your username of course): "I: Logged in as 'joshgavant' on
 'https://api.openshift.com'.
 
-<img src="../assets/openshift_on_aws/console-downloads-token.png" width="200px" />
-<img src="../assets/openshift_on_aws/ocm-manage-token.png" width="200px" />
+<img src="../assets/openshift_on_aws/console-downloads-token.png" width="300px" />
+<img src="../assets/openshift_on_aws/ocm-manage-token.png" width="300px" />
 
 > Tip: To quickly enable autocompletion for `rosa` commands in your current
   shell session run `. <(rosa completion)`.
@@ -109,7 +111,7 @@ You can also see your new cluster in the [Red Hat
 Console](https://console.redhat.com/openshift). Click into it and expand the
 "Show logs" section to reach a view like the following:
 
-<img src="../assets/openshift_on_aws/view-cluster-webui.png" width="200px" />
+<img src="../assets/openshift_on_aws/view-cluster-webui.png" width="300px" />
 
 ### Use cluster
 
@@ -135,13 +137,15 @@ cluster", then on the [Cluster create
 page](https://console.redhat.com/openshift/create) click "Create cluster" next
 to the ROSA offering, as in the following screenshot:
 
-<img src="../assets/openshift_on_aws/create-cluster-webui.png" width="200px" />
+<img src="../assets/openshift_on_aws/create-cluster-webui.png" width="300px" />
 
 If you've properly associated your accounts then your AWS account will be listed
 (by its ID) on the first page of the wizard. Follow the prompts to configure and
 install a cluster.
 
 ## Installer-provisioned infrastructure (IPI)
+
+Follow along with [the scripts](https://github.com/joshgav/openshift-on-aws/tree/main/ipi).
 
 Even if your cluster won't be managed by Red Hat you can provision and configure
 cloud infrastructure and the cluster itself in AWS with a similar short list of
@@ -176,7 +180,7 @@ here](https://docs.openshift.com/container-platform/4.10/installing/installing_a
 and [from AWS
 here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html).
 
-<img src="../assets/openshift_on_aws/aws-route53.png" width="200px" />
+<img src="../assets/openshift_on_aws/aws-route53.png" width="300px" />
 
 ### Create cluster
 
@@ -252,6 +256,8 @@ oc get pods -A
 
 ## User-provisioned infrastructure (UPI)
 
+Follow along with [the scripts](https://github.com/joshgav/openshift-on-aws/tree/main/upi).
+
 Though the easiest way to get started with OpenShift on AWS is via ROSA or
 installer-provisioned infrastructure (IPI), Red Hat also allows you to deploy
 and configure your own cloud infrastructure - machines, networks and storage -
@@ -299,17 +305,85 @@ cluster installation. When the cluster is ready, log in with `oc login` as the
 kubeadmin user with the password in `${workdir}/auth/kubeadmin-password`, or set
 your KUBECONFIG env var to the path `${workdir}/auth/kubeconfig`.
 
+Once ready reach the console of your cluster at
+`https://console-openshift-console.apps.${CLUSTER_NAME}.${BASE_DOMAIN}/`.
+
 ## Kubespray
 
-WORK IN PROGRESS !!
+Follow along with [the scripts](https://github.com/joshgav/openshift-on-aws/tree/main/kubespray).
 
-The previous three sections described how to deploy OpenShift, Red Hat's
-Kubernetes distribution, on Amazon Web Services with various levels of support
-and automation. To better compare, contrast and enhance these mechanisms it
-would help to deploy open source upstream Kubernetes too. The simplest cluster
-installation tool is `kubeadm`, but it leaves many critical aspects of the
-cluster incomplete, such as a network overlay, container registry and load
-balancer controller. Instead we'll use [kubespray](), a more complete mechanism
-also maintained by the Kubernetes project.
+The previous sections described how to deploy OpenShift, Red Hat's Kubernetes
+distribution, on Amazon Web Services with various levels of support and
+automation. Next we'll deploy upstream Kubernetes using
+[Kubespray](https://kubespray.io) in order to compare, contrast and gather new
+ideas. Notably, kubespray's included configuration for AWS infrastructure yields
+an environment nearly identical to that produced by openshift-install.
+
+> Note: The most basic cluster installation tool is [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/), but it leaves
+many critical aspects of the cluster incomplete, such as a network overlay,
+container registry and load balancer controller. [Kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/) is also
+maintained by the Kubernetes project and provides a more complete deployment.
+
+As with user-provisioned infrastructure (UPI) for OpenShift, with Kubespray the
+user must first install infrastructure, then use Kubespray to install a cluster
+on that infrastructure. Kubespray offers Terraform configurations for deploying
+typical environments in cloud providers. For this example I used the
+[configurations for
+AWS](https://github.com/kubernetes-sigs/kubespray/tree/master/contrib/terraform/aws)
+which yields the following env:
+
+<img src="../assets/openshift_on_aws/aws-kubespray.png" width="300px" />
+
+> From <https://github.com/kubernetes-sigs/kubespray/blob/master/contrib/terraform/aws/docs/aws_kubespray.png>
+
+The infrastructure provisioning process finishes by creating an inventory file
+which Ansible will consume to deploy cluster components. Now you'll run the main
+Kubespray process - an Ansible playbook - using that inventory:
+`ansible-playbook -i hosts.ini cluster.yaml`. You can customize the deployment
+by setting variables in the inventory vars files or by passing `-e key=value`
+pairs to the ansible-playbook invocation. See `deploy-cluster.sh` in the
+walkthrough for examples. So that you don't have to install the Kubespray
+Ansible environment locally, you may prefer to run commands like the following
+in a container:
+
+```bash
+podman run --rm -it \
+    --mount type=bind,source=kubespray/inventory/cluster,dst=/inventory,relabel=shared \
+    --mount type=bind,source=.ssh/id_rsa,dst=/root/.ssh/id_rsa,relabel=shared \
+        quay.io/kubespray/kubespray:v2.19.0 \
+            bash
+
+# when prompted, enter (for example):
+ansible-playbook cluster.yml \
+    -i /inventory/hosts.ini \
+    --private-key /root/.ssh/id_rsa \
+    --become --become-user=root \
+    -e "kube_version=v1.23.7" \
+    -e "ansible_user=ec2-user" \
+    -e "kubeconfig_localhost=true"
+```
+
+By setting the variable `kubeconfig_localhost=true` a kubeconfig file with
+credentials for the provisioned cluster will be written to the inventory
+directory at the end of provisioning. It will use the internal IP address of an
+API server; you'll need to change this to the address of your
+externally-accessible load balancer. Retrieve that with `aws elbv2
+describe-load-balancers --output json | jq -r '.LoadBalancers[0].DNSName'`, and
+be sure to prepend `https://` and append `:6443/` when putting it in the file.
+Finally set your KUBECONFIG env var to point to that file and run `kubectl get
+pods -A` to verify connectivity.
 
 ## Conclusion
+
+In this article and accompanying code we've discussed and demonstrated how to
+deploy an OpenShift or upstream Kubernetes cluster in AWS using four different
+methods which progress from simplest to most complex: ROSA > IPI > UPI >
+Kubespray.
+
+To minimize the complexity and overhead of managing your own clouds and
+clusters, start with the simplest method - ROSA - and progress to others only as
+greater control and customization is needed.
+
+Please provide feedback in [the
+repo](https://github.com/joshgav/openshift-on-aws/) or on
+[Twitter](https://twitter.com/joshugav). Thank you!
