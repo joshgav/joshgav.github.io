@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-15T15:59:16+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Many ways to run OpenShift on AWS</title><link href="https://blog.joshgav.com//posts/openshift-on-aws" rel="alternate" type="text/html" title="Many ways to run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/openshift-on-aws"><![CDATA[<p>OpenShift is Kubernetes with batteries included and verified - that is,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-15T16:05:55+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Many ways to run OpenShift on AWS</title><link href="https://blog.joshgav.com//posts/openshift-on-aws" rel="alternate" type="text/html" title="Many ways to run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/openshift-on-aws"><![CDATA[<p>OpenShift is Kubernetes with batteries included and verified - that is,
 OpenShift is ready to run complex first- and third-party applications and
 digital workloads as soon as installation is complete. For example, every
 OpenShift cluster includes a software-defined network provider, a container and
@@ -414,10 +414,8 @@ pods -A</code> to verify connectivity.</p>
 <p>In this article and <a href="https://github.com/joshgav/openshift-on-aws.git">accompanying
 code</a> we’ve discussed and
 demonstrated how to deploy an OpenShift or upstream Kubernetes cluster in AWS
-using four different methods which progress from simplest to most complex: ROSA</p>
-<blockquote>
-  <p>IPI &gt; UPI &gt; Kubespray.</p>
-</blockquote>
+using four different methods which progress from simplest to most complex:
+ROSA &gt; IPI &gt; UPI &gt; Kubespray.</p>
 
 <p>To minimize the complexity and overhead of managing your own clouds and
 clusters, start with the simplest method - ROSA - and progress to others only as
