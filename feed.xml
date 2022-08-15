@@ -1,25 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-09T15:41:08+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Run OpenShift on AWS</title><link href="https://blog.joshgav.com//openshift-on-aws" rel="alternate" type="text/html" title="Run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//openshift-on-aws"><![CDATA[<p>OpenShift is a Kubernetes distribution with batteries included - it’s ready for
-many use cases out of the box. For example, a default installation includes a
-network provider (CNI), container builder and registry, external ingress
-provider and a cluster lifecycle management system. Contrast this with a cluster
-provisioned by
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-15T15:44:43+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Many ways to run OpenShift on AWS</title><link href="https://blog.joshgav.com//openshift-on-aws" rel="alternate" type="text/html" title="Many ways to run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//openshift-on-aws"><![CDATA[<p>OpenShift is Kubernetes with batteries included and verified - that is,
+OpenShift is ready to run complex first- and third-party applications and
+digital workloads as soon as installation is complete. For example, every
+OpenShift cluster includes a software-defined network provider, a container and
+source build system and artifact registry, an Internet-facing router and even a
+system for maintaining and updating cluster components. Contrast this with a
+cluster provisioned by upstream
 <a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/">kubeadm</a>
 or even the more featureful
 <a href="https://kubernetes.io/docs/setup/production-environment/tools/kubespray/">kubespray</a>,
-where adding these and other critical features requires thoughtful and often
-fragile integration.</p>
+where adding these and other core, critical features requires thoughtful and
+sometimes fragile integration.</p>
 
-<p>Not only does OpenShift offer a turnkey, ready-to-use Kubernetes environment, it
-also has become easier and easier to deploy over time. Gone are the days when
-operators and infrastructure teams would have to pre-provision Linux nodes and
-carefully configure cloud networks. Though it’s still possible to customize to
-your (or your organization’s!) heart’s content, many use cases can be met with
-just a few commands to spin up an OpenShift Kubernetes cluster on a public cloud
-provider like Amazon Web Services.</p>
+<p>Not only does OpenShift offer a ready-to-use Kubernetes environment for
+developers and operators once deployed, but also deployment itself has become
+remarkably simple despite the many participants, especially when a cluster is
+deployed in a public cloud provider like AWS. Gone are the days when operators
+and infrastructure teams would have to pre-provision hardware and operating
+systems and carefully configure and patch datacenter networks. Though it’s still
+possible to customize OpenShift at deployment to your heart’s content, many use
+cases can be met with defaults, a cloud provider account and a few well-written
+commands.</p>
 
-<p>In this article we’ll discuss three ways to deploy and run OpenShift on AWS,
-then we’ll contrast these with deploying upstream Kubernetes with kubespray.
-Follow along with code at <a href="https://github.com/joshgav/openshift-on-aws.git">https://github.com/joshgav/openshift-on-aws.git</a>.</p>
+<p>In this article we’ll discuss three ways to deploy and run OpenShift on Amazon
+Web Services (AWS) and we’ll contrast these with deploying upstream Kubernetes
+with kubespray. The methods are presented in order of increasing complexity
+and customizability.</p>
+
+<p>Follow along with code at <a href="https://github.com/joshgav/openshift-on-aws.git">https://github.com/joshgav/openshift-on-aws.git</a>.</p>
 
 <h2 id="contents">Contents</h2>
 
@@ -34,54 +41,65 @@ Follow along with code at <a href="https://github.com/joshgav/openshift-on-aws.g
 
 <h2 id="rosa-red-hat-openshift-service-on-aws">ROSA: Red Hat OpenShift Service on AWS</h2>
 
-<p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/rosa">the scripts</a>.</p>
+<blockquote>
+  <p><a href="https://github.com/joshgav/openshift-on-aws/tree/main/rosa">Follow along</a>.</p>
+</blockquote>
 
-<p>Let’s start with the simplest option: Red Hat OpenShift Service on AWS, ROSA.
-Deployment of a ROSA cluster includes deployment and correct configuration of
-required compute, network and storage resources in AWS EC2 in addition to a
-fully-featured OpenShift Kubernetes cluster. As opposed to other options to be
-discussed, a ROSA environment is fully supported by Red Hat’s operations teams -
+<p>Let’s start with the simplest option: Red Hat OpenShift Service on AWS, “ROSA”.
+A ROSA cluster includes deployment, configuration <em>and</em> management of required
+compute, network and storage resources in AWS as well as all the resources and
+services of a OpenShift Kubernetes cluster. As opposed to other options to
+follow, a ROSA environment is fully supported by Red Hat’s operations teams -
 open a ticket and an expert Red Hat SRE will attend to it quickly.</p>
 
 <h3 id="setup">Setup</h3>
 
-<p>At the core of the ROSA lifecycle is the <a href="https://docs.openshift.com/rosa/rosa_cli/rosa-get-started-cli.html">rosa
-CLI</a>. Get it
-from the <a href="https://console.redhat.com/openshift/downloads">Downloads</a> section of
-the Red Hat Console or directly from
-<a href="https://mirror.openshift.com/pub/openshift-v4/clients/rosa/latest/rosa-linux.tar.gz">https://mirror.openshift.com/pub/openshift-v4/clients/rosa/latest/rosa-linux.tar.gz</a>.</p>
+<p>At the core of the ROSA lifecycle are the <a href="https://docs.openshift.com/rosa/rosa_cli/rosa-get-started-cli.html">rosa
+CLI</a> tool
+and the <a href="https://docs.openshift.com/rosa/ocm/ocm-overview.html">OpenShift Cluster
+Manager</a> (OCM) service
+(UI: <a href="https://console.redhat.com/openshift">https://console.redhat.com/openshift</a>).  Get the CLI from the
+<a href="https://console.redhat.com/openshift/downloads">Downloads</a> section of the Red
+Hat Console (free account required) or directly from
+<a href="https://mirror.openshift.com/pub/openshift-v4/clients/rosa/latest/rosa-linux.tar.gz">https://mirror.openshift.com/pub/openshift-v4/clients/rosa/latest/rosa-linux.tar.gz</a>.
+Source is at <a href="https://github.com/openshift/rosa">https://github.com/openshift/rosa</a>. The ROSA CLI invokes OCM
+services as described at <a href="https://api.openshift.com/">https://api.openshift.com/</a>.</p>
 
 <p>You’ll need both Red Hat and AWS credentials to enable the <code class="highlighter-rouge">rosa</code> CLI to
 provision and connect to resources. Your AWS credentials can be specified as
 exported <code class="highlighter-rouge">AWS_ACCESS_KEY_ID</code>, <code class="highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> and <code class="highlighter-rouge">AWS_REGION</code>
-environment variables as <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html">for the AWS
-CLI</a>.</p>
+environment variables as
+<a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html">for the AWS CLI</a>.</p>
 
 <p>To get a token to login to your Red Hat account, click “View API token” at the
 bottom of the Downloads page as shown in the following screenshot, or go
 straight to <a href="https://console.redhat.com/openshift/token">the token page</a>. On
 that page click “Load token”, then copy the raw token (not the <code class="highlighter-rouge">ocm</code> command
 line) and run <code class="highlighter-rouge">rosa login --token="${your_token}"</code>. If successful you will see
-this message (with your username of course): “I: Logged in as ‘joshgavant’ on
-‘https://api.openshift.com’.</p>
+this message (with your username of course): <code class="highlighter-rouge">"I: Logged in as 'joshgavant' on
+'https://api.openshift.com'</code>.</p>
 
 <p><img src="../assets/openshift_on_aws/console-downloads-token.png" width="300px" />
 <img src="../assets/openshift_on_aws/ocm-manage-token.png" width="300px" /></p>
 
 <blockquote>
-  <p>Tip: To quickly enable autocompletion for <code class="highlighter-rouge">rosa</code> commands in your current
+  <p><strong>Tip</strong>: To quickly enable autocompletion for <code class="highlighter-rouge">rosa</code> commands in your current
   shell session run <code class="highlighter-rouge">. &lt;(rosa completion)</code>.</p>
 </blockquote>
 
-<p>To verify that you’ve logged in successfully to both accounts run <code class="highlighter-rouge">rosa whoami</code>.</p>
+<p>To verify that you’ve logged in successfully to both accounts run <code class="highlighter-rouge">rosa whoami</code>.
+If connections were successful you’ll see a list of attributes about each
+account.</p>
 
 <h3 id="iam-roles">IAM Roles</h3>
 
-<p>Next you’ll need to create an AWS IAM role specifying the permissions Red Hat’s
-cluster manager service and operations team members will require. In STS mode,
-these roles will be applied to the short-lived tokens issued to these operators
-on demand. Run the following commands to create the OCM service role and the
-operator user role:</p>
+<p>Next you’ll need to create and link AWS IAM roles defining the limited permissions granted to the
+cluster manager service and Red Hat operations team members. In the recommended “STS” mode,
+these roles are applied to short-lived tokens issued to machine and human operators on demand.</p>
+
+<p>The following commands grant required access to the OpenShift Cluster Manager
+(OCM) and its installers. The last command creates roles for Installer,
+ControlPlane, Worker and Support components to assume.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rosa create <span class="nt">--yes</span> ocm-role <span class="nt">--admin</span> <span class="nt">--mode</span><span class="o">=</span>auto <span class="nt">--prefix</span><span class="o">=</span><span class="s2">"ManagedOpenShift"</span>
 rosa create <span class="nt">--yes</span> user-role <span class="nt">--mode</span><span class="o">=</span>auto <span class="nt">--prefix</span><span class="o">=</span><span class="s2">"ManagedOpenShift"</span>
@@ -91,27 +109,26 @@ rosa create <span class="nt">--yes</span> account-roles <span class="nt">--mode<
 <h3 id="create-cluster">Create cluster</h3>
 
 <p>Now that you’ve bound your Red Hat account with your AWS account you can proceed
-to create your ROSA cluster! If you’d like to use the rosa CLI, run the
+to create your ROSA cluster! Using the rosa CLI run the
 following command to create a cluster in <a href="https://docs.openshift.com/rosa/rosa_getting_started/rosa-sts-getting-started-workflow.html">STS
 mode</a>.</p>
-
-<p>Note that by setting the <code class="highlighter-rouge">--watch</code> flag installation logs will stream to stdout
-and the command won’t return till installation completes successfully or fails,
-typically &gt;30 minutes. You can not set set that flag, or exit the log stream
-with Ctrl+c, then watch logs again with <code class="highlighter-rouge">rosa logs install --cluster ${CLUSTER_NAME} --watch</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">## create a ROSA cluster in STS mode</span>
 rosa create <span class="nt">--yes</span> cluster <span class="nt">--cluster-name</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CLUSTER_NAME</span><span class="k">}</span><span class="s2">"</span> <span class="nt">--sts</span> <span class="nt">--mode</span><span class="o">=</span>auto <span class="nt">--watch</span>
 </code></pre></div></div>
 
+<p>You can also interactively provide configuration options at cluster creation
+time by running only <code class="highlighter-rouge">rosa create cluster</code> and answering prompts. We’ll also
+shortly describe how to create a cluster in OCM’s web pages.</p>
+
 <h3 id="monitor-installation">Monitor installation</h3>
 
-<p>Note that by setting the <code class="highlighter-rouge">--watch</code> flag installation logs will stream to stdout
-and the command won’t return till installation completes successfully or fails,
-typically &gt;30 minutes. You can not set set that flag, or exit the log stream
-with Ctrl+c, then watch logs again with <code class="highlighter-rouge">rosa logs install --cluster ${CLUSTER_NAME} --watch</code>.</p>
+<p>By setting the <code class="highlighter-rouge">--watch</code> flag in the above command installation logs will stream
+to stdout and the command won’t return till installation completes successfully
+or fails, typically &gt;30 minutes. Start watching logs anytime with <code class="highlighter-rouge">rosa logs
+install --cluster ${CLUSTER_NAME} --watch</code>.</p>
 
-<p>You can also see your new cluster in the <a href="https://console.redhat.com/openshift">Red Hat
+<p>You can also review your new cluster in the <a href="https://console.redhat.com/openshift">Red Hat
 Console</a>. Click into it and expand the
 “Show logs” section to reach a view like the following:</p>
 
@@ -119,38 +136,40 @@ Console</a>. Click into it and expand the
 
 <h3 id="use-cluster">Use cluster</h3>
 
-<p>Once it’s ready, the easiest way to begin using your cluster immediately is to
+<p>Once ready, the easiest way to begin using your cluster immediately is to
 create a one-off <code class="highlighter-rouge">cluster-admin</code> user as follows. Later you can allow users from
-a specific OpenIDConnect (OIDC) identity provider.</p>
+a specific OpenIDConnect (OIDC) identity provider using <code class="highlighter-rouge">rosa create
+oidc-provider ...</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">## create a cluster-admin user</span>
 rosa create <span class="nt">--yes</span> admin <span class="nt">--cluster</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CLUSTER_NAME</span><span class="k">}</span><span class="s2">"</span>
 </code></pre></div></div>
 
-<p>Next, you’ll need URLs to reach the API server and Console of your new cluster!
-Get those with <code class="highlighter-rouge">rosa list clusters</code>. Finally, log in to the cluster via the <code class="highlighter-rouge">oc</code>
+<p>You’ll need URLs to reach the API server and Console of your new cluster and log
+in; get those with <code class="highlighter-rouge">rosa list clusters</code>. Finally, log in to the cluster via the <code class="highlighter-rouge">oc</code>
 CLI: <code class="highlighter-rouge">oc login --user cluster-admin --password ${admin_password}</code>.</p>
 
 <h3 id="create-cluster-via-ui">Create cluster via UI</h3>
 
-<p>Note that once your Red Hat and AWS accounts are linked you can also choose to
-create a cluster via a guided wizard in the Console. On the <a href="https://console.redhat.com/openshift">Clusters
-page</a> on the Red Hat Console click “Create
-cluster”, then on the <a href="https://console.redhat.com/openshift/create">Cluster create
+<p>Instead of using the <code class="highlighter-rouge">rosa</code> CLI, once your Red Hat and AWS accounts have been
+linked as described above you can also choose to create a cluster via a guided
+graphical wizard in the Console. On the <a href="https://console.redhat.com/openshift">Clusters page</a>
+on the Red Hat Console click “Create cluster”, then on the <a href="https://console.redhat.com/openshift/create">Cluster create
 page</a> click “Create cluster” next
 to the ROSA offering, as in the following screenshot:</p>
 
 <p><img src="../assets/openshift_on_aws/create-cluster-webui.png" width="300px" /></p>
 
-<p>If you’ve properly associated your accounts then your AWS account will be listed
-(by its ID) on the first page of the wizard. Follow the prompts to configure and
-install a cluster.</p>
+<p>Your AWS account will be listed by its ID on the first page of the wizard.
+Follow the prompts to configure and install a cluster.</p>
 
 <p><a id="ipi"></a></p>
 
 <h2 id="installer-provisioned-infrastructure-ipi">Installer-provisioned infrastructure (IPI)</h2>
 
-<p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/ipi">the scripts</a>.</p>
+<blockquote>
+  <p><a href="https://github.com/joshgav/openshift-on-aws/tree/main/ipi">Follow along</a>.</p>
+</blockquote>
 
 <p>Even if your cluster won’t be managed by Red Hat you can provision and configure
 cloud infrastructure and the cluster itself in AWS with a similar short list of
@@ -162,7 +181,7 @@ infrastructure” (IPI). Here’s how to do it.</p>
 <p>The core of the IPI method is the <strong><code class="highlighter-rouge">openshift-install</code></strong> CLI; download it from
 the <a href="https://console.redhat.com/openshift/downloads#tool-x86_64-openshift-install">downloads section</a>
 of the OpenShift console, or directly from
-<a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz">https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz</a>.</p>
+<a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz">https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz</a>. Source is at <a href="https://github.com/openshift/installer">https://github.com/openshift/installer</a>.</p>
 
 <p>You’ll also need a <strong>pull secret</strong> containing credentials for Red Hat’s
 container registries. Copy this from
@@ -238,7 +257,7 @@ above.</p>
 <h3 id="monitor-installation-1">Monitor installation</h3>
 
 <p>Cluster installation will take 30 minutes or more. You can watch logs stream to
-stdout or tail the .openshift_install.log file in the installation working
+stdout or tail the <code class="highlighter-rouge">.openshift_install.log</code> file in the installation working
 directory.</p>
 
 <h3 id="use-cluster-1">Use cluster</h3>
@@ -263,7 +282,9 @@ oc get pods <span class="nt">-A</span>
 
 <h2 id="user-provisioned-infrastructure-upi">User-provisioned infrastructure (UPI)</h2>
 
-<p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/upi">the scripts</a>.</p>
+<blockquote>
+  <p><a href="https://github.com/joshgav/openshift-on-aws/tree/main/upi">Follow along</a>.</p>
+</blockquote>
 
 <p>Though the easiest way to get started with OpenShift on AWS is via ROSA or
 installer-provisioned infrastructure (IPI), Red Hat also allows you to deploy
@@ -320,7 +341,9 @@ your KUBECONFIG env var to the path <code class="highlighter-rouge">${workdir}/a
 
 <h2 id="kubespray">Kubespray</h2>
 
-<p>Follow along with <a href="https://github.com/joshgav/openshift-on-aws/tree/main/kubespray">the scripts</a>.</p>
+<blockquote>
+  <p><a href="https://github.com/joshgav/openshift-on-aws/tree/main/kubespray">Follow along</a>.</p>
+</blockquote>
 
 <p>The previous sections described how to deploy OpenShift, Red Hat’s Kubernetes
 distribution, on Amazon Web Services with various levels of support and
@@ -388,10 +411,13 @@ pods -A</code> to verify connectivity.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>In this article and accompanying code we’ve discussed and demonstrated how to
-deploy an OpenShift or upstream Kubernetes cluster in AWS using four different
-methods which progress from simplest to most complex: ROSA &gt; IPI &gt; UPI &gt;
-Kubespray.</p>
+<p>In this article and <a href="https://github.com/joshgav/openshift-on-aws.git">accompanying
+code</a> we’ve discussed and
+demonstrated how to deploy an OpenShift or upstream Kubernetes cluster in AWS
+using four different methods which progress from simplest to most complex: ROSA</p>
+<blockquote>
+  <p>IPI &gt; UPI &gt; Kubespray.</p>
+</blockquote>
 
 <p>To minimize the complexity and overhead of managing your own clouds and
 clusters, start with the simplest method - ROSA - and progress to others only as
@@ -399,7 +425,7 @@ greater control and customization is needed.</p>
 
 <p>Please provide feedback in <a href="https://github.com/joshgav/openshift-on-aws/">the
 repo</a> or on
-<a href="https://twitter.com/joshugav">Twitter</a>. Thank you!</p>]]></content><author><name>Josh Gavant</name></author><category term="clusters" /><category term="openshift" /><summary type="html"><![CDATA[OpenShift is a Kubernetes distribution with batteries included - it’s ready for many use cases out of the box. For example, a default installation includes a network provider (CNI), container builder and registry, external ingress provider and a cluster lifecycle management system. Contrast this with a cluster provisioned by kubeadm or even the more featureful kubespray, where adding these and other critical features requires thoughtful and often fragile integration.]]></summary></entry><entry><title type="html">Clusters for all!</title><link href="https://blog.joshgav.com//cluster-level-multitenancy" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://blog.joshgav.com//cluster-level-multitenancy</id><content type="html" xml:base="https://blog.joshgav.com//cluster-level-multitenancy"><![CDATA[<p><img src="/assets/virtual_cluster/pleiades.jpg" alt="Pleiades star clusters" /></p>
+<a href="https://twitter.com/joshugav">Twitter</a>. Thank you!</p>]]></content><author><name>Josh Gavant</name></author><category term="kubernetes" /><category term="openshift" /><category term="installation" /><summary type="html"><![CDATA[OpenShift is Kubernetes with batteries included and verified - that is, OpenShift is ready to run complex first- and third-party applications and digital workloads as soon as installation is complete. For example, every OpenShift cluster includes a software-defined network provider, a container and source build system and artifact registry, an Internet-facing router and even a system for maintaining and updating cluster components. Contrast this with a cluster provisioned by upstream kubeadm or even the more featureful kubespray, where adding these and other core, critical features requires thoughtful and sometimes fragile integration.]]></summary></entry><entry><title type="html">Clusters for all!</title><link href="https://blog.joshgav.com//cluster-level-multitenancy" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://blog.joshgav.com//cluster-level-multitenancy</id><content type="html" xml:base="https://blog.joshgav.com//cluster-level-multitenancy"><![CDATA[<p><img src="/assets/virtual_cluster/pleiades.jpg" alt="Pleiades star clusters" /></p>
 
 <p>A decision which faces many large organizations as they adopt cloud architecture is how to provide isolated spaces within the same environments and clusters for various teams and purposes. For example, marketing and sales applications may need to be isolated from an organization’s customer-facing applications; and development teams building any app usually require extra spaces for tests and verification.</p>
 
