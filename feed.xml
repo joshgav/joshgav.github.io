@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" /><updated>2022-08-15T16:05:55+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name></author><entry><title type="html">Many ways to run OpenShift on AWS</title><link href="https://blog.joshgav.com//posts/openshift-on-aws" rel="alternate" type="text/html" title="Many ways to run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/openshift-on-aws"><![CDATA[<p>OpenShift is Kubernetes with batteries included and verified - that is,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2022-08-15T19:07:32+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Many ways to run OpenShift on AWS</title><link href="https://blog.joshgav.com//posts/openshift-on-aws" rel="alternate" type="text/html" title="Many ways to run OpenShift on AWS" /><published>2022-08-09T07:00:00+00:00</published><updated>2022-08-09T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/openshift-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/openshift-on-aws"><![CDATA[<p>OpenShift is Kubernetes with batteries included and verified - that is,
 OpenShift is ready to run complex first- and third-party applications and
 digital workloads as soon as installation is complete. For example, every
 OpenShift cluster includes a software-defined network provider, a container and
@@ -65,29 +65,29 @@ Hat Console (free account required) or directly from
 Source is at <a href="https://github.com/openshift/rosa">https://github.com/openshift/rosa</a>. The ROSA CLI invokes OCM
 services as described at <a href="https://api.openshift.com/">https://api.openshift.com/</a>.</p>
 
-<p>You’ll need both Red Hat and AWS credentials to enable the <code class="highlighter-rouge">rosa</code> CLI to
+<p>You’ll need both Red Hat and AWS credentials to enable the <code class="language-plaintext highlighter-rouge">rosa</code> CLI to
 provision and connect to resources. Your AWS credentials can be specified as
-exported <code class="highlighter-rouge">AWS_ACCESS_KEY_ID</code>, <code class="highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> and <code class="highlighter-rouge">AWS_REGION</code>
+exported <code class="language-plaintext highlighter-rouge">AWS_ACCESS_KEY_ID</code>, <code class="language-plaintext highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> and <code class="language-plaintext highlighter-rouge">AWS_REGION</code>
 environment variables as
 <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html">for the AWS CLI</a>.</p>
 
 <p>To get a token to login to your Red Hat account, click “View API token” at the
 bottom of the Downloads page as shown in the following screenshot, or go
 straight to <a href="https://console.redhat.com/openshift/token">the token page</a>. On
-that page click “Load token”, then copy the raw token (not the <code class="highlighter-rouge">ocm</code> command
-line) and run <code class="highlighter-rouge">rosa login --token="${your_token}"</code>. If successful you will see
-this message (with your username of course): <code class="highlighter-rouge">"I: Logged in as 'joshgavant' on
+that page click “Load token”, then copy the raw token (not the <code class="language-plaintext highlighter-rouge">ocm</code> command
+line) and run <code class="language-plaintext highlighter-rouge">rosa login --token="${your_token}"</code>. If successful you will see
+this message (with your username of course): <code class="language-plaintext highlighter-rouge">"I: Logged in as 'joshgavant' on
 'https://api.openshift.com'</code>.</p>
 
 <p><img src="../assets/openshift_on_aws/console-downloads-token.png" width="300px" />
 <img src="../assets/openshift_on_aws/ocm-manage-token.png" width="300px" /></p>
 
 <blockquote>
-  <p><strong>Tip</strong>: To quickly enable autocompletion for <code class="highlighter-rouge">rosa</code> commands in your current
-  shell session run <code class="highlighter-rouge">. &lt;(rosa completion)</code>.</p>
+  <p><strong>Tip</strong>: To quickly enable autocompletion for <code class="language-plaintext highlighter-rouge">rosa</code> commands in your current
+  shell session run <code class="language-plaintext highlighter-rouge">. &lt;(rosa completion)</code>.</p>
 </blockquote>
 
-<p>To verify that you’ve logged in successfully to both accounts run <code class="highlighter-rouge">rosa whoami</code>.
+<p>To verify that you’ve logged in successfully to both accounts run <code class="language-plaintext highlighter-rouge">rosa whoami</code>.
 If connections were successful you’ll see a list of attributes about each
 account.</p>
 
@@ -118,14 +118,14 @@ rosa create <span class="nt">--yes</span> cluster <span class="nt">--cluster-nam
 </code></pre></div></div>
 
 <p>You can also interactively provide configuration options at cluster creation
-time by running only <code class="highlighter-rouge">rosa create cluster</code> and answering prompts. We’ll also
+time by running only <code class="language-plaintext highlighter-rouge">rosa create cluster</code> and answering prompts. We’ll also
 shortly describe how to create a cluster in OCM’s web pages.</p>
 
 <h3 id="monitor-installation">Monitor installation</h3>
 
-<p>By setting the <code class="highlighter-rouge">--watch</code> flag in the above command installation logs will stream
+<p>By setting the <code class="language-plaintext highlighter-rouge">--watch</code> flag in the above command installation logs will stream
 to stdout and the command won’t return till installation completes successfully
-or fails, typically &gt;30 minutes. Start watching logs anytime with <code class="highlighter-rouge">rosa logs
+or fails, typically &gt;30 minutes. Start watching logs anytime with <code class="language-plaintext highlighter-rouge">rosa logs
 install --cluster ${CLUSTER_NAME} --watch</code>.</p>
 
 <p>You can also review your new cluster in the <a href="https://console.redhat.com/openshift">Red Hat
@@ -137,8 +137,8 @@ Console</a>. Click into it and expand the
 <h3 id="use-cluster">Use cluster</h3>
 
 <p>Once ready, the easiest way to begin using your cluster immediately is to
-create a one-off <code class="highlighter-rouge">cluster-admin</code> user as follows. Later you can allow users from
-a specific OpenIDConnect (OIDC) identity provider using <code class="highlighter-rouge">rosa create
+create a one-off <code class="language-plaintext highlighter-rouge">cluster-admin</code> user as follows. Later you can allow users from
+a specific OpenIDConnect (OIDC) identity provider using <code class="language-plaintext highlighter-rouge">rosa create
 oidc-provider ...</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">## create a cluster-admin user</span>
@@ -146,12 +146,12 @@ rosa create <span class="nt">--yes</span> admin <span class="nt">--cluster</span
 </code></pre></div></div>
 
 <p>You’ll need URLs to reach the API server and Console of your new cluster and log
-in; get those with <code class="highlighter-rouge">rosa list clusters</code>. Finally, log in to the cluster via the <code class="highlighter-rouge">oc</code>
-CLI: <code class="highlighter-rouge">oc login --user cluster-admin --password ${admin_password}</code>.</p>
+in; get those with <code class="language-plaintext highlighter-rouge">rosa list clusters</code>. Finally, log in to the cluster via the <code class="language-plaintext highlighter-rouge">oc</code>
+CLI: <code class="language-plaintext highlighter-rouge">oc login --user cluster-admin --password ${admin_password}</code>.</p>
 
 <h3 id="create-cluster-via-ui">Create cluster via UI</h3>
 
-<p>Instead of using the <code class="highlighter-rouge">rosa</code> CLI, once your Red Hat and AWS accounts have been
+<p>Instead of using the <code class="language-plaintext highlighter-rouge">rosa</code> CLI, once your Red Hat and AWS accounts have been
 linked as described above you can also choose to create a cluster via a guided
 graphical wizard in the Console. On the <a href="https://console.redhat.com/openshift">Clusters page</a>
 on the Red Hat Console click “Create cluster”, then on the <a href="https://console.redhat.com/openshift/create">Cluster create
@@ -178,7 +178,7 @@ infrastructure” (IPI). Here’s how to do it.</p>
 
 <h3 id="setup-1">Setup</h3>
 
-<p>The core of the IPI method is the <strong><code class="highlighter-rouge">openshift-install</code></strong> CLI; download it from
+<p>The core of the IPI method is the <strong><code class="language-plaintext highlighter-rouge">openshift-install</code></strong> CLI; download it from
 the <a href="https://console.redhat.com/openshift/downloads#tool-x86_64-openshift-install">downloads section</a>
 of the OpenShift console, or directly from
 <a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz">https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-install-linux.tar.gz</a>. Source is at <a href="https://github.com/openshift/installer">https://github.com/openshift/installer</a>.</p>
@@ -190,15 +190,15 @@ container registries. Copy this from
 <p>A <strong>SSH key pair</strong> is required for access to provisioned machines; you’ll need
 to provide its public key to the installer and you’ll be able to use the private
 key for access. You can copy an existing key from (for example)
-<code class="highlighter-rouge">~/.ssh/id_rsa.pub</code>; or create a new one in a secure place using (for example)
-<code class="highlighter-rouge">ssh-keygen -t rsa -b 4096 -C "user@openshift" -f "${WORKDIR}/id_rsa" -N ''</code>.
-Copy the contents of the <code class="highlighter-rouge">*.pub</code> file as the value of <code class="highlighter-rouge">SSH_PUBLIC_KEY</code> below.</p>
+<code class="language-plaintext highlighter-rouge">~/.ssh/id_rsa.pub</code>; or create a new one in a secure place using (for example)
+<code class="language-plaintext highlighter-rouge">ssh-keygen -t rsa -b 4096 -C "user@openshift" -f "${WORKDIR}/id_rsa" -N ''</code>.
+Copy the contents of the <code class="language-plaintext highlighter-rouge">*.pub</code> file as the value of <code class="language-plaintext highlighter-rouge">SSH_PUBLIC_KEY</code> below.</p>
 
 <p>Finally, you’ll need an AWS <strong>Route53 public hosted zone</strong> for your cluster’s
-base domain name. For example, I delegate a domain named <code class="highlighter-rouge">aws.joshgav.com</code> from
+base domain name. For example, I delegate a domain named <code class="language-plaintext highlighter-rouge">aws.joshgav.com</code> from
 my registrar to a new AWS Route53 zone, see following screenshot. Specifically,
-after creating the Route53 zone I create NS records for <code class="highlighter-rouge">aws</code> in the parent
-<code class="highlighter-rouge">joshgav.com</code> zone pointing to the name servers selected by Route53. More
+after creating the Route53 zone I create NS records for <code class="language-plaintext highlighter-rouge">aws</code> in the parent
+<code class="language-plaintext highlighter-rouge">joshgav.com</code> zone pointing to the name servers selected by Route53. More
 details <a href="https://docs.openshift.com/container-platform/4.10/installing/installing_aws/installing-aws-account.html#installation-aws-route53_installing-aws-account">from RedHat
 here</a>
 and <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html">from AWS
@@ -208,13 +208,13 @@ here</a>.</p>
 
 <h3 id="create-cluster-1">Create cluster</h3>
 
-<p>Now you can use <code class="highlighter-rouge">openshift-install create ...</code> to independently manage various
+<p>Now you can use <code class="language-plaintext highlighter-rouge">openshift-install create ...</code> to independently manage various
 phases of the installation process. A simple, automatable approach is to define
-the desired state of your cluster in a file named <code class="highlighter-rouge">install-config.yaml</code> put it
-in a directory <code class="highlighter-rouge">${WORKDIR}</code> and run the installer with it as follows:
-<code class="highlighter-rouge">openshift-install create cluster --dir ${WORKDIR}</code>. Following is a template
+the desired state of your cluster in a file named <code class="language-plaintext highlighter-rouge">install-config.yaml</code> put it
+in a directory <code class="language-plaintext highlighter-rouge">${WORKDIR}</code> and run the installer with it as follows:
+<code class="language-plaintext highlighter-rouge">openshift-install create cluster --dir ${WORKDIR}</code>. Following is a template
 install-config.yaml file; use it with your own values for
-<code class="highlighter-rouge">OPENSHIFT_PULL_SECRET</code>, <code class="highlighter-rouge">YOUR_DOMAIN_NAME</code> and <code class="highlighter-rouge">SSH_PUBLIC_KEY</code> established
+<code class="language-plaintext highlighter-rouge">OPENSHIFT_PULL_SECRET</code>, <code class="language-plaintext highlighter-rouge">YOUR_DOMAIN_NAME</code> and <code class="language-plaintext highlighter-rouge">SSH_PUBLIC_KEY</code> established
 above.</p>
 
 <blockquote>
@@ -257,14 +257,14 @@ above.</p>
 <h3 id="monitor-installation-1">Monitor installation</h3>
 
 <p>Cluster installation will take 30 minutes or more. You can watch logs stream to
-stdout or tail the <code class="highlighter-rouge">.openshift_install.log</code> file in the installation working
+stdout or tail the <code class="language-plaintext highlighter-rouge">.openshift_install.log</code> file in the installation working
 directory.</p>
 
 <h3 id="use-cluster-1">Use cluster</h3>
 
 <p>A username and password for your cluster will be in the final lines of the log,
-either on stdout or in the <code class="highlighter-rouge">.openshift_install.log</code> file. In addition, a
-“kubeconfig” file and the kubeadmin user’s password are saved in the <code class="highlighter-rouge">auth</code>
+either on stdout or in the <code class="language-plaintext highlighter-rouge">.openshift_install.log</code> file. In addition, a
+“kubeconfig” file and the kubeadmin user’s password are saved in the <code class="language-plaintext highlighter-rouge">auth</code>
 directory of the installation dir. Login to your cluster with one of the
 following:</p>
 
@@ -292,7 +292,7 @@ and configure your own cloud infrastructure - machines, networks and storage -
 and provision a cluster over it. This is known as “user-provisioned
 infrastructure” - UPI.</p>
 
-<p>UPI installations still use the <code class="highlighter-rouge">openshift-install</code> CLI to generate resource
+<p>UPI installations still use the <code class="language-plaintext highlighter-rouge">openshift-install</code> CLI to generate resource
 manifests and Ignition configuration files. However it is up to the user to
 configure machines and supply these Ignition files to them. In AWS this is
 accomplished by putting a configuration in a S3 bucket and pointing the first
@@ -302,13 +302,13 @@ machine there at startup.</p>
 provisioning supporting infrastructure for an OpenShift cluster; these templates
 are available
 <a href="https://github.com/openshift/installer/tree/master/upi/aws/cloudformation">here</a>.
-In the <code class="highlighter-rouge">upi</code> directory in the repo which accomplanies this article a <code class="highlighter-rouge">deploy.sh</code>
+In the <code class="language-plaintext highlighter-rouge">upi</code> directory in the repo which accomplanies this article a <code class="language-plaintext highlighter-rouge">deploy.sh</code>
 script steps through the following:</p>
 
 <ol>
-  <li>Create manifests and configurations with <code class="highlighter-rouge">openshift-install</code></li>
+  <li>Create manifests and configurations with <code class="language-plaintext highlighter-rouge">openshift-install</code></li>
   <li>Deploy AWS networks and machines using recommended CloudFormation templates</li>
-  <li>Await completed installation using <code class="highlighter-rouge">openshift-install</code></li>
+  <li>Await completed installation using <code class="language-plaintext highlighter-rouge">openshift-install</code></li>
 </ol>
 
 <p>The AWS resources created for OpenShift include a VPC and subnets, a DNS zone
@@ -321,7 +321,7 @@ production cluster on the other machines.</p>
 
 <p>Note that one step in the process can be difficult to automate - signing
 Certificate Signing Requests (CSRs) for nodes. Check if CSRs are awaiting a
-signature with <code class="highlighter-rouge">oc get csr</code>. Approve all pending requests with the following:</p>
+signature with <code class="language-plaintext highlighter-rouge">oc get csr</code>. Approve all pending requests with the following:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">csrs</span><span class="o">=(</span><span class="si">$(</span>oc get csr <span class="nt">-o</span> json | jq <span class="nt">-r</span> <span class="s1">'.items[] | select(.status == {}) | .metadata.name'</span><span class="si">)</span><span class="o">)</span>
 <span class="k">for </span>csr <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="nv">csrs</span><span class="p">[@]</span><span class="k">}</span><span class="s2">"</span><span class="p">;</span> <span class="k">do
@@ -329,13 +329,13 @@ signature with <code class="highlighter-rouge">oc get csr</code>. Approve all pe
 <span class="k">done</span>
 </code></pre></div></div>
 
-<p>As with IPI, you can monitor the <code class="highlighter-rouge">.openshift_install.log</code> file for progress of
-cluster installation. When the cluster is ready, log in with <code class="highlighter-rouge">oc login</code> as the
-kubeadmin user with the password in <code class="highlighter-rouge">${workdir}/auth/kubeadmin-password</code>, or set
-your KUBECONFIG env var to the path <code class="highlighter-rouge">${workdir}/auth/kubeconfig</code>.</p>
+<p>As with IPI, you can monitor the <code class="language-plaintext highlighter-rouge">.openshift_install.log</code> file for progress of
+cluster installation. When the cluster is ready, log in with <code class="language-plaintext highlighter-rouge">oc login</code> as the
+kubeadmin user with the password in <code class="language-plaintext highlighter-rouge">${workdir}/auth/kubeadmin-password</code>, or set
+your KUBECONFIG env var to the path <code class="language-plaintext highlighter-rouge">${workdir}/auth/kubeconfig</code>.</p>
 
 <p>Once ready reach the console of your cluster at
-<code class="highlighter-rouge">https://console-openshift-console.apps.${CLUSTER_NAME}.${BASE_DOMAIN}/</code>.</p>
+<code class="language-plaintext highlighter-rouge">https://console-openshift-console.apps.${CLUSTER_NAME}.${BASE_DOMAIN}/</code>.</p>
 
 <p><a id="kubespray"></a></p>
 
@@ -376,9 +376,9 @@ which yields the following env:</p>
 <p>The infrastructure provisioning process finishes by creating an inventory file
 which Ansible will consume to deploy cluster components. Now you’ll run the main
 Kubespray process - an Ansible playbook - using that inventory:
-<code class="highlighter-rouge">ansible-playbook -i hosts.ini cluster.yaml</code>. You can customize the deployment
-by setting variables in the inventory vars files or by passing <code class="highlighter-rouge">-e key=value</code>
-pairs to the ansible-playbook invocation. See <code class="highlighter-rouge">deploy-cluster.sh</code> in the
+<code class="language-plaintext highlighter-rouge">ansible-playbook -i hosts.ini cluster.yaml</code>. You can customize the deployment
+by setting variables in the inventory vars files or by passing <code class="language-plaintext highlighter-rouge">-e key=value</code>
+pairs to the ansible-playbook invocation. See <code class="language-plaintext highlighter-rouge">deploy-cluster.sh</code> in the
 walkthrough for examples. So that you don’t have to install the Kubespray
 Ansible environment locally, you may prefer to run commands like the following
 in a container:</p>
@@ -399,14 +399,14 @@ ansible-playbook cluster.yml <span class="se">\</span>
     <span class="nt">-e</span> <span class="s2">"kubeconfig_localhost=true"</span>
 </code></pre></div></div>
 
-<p>By setting the variable <code class="highlighter-rouge">kubeconfig_localhost=true</code> a kubeconfig file with
+<p>By setting the variable <code class="language-plaintext highlighter-rouge">kubeconfig_localhost=true</code> a kubeconfig file with
 credentials for the provisioned cluster will be written to the inventory
 directory at the end of provisioning. It will use the internal IP address of an
 API server; you’ll need to change this to the address of your
-externally-accessible load balancer. Retrieve that with <code class="highlighter-rouge">aws elbv2
+externally-accessible load balancer. Retrieve that with <code class="language-plaintext highlighter-rouge">aws elbv2
 describe-load-balancers --output json | jq -r '.LoadBalancers[0].DNSName'</code>, and
-be sure to prepend <code class="highlighter-rouge">https://</code> and append <code class="highlighter-rouge">:6443/</code> when putting it in the file.
-Finally set your KUBECONFIG env var to point to that file and run <code class="highlighter-rouge">kubectl get
+be sure to prepend <code class="language-plaintext highlighter-rouge">https://</code> and append <code class="language-plaintext highlighter-rouge">:6443/</code> when putting it in the file.
+Finally set your KUBECONFIG env var to point to that file and run <code class="language-plaintext highlighter-rouge">kubectl get
 pods -A</code> to verify connectivity.</p>
 
 <h2 id="conclusion">Conclusion</h2>
@@ -423,7 +423,7 @@ greater control and customization is needed.</p>
 
 <p>Please provide feedback in <a href="https://github.com/joshgav/openshift-on-aws/">the
 repo</a> or on
-<a href="https://twitter.com/joshugav">Twitter</a>. Thank you!</p>]]></content><author><name>Josh Gavant</name></author><category term="kubernetes" /><category term="openshift" /><category term="installation" /><summary type="html"><![CDATA[OpenShift is Kubernetes with batteries included and verified - that is, OpenShift is ready to run complex first- and third-party applications and digital workloads as soon as installation is complete. For example, every OpenShift cluster includes a software-defined network provider, a container and source build system and artifact registry, an Internet-facing router and even a system for maintaining and updating cluster components. Contrast this with a cluster provisioned by upstream kubeadm or even the more featureful kubespray, where adding these and other core, critical features requires thoughtful and sometimes fragile integration.]]></summary></entry><entry><title type="html">Clusters for all!</title><link href="https://blog.joshgav.com//posts/cluster-level-multitenancy" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://blog.joshgav.com//posts/cluster-level-multitenancy</id><content type="html" xml:base="https://blog.joshgav.com//posts/cluster-level-multitenancy"><![CDATA[<p><img src="/assets/virtual_cluster/pleiades.jpg" alt="Pleiades star clusters" /></p>
+<a href="https://twitter.com/joshugav">Twitter</a>. Thank you!</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="openshift" /><category term="installation" /><summary type="html"><![CDATA[OpenShift is Kubernetes with batteries included and verified - that is, OpenShift is ready to run complex first- and third-party applications and digital workloads as soon as installation is complete. For example, every OpenShift cluster includes a software-defined network provider, a container and source build system and artifact registry, an Internet-facing router and even a system for maintaining and updating cluster components. Contrast this with a cluster provisioned by upstream kubeadm or even the more featureful kubespray, where adding these and other core, critical features requires thoughtful and sometimes fragile integration.]]></summary></entry><entry><title type="html">Clusters for all!</title><link href="https://blog.joshgav.com//posts/cluster-level-multitenancy" rel="alternate" type="text/html" title="Clusters for all!" /><published>2022-05-16T16:00:00+00:00</published><updated>2022-05-16T16:00:00+00:00</updated><id>https://blog.joshgav.com//posts/cluster-level-multitenancy</id><content type="html" xml:base="https://blog.joshgav.com//posts/cluster-level-multitenancy"><![CDATA[<p><img src="/assets/virtual_cluster/pleiades.jpg" alt="Pleiades star clusters" /></p>
 
 <p>A decision which faces many large organizations as they adopt cloud architecture is how to provide isolated spaces within the same environments and clusters for various teams and purposes. For example, marketing and sales applications may need to be isolated from an organization’s customer-facing applications; and development teams building any app usually require extra spaces for tests and verification.</p>
 
@@ -497,11 +497,11 @@ repo</a> or on
 
 <h4 id="colophon">Colophon</h4>
 
-<p>The image at the top is of star clusters in <a href="https://en.wikipedia.org/wiki/Pleiades">Pleiades</a> and the picture was copied from that article.</p>]]></content><author><name>Josh Gavant</name></author><category term="multitenancy" /><category term="clusters" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Kubernetes isn’t about containers</title><link href="https://blog.joshgav.com//posts/kubernetes-isnt-about-containers" rel="alternate" type="text/html" title="Kubernetes isn’t about containers" /><published>2021-12-16T19:00:00+00:00</published><updated>2021-12-16T19:00:00+00:00</updated><id>https://blog.joshgav.com//posts/kubernetes-isnt-about-containers</id><content type="html" xml:base="https://blog.joshgav.com//posts/kubernetes-isnt-about-containers"><![CDATA[<p>It’s about APIs; we’ll get to that shortly.</p>
+<p>The image at the top is of star clusters in <a href="https://en.wikipedia.org/wiki/Pleiades">Pleiades</a> and the picture was copied from that article.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="multitenancy" /><category term="clusters" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Kubernetes isn’t about containers</title><link href="https://blog.joshgav.com//posts/kubernetes-isnt-about-containers" rel="alternate" type="text/html" title="Kubernetes isn’t about containers" /><published>2021-12-16T19:00:00+00:00</published><updated>2021-12-16T19:00:00+00:00</updated><id>https://blog.joshgav.com//posts/kubernetes-isnt-about-containers</id><content type="html" xml:base="https://blog.joshgav.com//posts/kubernetes-isnt-about-containers"><![CDATA[<p>It’s about APIs; we’ll get to that shortly.</p>
 
 <h2 id="first-there-were-containers">First there were containers</h2>
 
-<p>Now Docker <em>is</em> about containers: running complex software with a simple <code class="highlighter-rouge">docker run postgres</code> command was a revelation to software developers in 2013, unlocking agile infrastructure that they’d never known. And happily, as developers adopted containers as a standard build and run target, the industry realized that the same encapsulation fits nicely for workloads to be scheduled in compute clusters by orchestrators like Kubernetes and Apache Mesos. Containers have become the most important workload type managed by these schedulers, but as the title says that’s not what’s most valuable about Kubernetes.</p>
+<p>Now Docker <em>is</em> about containers: running complex software with a simple <code class="language-plaintext highlighter-rouge">docker run postgres</code> command was a revelation to software developers in 2013, unlocking agile infrastructure that they’d never known. And happily, as developers adopted containers as a standard build and run target, the industry realized that the same encapsulation fits nicely for workloads to be scheduled in compute clusters by orchestrators like Kubernetes and Apache Mesos. Containers have become the most important workload type managed by these schedulers, but as the title says that’s not what’s most valuable about Kubernetes.</p>
 
 <p>Kubernetes is not about more general workload <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">scheduling</a> either (sorry <a href="https://krustlet.dev/">Krustlet</a> fans). While scheduling various workloads efficiently is an important value Kubernetes provides, it’s not the reason for its success.</p>
 
@@ -525,9 +525,9 @@ repo</a> or on
 
 <p>All of this isn’t to say that the Kubernetes API framework is perfect. Rather it’s to say that <em>it doesn’t matter</em> (much) because the Kubernetes model has become a de facto standard. Many developers understand it, many tools speak it, and many providers use it. Even with warts, Kubernetes’ broad adoption, user awareness and interoperability mostly outweigh other considerations.</p>
 
-<p>With the spread of the Kubernetes resource model it’s already possible to describe an entire software-defined computing environment as a collection of Kubernetes resources. Like running a single artifact with <code class="highlighter-rouge">docker run ...</code>, distributed applications can be deployed and run with a simple <code class="highlighter-rouge">kubectl apply -f ...</code>. And unlike the custom formats and tools offered by individual cloud service providers, the Kubernetes’ descriptors are much more likely to run in many different provider and datacenter environments, because <strong>they all implement the same APIs</strong>.</p>
+<p>With the spread of the Kubernetes resource model it’s already possible to describe an entire software-defined computing environment as a collection of Kubernetes resources. Like running a single artifact with <code class="language-plaintext highlighter-rouge">docker run ...</code>, distributed applications can be deployed and run with a simple <code class="language-plaintext highlighter-rouge">kubectl apply -f ...</code>. And unlike the custom formats and tools offered by individual cloud service providers, the Kubernetes’ descriptors are much more likely to run in many different provider and datacenter environments, because <strong>they all implement the same APIs</strong>.</p>
 
-<p>Kubernetes isn’t about containers after all. It’s about APIs.</p>]]></content><author><name>Josh Gavant</name></author><category term="containers" /><category term="kubernetes" /><category term="apis" /><category term="infrastructure" /><summary type="html"><![CDATA[It’s about APIs; we’ll get to that shortly.]]></summary></entry><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://blog.joshgav.com//posts/cloud-redefined-infrastructure" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//posts/cloud-redefined-infrastructure</id><content type="html" xml:base="https://blog.joshgav.com//posts/cloud-redefined-infrastructure"><![CDATA[<p><img src="/assets/infra_desired_state.png" alt="infrastructure platform" /></p>
+<p>Kubernetes isn’t about containers after all. It’s about APIs.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="containers" /><category term="kubernetes" /><category term="apis" /><category term="infrastructure" /><summary type="html"><![CDATA[It’s about APIs; we’ll get to that shortly.]]></summary></entry><entry><title type="html">Cloud redefines enterprise infrastructure</title><link href="https://blog.joshgav.com//posts/cloud-redefined-infrastructure" rel="alternate" type="text/html" title="Cloud redefines enterprise infrastructure" /><published>2021-09-30T13:00:00+00:00</published><updated>2021-09-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//posts/cloud-redefined-infrastructure</id><content type="html" xml:base="https://blog.joshgav.com//posts/cloud-redefined-infrastructure"><![CDATA[<p><img src="/assets/infra_desired_state.png" alt="infrastructure platform" /></p>
 
 <p>Cloud computing has been around for well over a decade, so we ought to know what “cloud” is by now. Indeed we understand its attributes well, such as flexibility, efficiency, connectivity, and scalability; in the <a href="https://github.com/cncf/toc/blob/main/DEFINITION.md">words of the CNCF</a> (emphasis added):</p>
 
@@ -571,7 +571,7 @@ repo</a> or on
 
 <p>A “cloud” is <em>not</em> just something run by big tech companies like Microsoft and Amazon. Rather, “cloud” is <em>the</em> new paradigm of enterprise infrastructure itself: providing a consistent collection of automatable infrastructure services to apps and developers.</p>
 
-<p>How are you providing “cloud” at your organization?</p>]]></content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Deliver platform capabilities</title><link href="https://blog.joshgav.com//posts/deliver-platform-capabilities" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//posts/deliver-platform-capabilities</id><content type="html" xml:base="https://blog.joshgav.com//posts/deliver-platform-capabilities"><![CDATA[<p><img src="/assets/city-platform.jpg" alt="Platform and capabilities" /></p>
+<p>How are you providing “cloud” at your organization?</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="platform" /><category term="infrastructure" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Deliver platform capabilities</title><link href="https://blog.joshgav.com//posts/deliver-platform-capabilities" rel="alternate" type="text/html" title="Deliver platform capabilities" /><published>2021-08-30T13:00:00+00:00</published><updated>2021-08-30T13:00:00+00:00</updated><id>https://blog.joshgav.com//posts/deliver-platform-capabilities</id><content type="html" xml:base="https://blog.joshgav.com//posts/deliver-platform-capabilities"><![CDATA[<p><img src="/assets/city-platform.jpg" alt="Platform and capabilities" /></p>
 
 <p>Platform teams exist to develop and manage capabilities required across many application service teams. When functioning well, platform teams provide expertise and support for complex capabilities which would otherwise have required such support in each application service team.</p>
 
@@ -669,7 +669,7 @@ repo</a> or on
   </li>
   <li>Inject capability automatically and transparently
     <ol>
-      <li>At build time with e.g., <code class="highlighter-rouge">helm</code>, <code class="highlighter-rouge">kustomize</code></li>
+      <li>At build time with e.g., <code class="language-plaintext highlighter-rouge">helm</code>, <code class="language-plaintext highlighter-rouge">kustomize</code></li>
       <li>At deploy time with e.g., mutating admission controllers</li>
       <li>At run time with e.g., daemonsets and network proxies</li>
     </ol>
@@ -688,7 +688,7 @@ repo</a> or on
 
 <h2 id="summary">Summary</h2>
 
-<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>]]></content><author><name>Josh Gavant</name></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://blog.joshgav.com//posts/container-streaming" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://blog.joshgav.com//posts/container-streaming</id><content type="html" xml:base="https://blog.joshgav.com//posts/container-streaming"><![CDATA[<h1 id="overview-of-kubelet">Overview of Kubelet</h1>
+<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://blog.joshgav.com//posts/container-streaming" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://blog.joshgav.com//posts/container-streaming</id><content type="html" xml:base="https://blog.joshgav.com//posts/container-streaming"><![CDATA[<h1 id="overview-of-kubelet">Overview of Kubelet</h1>
 
 <p>Kubernetes’ <strong>kubelet</strong> is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by <strong>PodSpec</strong>s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.</p>
 
@@ -698,78 +698,78 @@ repo</a> or on
 
 <p>Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a <strong>container runtime</strong> like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in <a href="https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto">this protobuf spec</a>. A shim for CRI from Docker’s native API is <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim">included</a> in the kubelet, or you can follow <a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">these instructions</a> to install and use another runtime like CRI-O.</p>
 
-<p>Amongst the procedures offered by CRI’s <a href="https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110">RuntimeService</a> one finds <strong>Exec</strong>, <strong>Attach</strong> and <strong>PortForward</strong>, likely familiar to anyone who works with containers. These ultimately are core to the <code class="highlighter-rouge">kubectl exec ...</code>, <code class="highlighter-rouge">kubectl run -it ...</code>, <code class="highlighter-rouge">kubectl port-forward</code> and even the new <code class="highlighter-rouge">kubectl [alpha] debug ...</code> commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.</p>
+<p>Amongst the procedures offered by CRI’s <a href="https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110">RuntimeService</a> one finds <strong>Exec</strong>, <strong>Attach</strong> and <strong>PortForward</strong>, likely familiar to anyone who works with containers. These ultimately are core to the <code class="language-plaintext highlighter-rouge">kubectl exec ...</code>, <code class="language-plaintext highlighter-rouge">kubectl run -it ...</code>, <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> and even the new <code class="language-plaintext highlighter-rouge">kubectl [alpha] debug ...</code> commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.</p>
 
 <h1 id="exec">exec</h1>
 
-<p>First let’s walk through what happens when you run <code class="highlighter-rouge">kubectl exec -it ${pod_name} sh --container ${container_name}</code> to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md">this k8s enhancement proposal</a>.</p>
+<p>First let’s walk through what happens when you run <code class="language-plaintext highlighter-rouge">kubectl exec -it ${pod_name} sh --container ${container_name}</code> to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md">this k8s enhancement proposal</a>.</p>
 
 <p><img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" /></p>
 
 <h2 id="1-client">1. client</h2>
 
-<p>Based on its arguments, <code class="highlighter-rouge">kubectl exec</code> builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is <code class="highlighter-rouge">http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;stdout=true&amp;stderr=true&amp;tty=true&amp;container=${container_name}&amp;command=sh</code>.</p>
+<p>Based on its arguments, <code class="language-plaintext highlighter-rouge">kubectl exec</code> builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is <code class="language-plaintext highlighter-rouge">http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;stdout=true&amp;stderr=true&amp;tty=true&amp;container=${container_name}&amp;command=sh</code>.</p>
 
 <h3 id="source-refs">Source refs:</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">kubectl exec</code> [<a href="https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl exec</code> [<a href="https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go">1</a>]</li>
 </ul>
 
 <h2 id="2-apiserver">2. apiserver</h2>
 
 <p>The corev1/pods APIService accepts the incoming request and handles it per <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod">its registration</a>. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.</p>
 
-<p>The URL for the kubelet server is of form <code class="highlighter-rouge">http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}</code> where <code class="highlighter-rouge">${subresource}</code> can be <code class="highlighter-rouge">exec</code>, <code class="highlighter-rouge">attach</code>, <code class="highlighter-rouge">portforward</code> or a few others.</p>
+<p>The URL for the kubelet server is of form <code class="language-plaintext highlighter-rouge">http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}</code> where <code class="language-plaintext highlighter-rouge">${subresource}</code> can be <code class="language-plaintext highlighter-rouge">exec</code>, <code class="language-plaintext highlighter-rouge">attach</code>, <code class="language-plaintext highlighter-rouge">portforward</code> or a few others.</p>
 
 <h3 id="source-refs-1">Source refs:</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">registry/core/pod.streamLocation</code> [<a href="https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">registry/core/pod.streamLocation</code> [<a href="https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511">1</a>]</li>
 </ul>
 
 <h2 id="3-kubelet">3. kubelet</h2>
 
 <p>The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.</p>
 
-<p>The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting <a href="https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262">EnableDebuggingHandlers</a> to <code class="highlighter-rouge">false</code> in the global kubelet configuration, or by setting the flag <code class="highlighter-rouge">--enable-debugging-handlers=false</code> on an individual kubelet. <strong>Note</strong> that this will disable container logs via <code class="highlighter-rouge">kubectl logs</code> as well!</p>
+<p>The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting <a href="https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262">EnableDebuggingHandlers</a> to <code class="language-plaintext highlighter-rouge">false</code> in the global kubelet configuration, or by setting the flag <code class="language-plaintext highlighter-rouge">--enable-debugging-handlers=false</code> on an individual kubelet. <strong>Note</strong> that this will disable container logs via <code class="language-plaintext highlighter-rouge">kubectl logs</code> as well!</p>
 
 <h3 id="source-refs-2">Source refs:</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">kubelet/server/NewServer(enableDebuggingHandlers)</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253">1</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411">2</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/server/server.getExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821">3</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/server/NewServer(enableDebuggingHandlers)</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411">2</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.getExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821">3</a>]</li>
 </ul>
 
 <h2 id="4-cri">4. CRI</h2>
 
 <p>Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling <a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">github.com/moby/moby/client#Client.ContainerExecCreate</a>.</p>
 
-<p>In truth <code class="highlighter-rouge">exec</code> itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify <code class="highlighter-rouge">-i -t</code> with <code class="highlighter-rouge">exec</code> an attach action is executed immediately after exec to provide a persistent connection.</p>
+<p>In truth <code class="language-plaintext highlighter-rouge">exec</code> itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify <code class="language-plaintext highlighter-rouge">-i -t</code> with <code class="language-plaintext highlighter-rouge">exec</code> an attach action is executed immediately after exec to provide a persistent connection.</p>
 
 <h3 id="source-refs-3">Source refs:</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">kubelet/cri/streaming.NewServer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133">1</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/cri/streaming/server.serveExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297">2</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/cri/streaming/remotecommand/ServeExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44">3</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/dockershim/NativeExecHandler.ExecInContainer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64">4</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/dockershim/libdocker/kubeDockerClient.StartExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461">5</a>]</li>
-  <li><code class="highlighter-rouge">moby/moby/client/Client.ContainerExecCreate</code> [<a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">6</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming.NewServer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/server.serveExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297">2</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/remotecommand/ServeExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44">3</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/dockershim/NativeExecHandler.ExecInContainer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64">4</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/dockershim/libdocker/kubeDockerClient.StartExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461">5</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">moby/moby/client/Client.ContainerExecCreate</code> [<a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">6</a>]</li>
 </ul>
 
 <h1 id="port-forward">port-forward</h1>
 
 <p>Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.</p>
 
-<p><code class="highlighter-rouge">nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}</code></p>
+<p><code class="language-plaintext highlighter-rouge">nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}</code></p>
 
 <h3 id="source-refs-4">Source Refs</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">kubelet/cri/streaming/portforward.ServePortForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53">1</a>]</li>
-  <li><code class="highlighter-rouge">kubelete/dockershim/streamingRuntime.portForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go">2</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/portforward.ServePortForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelete/dockershim/streamingRuntime.portForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go">2</a>]</li>
 </ul>
 
 <h1 id="logs">logs</h1>
@@ -779,15 +779,15 @@ repo</a> or on
 <h3 id="source-refs-5">Source Refs</h3>
 
 <ul>
-  <li><code class="highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
-  <li><code class="highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
-  <li><code class="highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
-</ul>]]></content><author><name>Josh Gavant</name></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://blog.joshgav.com//posts/welcome-to-partly-cloudy" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://blog.joshgav.com//posts/welcome-to-partly-cloudy</id><content type="html" xml:base="https://blog.joshgav.com//posts/welcome-to-partly-cloudy"><![CDATA[<p>So called because I’ll be writing posts about cloud-native patterns, practices and tools.</p>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
+  <li><code class="language-plaintext highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
+</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://blog.joshgav.com//posts/welcome-to-partly-cloudy" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://blog.joshgav.com//posts/welcome-to-partly-cloudy</id><content type="html" xml:base="https://blog.joshgav.com//posts/welcome-to-partly-cloudy"><![CDATA[<p>So called because I’ll be writing posts about cloud-native patterns, practices and tools.</p>
 
-<p>I chose to start by maintaining the site with <a href="https://jekyllrb.com/">Jekyll</a>, though I almost reconsidered upon discovering that the latest version of Jekyll <a href="https://github.com/github/pages-gem/issues/651">isn’t fully supported</a> for automatically-built GitHub Pages sites. That led me to write <a href="https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml">a GitHub Action to build and publish the site</a>, inspired by <a href="https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions">this post</a>. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages <em>did</em> automatically build the site. Good thing too cause my custom Action originally pushed the built site to the <code class="highlighter-rouge">gh-pages</code> branch, which wouldn’t work for a user’s top-level user site - <code class="highlighter-rouge">joshgav.github.io</code> in my case.</p>
+<p>I chose to start by maintaining the site with <a href="https://jekyllrb.com/">Jekyll</a>, though I almost reconsidered upon discovering that the latest version of Jekyll <a href="https://github.com/github/pages-gem/issues/651">isn’t fully supported</a> for automatically-built GitHub Pages sites. That led me to write <a href="https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml">a GitHub Action to build and publish the site</a>, inspired by <a href="https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions">this post</a>. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages <em>did</em> automatically build the site. Good thing too cause my custom Action originally pushed the built site to the <code class="language-plaintext highlighter-rouge">gh-pages</code> branch, which wouldn’t work for a user’s top-level user site - <code class="language-plaintext highlighter-rouge">joshgav.github.io</code> in my case.</p>
 
-<p>I wasn’t happy with the unpolished feel of the default <code class="highlighter-rouge">minima</code> theme, so I reviewed some others at <a href="https://jekyllthemes.io/">jekyllthemes.io</a>. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “<a href="https://github.com/huangyz0918/moving">moving</a>” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with <a href="https://pages.github.com/themes/">this subset of Jekyll themes</a>. Great, an opportunity to tweak and use the Action action!</p>
+<p>I wasn’t happy with the unpolished feel of the default <code class="language-plaintext highlighter-rouge">minima</code> theme, so I reviewed some others at <a href="https://jekyllthemes.io/">jekyllthemes.io</a>. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “<a href="https://github.com/huangyz0918/moving">moving</a>” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with <a href="https://pages.github.com/themes/">this subset of Jekyll themes</a>. Great, an opportunity to tweak and use the Action action!</p>
 
-<p>So to use my chosen theme I went back and tweaked my action to listen for pushes to the <code class="highlighter-rouge">source</code> branch and push changes to the <code class="highlighter-rouge">master</code> branch, as required for the “top-level” GitHub Page. It seems to be working now.</p>
+<p>So to use my chosen theme I went back and tweaked my action to listen for pushes to the <code class="language-plaintext highlighter-rouge">source</code> branch and push changes to the <code class="language-plaintext highlighter-rouge">master</code> branch, as required for the “top-level” GitHub Page. It seems to be working now.</p>
 
-<p>Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.</p>]]></content><author><name>Josh Gavant</name></author><category term="info" /><category term="blog" /><summary type="html"><![CDATA[So called because I’ll be writing posts about cloud-native patterns, practices and tools.]]></summary></entry></feed>
+<p>Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="info" /><category term="blog" /><summary type="html"><![CDATA[So called because I’ll be writing posts about cloud-native patterns, practices and tools.]]></summary></entry></feed>
