@@ -7,12 +7,17 @@ repo_password=${3}
 # declare -r this_dir=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 # declare -r root_dir=$(cd ${this_dir}/.. && pwd)
 
+# should've been handled by GitHub Action but without this it throws an error
+git config --global --add safe.directory '/__w/joshgav.github.io/joshgav.github.io'
+
 repo_url="https://${repo_user}:${repo_password}@github.com/${repo_slug}"
 github_publish_branch=${GITHUB_PUBLISH_BRANCH:-publish}
 
 # get latest commit on master branch to compare with current published site
 master_commit_hash=$(git log --format='%H' -1)
 master_commit_subject=$(git log --format='%s' -1)
+
+echo "discovered current master commit: ${master_commit_hash}"
 
 git config --global user.name "${repo_user}"
 git config --global user.email "${repo_user}@users.noreply.github.com"
