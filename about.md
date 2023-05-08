@@ -15,7 +15,11 @@ permalink: /about
 
 ## Other publications
 
-- Kubernetes and cloud
+- Cloud platforms
+    - [Deliver applications efficiently with cloud-native platforms](https://www.youtube.com/watch?v=YZo5VNS68Uc)
+    - [Panel: Cloud-native platforms: What and why?](https://youtu.be/tVSPTrf_JXU?list=PLaR6Rq6Z4Iqdcoy9kQXJFIb83oo88nFRW)
+    - [CNCF Platforms white paper](https://tag-app-delivery.cncf.io/whitepapers/platforms/)
+    - [Infrastructure for apps: Platforms for cooperative delivery](https://tag-app-delivery.cncf.io/blog/infrastructure-for-apps-platforms-for-cooperative-delivery/)
     - [Kubernetes is your cloud control plane](https://www.youtube.com/watch?v=O0rzh8mH7Ao)
     - [Run your code and leave build to us](https://azure.microsoft.com/en-us/blog/run-your-code-and-leave-build-to-us/)
 - Go on Azure
