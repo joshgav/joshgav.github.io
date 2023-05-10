@@ -2,7 +2,7 @@
 layout: post
 title: Kubecon Amsterdam Learnings
 date: 2023-05-08 02:00:00 -0500
-tags: kubernetes platforms portals cncf
+tags: kubernetes platforms portals CNCF
 ---
 
 <img width=600 alt="Amsterdam" src="../assets/amsterdam.jpg" />
@@ -38,7 +38,7 @@ That is, while Kubernetes APIs are the de facto open standard, they are _not_ an
 
 To meet this demand a plethora of projects exist and continue to emerge to reduce Kubernetes APIs to smaller resource types fit for specific use cases. In my opinion [Helm](https://helm.sh/) and it's values.yaml "APIs" is an example of this pattern; more modern possibilities include [Kratix](https://kratix.io/)'s [promises](https://kratix.io/docs/main/reference/promises/intro) and [Crossplane](https://www.crossplane.io/)'s [Composite Resources](https://docs.crossplane.io/v1.12/concepts/composition/).
 
-This distinction between full Kubernetes APIs (aka custom resource definitions) and API "views" for platform users leads me to continue to advocate for Kubernetes resources as a "source of truth" and point of interobility and policy for software-defined infrastructure, while in parallel seeking conventions for the API-reducing frameworks seeking to encapsulate the complexity of those full APIs.
+This distinction between full Kubernetes APIs (aka custom resource definitions) and API "views" for platform users leads me to continue to advocate for Kubernetes resources as a "source of truth" and point of interoperability and policy for software-defined infrastructure, while in parallel seeking conventions for the API-reducing frameworks seeking to encapsulate the complexity of those full APIs.
 
 ## OCI is about more than container images
 
@@ -62,7 +62,7 @@ These new observable aspects of our systems will be gradually integrated into ex
 
 The proliferation of projects in CNCF and the need to understand and support them was a theme of keynotes from CNCF leaders. I was inspired by ideas for encouraging new contributors from [Dawn Foster](https://www.youtube.com/watch?v=rOsrfxjhev0) and [Emily Fox](https://www.youtube.com/watch?v=oKHD3yAyWss) and wrote up a new [CONTRIBUTING.md](https://github.com/cncf/tag-app-delivery/blob/main/CONTRIBUTING.md) doc for TAG App Delivery based on discussions at our booth.
 
-I personally lead TAG App Delivery cause I belive cloud-native projects will better succeed in enabling end users when these projects and users are aware of each other and adopt similar patterns and practices. We don't want to slow down individual projects and innovations, but we do want to facilitate cross-pollination, ultimately to reduce complexity and ensure adoption and usability of projects by end users.
+I personally lead TAG App Delivery cause I believe cloud-native projects will better succeed in enabling end users when these projects and users are aware of each other and adopt similar patterns and practices. We don't want to slow down individual projects and innovations, but we do want to facilitate cross-pollination, ultimately to reduce complexity and ensure adoption and usability of projects by end users.
 
 Stated from another perspective, we must recognize and appreciate the effect of [Conway's Law](https://martinfowler.com/bliki/ConwaysLaw.html) on CNCF's ecosystem and take some steps to reduce its impact.
 
