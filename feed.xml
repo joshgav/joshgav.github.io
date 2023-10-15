@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-15T17:32:54+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="Orchestrated" src="../assets/orchestrated.jpg" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-15T17:38:27+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="Orchestrated" src="../assets/orchestrated.jpg" /></p>
 
 <p>Sometimes an idea seems so obvious that it need not be stated, but then one
 realizes that what’s obvious to someone deep in a domain is not so obvious to
@@ -83,7 +83,7 @@ start with the following graphic:</p>
 <p>First, let’s again define a platform orchestrator: it’s a system invoked on
 demand to execute workflows to provision and/or maintain platform capabilities
 and software-defined infrastructure. Kubernetes acts like an orchestrator and
-runs such workflows when invoked by resource descriptions submitted to its API
+runs such workflows when invoked by resources submitted to its API
 server: once admitted, Kubernetes controllers discover resource types under
 their management and execute tasks to bring those resources to their declared
 desired state.</p>
@@ -95,38 +95,39 @@ controller ensures routing tables in nodes and cloud services are configured to
 route traffic as desired.</p>
 
 <p>But as we mentioned above, Kubernetes can handle much more than its built-in
-resources like Pods, Ingresses and Volumes. Today’s broad collection of CNCF
-projects offer themselves primarily as extension controllers to Kubernetes too.
-Want an Apache Spark cluster? There’s a controller and resource for that. Want a
-certificate management system? Try cert-manager. Looking for Kafka
-infrastructure? Try Strimzi. Need a directory and OpenIDConnect? Choose from Dex
-or Keycloak.</p>
+resources like Pods, Ingresses and Volumes. For example, today’s broad
+collection of CNCF projects offer themselves primarily as extension controllers
+to Kubernetes too.  Want an Apache Spark cluster? There’s a controller and
+custom resource for that. Want a certificate management system? Try
+cert-manager.  Looking for Kafka infrastructure? Try Strimzi. Need a directory
+and OpenIDConnect? Choose from Dex or Keycloak.</p>
 
-<p>And Kubernetes usefulness as a general orchestrator and control plane doesn’t
+<p>And Kubernetes’ usefulness as a general orchestrator and control plane doesn’t
 stop with cluster-internal resource types. Using the likes of <a href="https://aws-controllers-k8s.github.io/community/">AWS Controllers
 for Kubernetes</a>, <a href="https://azure.github.io/azure-service-operator/">Azure
 Service Operator</a>, and <a href="https://cloud.google.com/config-connector/docs/overview">Google
-Cloud Config Connector</a>
-internal platform providers can provision and manage provider-managed services
-outside of their clusters using the same paradigms as internal resources.
-Projects like Crossplane have even started <a href="https://marketplace.upbound.io/providers">a
-marketplace</a> of such providers.</p>
+Cloud Config
+Connector</a>, internal
+platform providers can also provision and manage provider-managed services using
+the same paradigms as internal resources.  Projects like Crossplane have even
+started <a href="https://marketplace.upbound.io/providers">a marketplace</a> of such
+providers.</p>
 
 <h2 id="what-does-that-mean-to-you">What does that mean <em>to you</em>?</h2>
 
-<p>The previous section shows the robust collection of pieces and building blocks
-available today for building a platform orchestrator on Kubernetes. Indeed some
-intrepid organizations are already building platforms and orchestrators from
-this hodgepodge of pieces - installing each controller in its own way while
-evaluating and gradually establishing common standards and patterns. These
+<p>The previous section describes the robust collection of pieces and building
+blocks available today for building a platform orchestrator on Kubernetes.
+Indeed some intrepid organizations are already building platforms and
+orchestrators from this hodgepodge of pieces - installing each controller in its
+own way while gradually establishing common standards and patterns. These
 systems often use and are even sometimes equated with Kubernetes-native delivery
 systems like GitOps via ArgoCD or Flux.</p>
 
 <p>But the truth is another component is needed to consistently coordinate the
 collection of controllers in Kubernetes that make it a complete platform; and
-several frameworks are emerging and maturing to enable this. Find them described
-in the above graphic as part of Kubernetes’ “extended” control plane. The first
-and perhaps still most popular controller manager is Red Hat’s <a href="https://operatorframework.io/">Operator
+several frameworks are emerging and maturing to enable this - find them in the
+above graphic as part of Kubernetes’ “extended” control plane. The first and
+perhaps still most popular controller manager is Red Hat’s <a href="https://operatorframework.io/">Operator
 Framework</a>, which provides not only tools to
 curate and create new controllers but also a “contoller of controllers” known as
 <a href="https://olm.operatorframework.io/">Operator Lifecycle Manager</a> to package and
@@ -134,11 +135,10 @@ deploy controllers into clusters and keep them up to date.</p>
 
 <p>Another popular controller manager framework is Upbound’s
 <a href="https://crossplane.io/">Crossplane</a>. Crossplane includes a system for managing
-extension controllers - known in Crossplane as providers, as well as a
-higher-level type composition system (known as “composite resource definitions”
-or XRDs) to work with new resources from those providers.</p>
-
-<p>Other frameworks for managing a collection of Kubernetes controllers are
+extension controllers - known in Crossplane as providers - as well as a
+higher-level type composition system known as “composite resource definitions”
+or XRDs to work with new resource types from those providers. Other frameworks
+for managing a collection of Kubernetes controllers are
 <a href="https://kudo.dev/">KUDO</a>, <a href="https://kubevela.io/">KubeVela</a> and
 <a href="https://kratix.io/">Kratix</a>. Notably, each of these frameworks also offers a
 catalog of compatible extensions, many of which are also listed in CNCF’s
@@ -176,12 +176,13 @@ can be found via the following table.</p>
   </tbody>
 </table>
 
-<p>The point of this section is to emphasize that if you use Kubernetes as an
-orchestrator you should strongly consider choosing a framework to help build and
-manage all those Kubernetes extensions and controllers consistently. Some
-forward-thinking organizations may have started building such a framework
-themselves to gather standards for deploying Helm charts, scripting CLI tools
-and implementing other practices for deploying and managing controllers.  I
+<p>The point of this section is to emphasize that if you already do or plan to use
+Kubernetes as an orchestrator you should strongly consider choosing a framework
+to help build and manage all those Kubernetes extensions and controllers
+consistently. Some forward-thinking organizations may have started building such
+a framework themselves, gathering standards and template code for deploying Helm
+charts, scripting CLI tools and implementing other practices for deploying and
+managing controllers. Whether you’ve built something yourself or not, I
 recommend evaluating, adopting and contributing to one of the open source
 frameworks mentioned above.</p>
 
