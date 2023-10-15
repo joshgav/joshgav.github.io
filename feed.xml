@@ -1,4 +1,195 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-15T17:19:03+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Kubecon Amsterdam Learnings</title><link href="https://blog.joshgav.com//posts/kubecon-amsterdam" rel="alternate" type="text/html" title="Kubecon Amsterdam Learnings" /><published>2023-05-08T07:00:00+00:00</published><updated>2023-05-08T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/kubecon-amsterdam</id><content type="html" xml:base="https://blog.joshgav.com//posts/kubecon-amsterdam"><![CDATA[<p><img width="600" alt="Amsterdam" src="../assets/amsterdam.jpg" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-15T17:22:53+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="Orchestrated" src="../assets/orchestrated.jpg" /></p>
+
+<p>Sometimes an idea seems so obvious that it need not be stated, but then one
+realizes that what’s obvious to someone deep in a domain is not so obvious to
+others not as deep and therefore still deserves to be stated explicitly. One
+such idea is that the Kubernetes API and its ever-growing ecosystem of
+extensions and extensibility frameworks is an ideal open, hybrid orchestrator
+for today’s emerging internal enterprise developer platforms. In this post I’ll
+explain why that is and what it means to adopt Kubernetes as orchestrator.</p>
+
+<p>To set the stage, our industry is currently intrigued by the value of internal
+cloud-like platforms that provision and manage high-level capabilities for
+products and applications on demand. The term “orchestrator” is often used to
+describe the central “brain” of these platforms; such an <em>orchestrator</em> is a set
+of controllers that calculate and execute workflows on demand to manage
+high-level capabilities and components for applications and maintain those
+capabilities in their expected, desired state.</p>
+
+<p>Let’s reflect further on orchestrators. In fact the term has been used for a
+while to describe resource managers like Azure Resource Manager (ARM), AWS Cloud
+Formation, and Hashicorp Terraform; as well as Linux container managers like
+Apache Mesos, Docker Swarm and even our beloved Kubernetes. What is common to
+all these? The aspect they share is that they receive workload descriptions
+and capability requests centrally then coordinate and route those requests to be
+fulfilled by many other resource and service providers.</p>
+
+<p>For example, submit a collection of resources to Azure’s Resource Manager and it
+in turn will call a Storage resource provider (RP), a Database RP, and many
+other Azure and third-party RPs to complete your request. Submit a collection of
+resources to Hashicorp’s Terraform Cloud and it uses some of its many providers
+to provision those resources. Or last but not least, submit a bunch of
+Kubernetes resources to a Kubernetes API server and it will delegate them to its
+many built-in and custom controllers to manage.</p>
+
+<h2 id="kuberenetes-is-an-orchestrator">Kuberenetes is an orchestrator</h2>
+
+<p>As I’ve mentioned in <a href="https://blog.joshgav.com/posts/kubernetes-isnt-about-containers">other
+posts</a>,
+Kubernetes emerged as a way to coordinate and run containers across many Linux
+machines; but the real value of Kubernetes is that it’s a de facto open, hybrid
+standard framework for software-defined infrastructure APIs - that is,
+Kubernetes provides a framework for offering automated cloud infrastructure
+management. Because Kubernetes offers this we can and should use it as a
+framework for building platform orchestrators.</p>
+
+<p>That’s the central idea here so let me repeat it: <strong>we can and should use the
+Kubernetes API as a framework for building platform orchestrators.</strong></p>
+
+<p>Why? First, Kubernetes is a de facto standard. Perhaps it took us a while to get
+comfortable with it but at this point Kubernetes is familiar to most experienced
+industry practitioners and tools and practices like kubectl and GitOps are
+broadly used. Second, Kubernetes is an open standard - its source is licensed
+openly and managed by a foundation, new specs are developed openly with input
+from many companies and individuals, and managed implementations that conform to
+those specs and standards are available from many providers. So building on
+Kubernetes is a reliable investment.</p>
+
+<p>Third, a vast array of open source projects are embracing the pattern of
+orchestrating their own individual capabilities and services via Kubernetes
+controllers. Almost all CNCF projects are installed by deploying controllers and
+operators in Kubernetes clusters invoking those controllers’ APIs via Custom
+Resource Definitions (“CRDs”). So it’s natural for companies seeking to build on
+open cloud-native projects to build their internal platforms as a thin layer
+over these upstream implementations.</p>
+
+<p>Last, and far from least, a number of frameworks are now available that make
+building an orchestrator (aka a “control plane” or “internal platform”) on
+Kubernetes straightforward. Platform engineers don’t have to rewrite or even
+recompile Kubernetes to extend it, they simply need to learn and leverage
+Operator Framework, Crossplane, KUDO, Kratix or tomorrow’s newest controller
+management framework.</p>
+
+<p>Generally, the ubiquity and openness of Kubernetes and its ecosystem are key
+reasons it should be your first choice as a platform orchestrators.</p>
+
+<h2 id="what-does-that-mean">What does that mean?</h2>
+
+<p>So what does it look like to use Kubernetes as your platform orchestrator? Let’s
+start with the following graphic:</p>
+
+<p><img width="600" alt="Kubernetes-based Platform" src="../assets/k8s-plat.png" /></p>
+
+<p>First, let’s again define a platform orchestrator: it’s a system invoked on
+demand to execute workflows to provision and/or maintain platform capabilities
+and software-defined infrastructure. Kubernetes acts like an orchestrator and
+runs such workflows when invoked by resource descriptions submitted to its API
+server: once admitted, Kubernetes controllers discover resource types under
+their management and execute tasks to bring those resources to their declared
+desired state.</p>
+
+<p>For example, if a <code class="language-plaintext highlighter-rouge">Deployment</code> resource is submitted to Kubernetes, a Deployment
+controller ensures one pod template per desired replica is rendered and
+instantiated in the cluster. If an <code class="language-plaintext highlighter-rouge">Ingress</code> resource is submitted, a network
+controller ensures routing tables in nodes and cloud services are configured to
+route traffic as desired.</p>
+
+<p>But as we mentioned above, Kubernetes can handle much more than its built-in
+resources like Pods, Ingresses and Volumes. Today’s broad collection of CNCF
+projects offer themselves primarily as extension controllers to Kubernetes too.
+Want an Apache Spark cluster? There’s a controller and resource for that. Want a
+certificate management system? Try cert-manager. Looking for Kafka
+infrastructure? Try Strimzi. Need a directory and OpenIDConnect? Choose from Dex
+or Keycloak.</p>
+
+<p>And Kubernetes usefulness as a general orchestrator and control plane doesn’t
+stop with cluster-internal resource types. Using the likes of <a href="https://aws-controllers-k8s.github.io/community/">AWS Controllers
+for Kubernetes</a>, <a href="https://azure.github.io/azure-service-operator/">Azure
+Service Operator</a>, and <a href="https://cloud.google.com/config-connector/docs/overview">Google
+Cloud Config Connector</a>
+internal platform providers can provision and manage provider-managed services
+outside of their clusters using the same paradigms as internal resources.
+Projects like Crossplane have even started <a href="https://marketplace.upbound.io/providers">a
+marketplace</a> of such providers.</p>
+
+<h2 id="what-does-that-mean-to-you">What does that mean <em>to you</em>?</h2>
+
+<p>The previous section shows the robust collection of pieces and building blocks
+available today for building a platform orchestrator on Kubernetes. Indeed some
+intrepid organizations are already building platforms and orchestrators from
+this hodgepodge of pieces - installing each controller in its own way while
+evaluating and gradually establishing common standards and patterns. These
+systems often use and are even sometimes equated with Kubernetes-native delivery
+systems like GitOps via ArgoCD or Flux.</p>
+
+<p>But the truth is another component is needed to consistently coordinate the
+collection of controllers in Kubernetes that make it a complete platform; and
+several frameworks are emerging and maturing to enable this. Find them described
+in the above graphic as part of Kubernetes’ “extended” control plane. The first
+and perhaps still most popular controller manager is Red Hat’s <a href="https://operatorframework.io/">Operator
+Framework</a>, which provides not only tools to
+curate and create new controllers but also a “contoller of controllers” known as
+<a href="https://olm.operatorframework.io/">Operator Lifecycle Manager</a> to package and
+deploy controllers into clusters and keep them up to date.</p>
+
+<p>Another popular controller manager framework is Upbound’s
+<a href="https://crossplane.io/">Crossplane</a>. Crossplane includes a system for managing
+extension controllers - known in Crossplane as providers, as well as a
+higher-level type composition system (known as “composite resource definitions”
+or XRDs) to work with new resources from those providers.</p>
+
+<p>Other frameworks for managing a collection of Kubernetes controllers are
+<a href="https://kudo.dev/">KUDO</a>, <a href="https://kubevela.io/">KubeVela</a> and
+<a href="https://kratix.io/">Kratix</a>. Notably, each of these frameworks also offers a
+catalog of compatible extensions, many of which are also listed in CNCF’s
+syndicated <a href="https://artifacthub.io/">ArtifactHub</a>. Catalogs for each framework
+can be found via the following table.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Framework</th>
+      <th>Catalog</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://operatorframework.io/">Operator Framework</a></td>
+      <td><a href="https://operatorhub.io/">Operator Hub</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://www.crossplane.io/">Crossplane</a></td>
+      <td><a href="https://marketplace.upbound.io/">Upbound Marketplace</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://kratix.io/">Kratix</a></td>
+      <td><a href="https://kratix.io/marketplace">Kratix Marketpace</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://kudo.dev/">KUDO</a></td>
+      <td><a href="https://github.com/kudobuilder/operators/">KUDO Operators</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://kubevela.io/">KubeVela</a></td>
+      <td><a href="https://github.com/kubevela/catalog">KubeVela Catalog</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The point of this section is to emphasize that if you use Kubernetes as an
+orchestrator you should strongly consider choosing a framework to help build and
+manage all those Kubernetes extensions and controllers consistently. Some
+forward-thinking organizations may have started building such a framework
+themselves to gather standards for deploying Helm charts, scripting CLI tools
+and implementing other practices for deploying and managing controllers.  I
+recommend evaluating, adopting and contributing to one of the open source
+frameworks mentioned above.</p>
+
+<h2 id="now-what">Now what?</h2>
+
+<p>In conclusion, Kubernetes stands waiting as a de facto open, standard, hybrid
+orchestrator for your internal platforms. Choose a framework, choose some
+capabilities and start building your platform on Kubernetes today!</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="platforms" /><category term="operators" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Kubecon Amsterdam Learnings</title><link href="https://blog.joshgav.com//posts/kubecon-amsterdam" rel="alternate" type="text/html" title="Kubecon Amsterdam Learnings" /><published>2023-05-08T07:00:00+00:00</published><updated>2023-05-08T07:00:00+00:00</updated><id>https://blog.joshgav.com//posts/kubecon-amsterdam</id><content type="html" xml:base="https://blog.joshgav.com//posts/kubecon-amsterdam"><![CDATA[<p><img width="600" alt="Amsterdam" src="../assets/amsterdam.jpg" /></p>
 
 <p>Kubecon EU 2023 in Amsterdam was a great opportunity to discuss and learn more about emerging trends in cloud-native architecture and engineering. My group <a href="https://tag-app-delivery.cncf.io/">TAG App Delivery</a> maintained a booth in the project pavilion and ran <a href="https://tag-app-delivery.cncf.io/blog/tag-app-delivery-at-kubecon-eu-2023/">a lightning talk series</a> where we met and introduced many project maintainers enabling app delivery and development on Kubernetes and open cloud-native platforms.</p>
 
