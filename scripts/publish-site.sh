@@ -17,12 +17,12 @@ github_publish_branch=${GITHUB_PUBLISH_BRANCH:-publish}
 master_commit_hash=$(git log --format='%H' -1)
 master_commit_subject=$(git log --format='%s' -1)
 
-echo "discovered current master commit: ${master_commit_hash}"
+echo "INFO: discovered current master commit: ${master_commit_hash}"
 
 git config --global user.name "${repo_user}"
 git config --global user.email "${repo_user}@users.noreply.github.com"
 
-echo "----> get currently-deployed site"
+echo "INFO: getting currently-deployed site"
 git clone ${repo_url} --branch ${github_publish_branch} _site
 
 # compare last published hash to hash from master commit
@@ -30,22 +30,22 @@ pushd _site
 set +e
 git log -1 --oneline | grep -q "${master_commit_hash}"
 if [[ $? == 0 ]]; then
-    echo "latest commit already published"
+    echo "INFO: latest commit already published"
     exit 0
 else
-    echo "new commit to publish!"
+    echo "INFO: new commit to publish!"
 fi
 set -e
 popd
 
-echo "----> generate fresh version of static site"
+echo "INFO: generating fresh version of static site"
 export JEKYLL_ENV=production
 bundle install
 bundle exec jekyll build
 if [[ -e "CNAME" ]]; then cp "CNAME" "_site/CNAME"; fi
 
 pushd _site
-echo "----> push fresh version of static site"
+echo "INFO: pushing fresh version of static site"
 git add .
 git commit -m "source commit: ${master_commit_hash}" -m "original subject: ${master_commit_subject}"
 git push ${repo_url} ${github_publish_branch}

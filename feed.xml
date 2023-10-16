@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-16T02:57:37+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="Orchestrated" src="../assets/orchestrated.jpg" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-16T03:31:48+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="Orchestrated" src="../assets/orchestrated.jpg" /></p>
 
 <p>Sometimes an obvious idea still deserves to be stated explicitly. One such idea
 is that the Kubernetes API and its ever-growing ecosystem of extensions and
@@ -32,7 +32,7 @@ provision those resources. Or last but not least, submit a bunch of Kubernetes
 resources to a Kubernetes API server and it will delegate them to its many
 built-in and custom controllers to manage.</p>
 
-<h2 id="kuberenetes-is-an-orchestrator">Kuberenetes is an orchestrator</h2>
+<h2 id="kubernetes-is-an-orchestrator">Kubernetes is an orchestrator</h2>
 
 <p>As I’ve mentioned in <a href="https://blog.joshgav.com/posts/kubernetes-isnt-about-containers">other posts</a>,
 Kubernetes emerged as a way to coordinate and run containers across many Linux
@@ -95,14 +95,12 @@ controller ensures routing tables in nodes and cloud services are configured to
 route traffic as desired.</p>
 
 <p>But as we mentioned above, Kubernetes can handle much more than its built-in
-resources like Pods, Services and Volumes. For example, today’s broad collection of CNCF
-projects offer themselves primarily as extension controllers to Kubernetes too.
-Want a virtual machine instead of a container? There’s a controller</p>
-<ul>
-  <li>KubeVirt - and custom resource for that. Want a certificate management system?
-Try cert-manager. Looking for Kafka infrastructure? Try Strimzi. Need a
-directory and OpenIDConnect system? Choose from Dex or Keycloak.</li>
-</ul>
+resources like Pods, Services and Volumes. For example, today’s broad collection
+of CNCF projects offer themselves primarily as extension controllers to
+Kubernetes too.  Want a virtual machine instead of a container? There’s a
+controller - KubeVirt - and custom resource for that. Want a certificate
+management system?  Try cert-manager. Looking for Kafka infrastructure? Try
+Strimzi. Need a directory and OpenIDConnect system? Choose from Dex or Keycloak.</p>
 
 <p>And Kubernetes’ usefulness as a general orchestrator and control plane doesn’t
 stop with cluster-internal resource types. Using the likes of <a href="https://aws-controllers-k8s.github.io/community/">AWS Controllers
