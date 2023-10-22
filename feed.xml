@@ -1,4 +1,137 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-16T04:35:40+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-on-kubernetes"><![CDATA[<p><img width="600" alt="well-orchestrated" src="../assets/well-orchestrated.png" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2023-10-22T14:00:06+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Why Red Hat OpenShift on AWS - ROSA</title><link href="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws" rel="alternate" type="text/html" title="Why Red Hat OpenShift on AWS - ROSA" /><published>2023-10-22T11:00:00+00:00</published><updated>2023-10-22T11:00:00+00:00</updated><id>https://blog.joshgav.com//posts/why-openshift-rosa-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws"><![CDATA[<p><img style="float:right;margin:15px" width="200" alt="ROSA logo" src="../assets/rosa/rosa-logo.png" /></p>
+
+<h1 id="why-red-hat-openshift-on-aws---rosa">Why Red Hat OpenShift on AWS - ROSA</h1>
+
+<p>For my daily research and development I primarily use the managed OpenShift
+service on AWS known as <a href="https://aws.amazon.com/rosa/">ROSA</a>. It provides a
+ready-to-use Kubernetes cluster in under an hour pre-configured with network
+providers - CNI, storage providers - CSI, identity and access management (IAM),
+an administrator and a developer portal and much more.</p>
+
+<p>A bunch of recent and existing additions make ROSA more compelling than ever and
+I want to share them here.</p>
+
+<h2 id="1-hosted-control-planes">1. Hosted Control Planes</h2>
+
+<p><img style="float:left;margin:15px" width="100" alt="Kubernetes Control Plane logo" src="../assets/rosa/control-plane-icon.png" /></p>
+
+<p>One of ROSA’s top value propositions is that it relieves users of the burden of
+installing, upgrading and managing cluster control planes.</p>
+
+<p>Every Kubernetes cluster has three control plane nodes with hundreds of
+components that orchestrate cluster operations. The control plane is overhead most users
+prefer not to manage, and Red Hat OpenShift on AWS (ROSA) has always relieved
+administrators of this burden. Starting shortly, control plane node instances
+for ROSA clusters will be even further managed by Red Hat - the nodes won’t even
+show in the user’s account! Known as “Hosted Control Planes”, this update shifts
+the control plane entirely into Red Hat’s domain. With this change ROSA competes
+better with AWS’ own Elastic Kubernetes Service while still offering all of
+OpenShift’s additional benefits.</p>
+
+<p>See <a href="https://docs.aws.amazon.com/ROSA/latest/userguide/rosa-deployment-options.html">this AWS doc</a>
+for more on hosted control planes.</p>
+
+<h2 id="2-aws-controllers-for-kubernetes">2. AWS Controllers for Kubernetes</h2>
+
+<p><img style="float:right;margin:15px" width="100" alt="AWS Controllers for Kubernetes (ACK) logo" src="../assets/rosa/ack-logo.png" /></p>
+
+<p>With ROSA it’s natural to add <a href="https://aws-controllers-k8s.github.io/community/docs/community/overview/">AWS Controller for Kubernetes
+(ACK)</a>
+and enable platform users to manage AWS-native resources in the same way as they
+manage other platform capabilities.</p>
+
+<p>ACK has been available via OpenShift’s Operator Hub for some time. Its
+controllers make it easy to manage native AWS resources via the same control
+plane (aka
+<a href="https://blog.joshgav.com/posts/orchestrate-platforms-on-kubernetes">orchestrator</a>)
+alongside Kubernetes’ built-in and custom resource types. See <a href="https://docs.openshift.com/rosa/cloud_experts_tutorials/cloud-experts-using-aws-ack.html">this
+tutorial</a>
+to get started. Crossplane is another popular way to achieve this, check out
+this old but still applicable <a href="https://blog.crossplane.io/crossplane-openshift-operator-cloud-native-services/">post on Crossplane on
+OpenShift</a>.</p>
+
+<h2 id="3-virtual-machine-management">3. Virtual Machine Management</h2>
+
+<p><img style="float:left;margin:15px" width="100" alt="Kubevirt logo" src="../assets/rosa/kubevirt-icon-color.png" /></p>
+
+<p>With Virtualization in ROSA you can specify and run VirtualMachineInstances in
+the exact same way as Pods.</p>
+
+<p>A capability recently added to ROSA is the ability to run virtual machines (VMs)
+via <a href="https://kubevirt.io/">KubeVirt</a> on EC2 instances that include Kernel
+Virtual Machine (KVM). KubeVirt recently <a href="https://kubevirt.io/2023/KubeVirt-v1-has-landed.html">reached
+v1.0</a> and Red Hat
+OpenShift is one of few Kubernetes distros that already <a href="https://docs.openshift.com/container-platform/4.13/virt/about-virt.html">fully supports
+it</a>.
+While it may seem like this capability is well-covered by EC2 in AWS, the
+benefit of Kubevirt is in using a common set of platform interfaces for
+both containers and VMs. For example, Kubevirt uses Container Network
+Interface (CNI), Container Storage Interface (CSI) and soon <a href="https://github.com/cncf-tags/container-device-interface">Container Device
+Interface (CDI)</a> the
+same way as containers do.</p>
+
+<h2 id="4-operator-hub">4. Operator Hub</h2>
+
+<p><img style="float:right;margin:15px" width="100" alt="Operator Framework logo" src="../assets/rosa/operatorframework-icon-color.png" /></p>
+
+<p>Operator Hub makes it easy to build an application or developer platform on
+Kubernetes.</p>
+
+<p>In fact available in any OpenShift cluster, Operator Hub leverages <a href="https://olm.operatorframework.io/">Operator
+Lifecycle Manager</a> to advertise and quickly
+install new Kubernetes extensions, capabilities and services in a cluster, such
+as OpenShift GitOps (ArgoCD), Service Mesh (Istio) and Pipelines (Tekton). Over
+100 Red Hat-maintained operators can be installed as soon as the cluster is
+ready, as well as nearly 200 partner-certified offerings such as PostgresQL
+clusters and observability systems. With Operator Hub OpenShift becomes a
+platform for building your own platform - choose the capabilities you require,
+try implementations from Red Hat and partners, and finally choose and productionalize
+the best implementation and experience for your internal platform.</p>
+
+<p>Relatedly, don’t miss <a href="https://blog.joshgav.com/posts/orchestrate-platforms-on-kubernetes">my
+post</a> on why
+Kubernetes should be the control plane of your application platform!</p>
+
+<h2 id="5-developer-hub">5. Developer Hub</h2>
+
+<p><img style="float:left;margin:20px" width="100" alt="Backstage logo" src="../assets/rosa/backstage-icon-color.png" /></p>
+
+<p>Developer Hub makes it easy for platform users to observe and understand the
+products, components and capabilities they work with daily.</p>
+
+<p>Also available for other OpenShift clusters, <a href="https://developers.redhat.com/products/developer-hub/overview">Developer
+Hub</a> offers a
+single landing spot for developers to check on elements of the platform relevant
+to their daily work. Based on CNCF’s Backstage and its software catalog,
+Developer Hub provides an application- and component-centric view, bringing
+together in one pane of glass relevant source code repos, issue trackers,
+pipeline runners, observability dashboards and more.</p>
+
+<h2 id="a-couple-more">A couple more</h2>
+
+<p>Another reason I appreciate ROSA is that it provides the same experience as I
+get with OpenShift in <a href="https://azure.microsoft.com/en-us/products/openshift">Azure Red Hat OpenShift
+(ARO)</a> and <a href="https://www.redhat.com/technologies/cloud-computing/openshift/try-it">on
+premises</a>
+too. After a bit of unique provisioning for each infrastructure type, I interact
+in the same way with ROSA, ARO or bare metal clusters in my office closet!</p>
+
+<p>Last but not least, I always appreciate that by using ROSA I’m automatically
+using the battle-hardened Red Hat Enterprise Linux kernel via <a href="https://docs.openshift.com/container-platform/4.13/architecture/architecture-rhcos.html">Red Hat
+CoreOS</a>
+to run all my systems - <a href="https://www.redhat.com/en/blog/containers-are-linux">Kubernetes is containers is
+Linux</a> after all.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Ready to try ROSA and experience these great features yourself? Here are a few resources to get you started.</p>
+
+<ul>
+  <li>Quickstart: <a href="https://docs.openshift.com/rosa/rosa_hcp/rosa-hcp-sts-creating-a-cluster-quickly.html">https://docs.openshift.com/rosa/rosa_hcp/rosa-hcp-sts-creating-a-cluster-quickly.html</a></li>
+  <li>Tutorial: <a href="https://cloud.redhat.com/learn/getting-started-red-hat-openshift-service-aws-rosa">https://cloud.redhat.com/learn/getting-started-red-hat-openshift-service-aws-rosa</a></li>
+  <li>Josh’s scripts and CLI walkthroughs: <a href="https://github.com/joshgav/platform/tree/main/clusters/openshift/aws/rosa">https://github.com/joshgav/platform/tree/main/clusters/openshift/aws/rosa</a></li>
+  <li>Other ways to run OpenShift on AWS: <a href="https://blog.joshgav.com/posts/openshift-on-aws">https://blog.joshgav.com/posts/openshift-on-aws</a></li>
+</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="openshift" /><category term="platforms" /><category term="aws" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Orchestrate platforms with Kubernetes</title><link href="https://blog.joshgav.com//posts/orchestrate-platforms-with-kubernetes" rel="alternate" type="text/html" title="Orchestrate platforms with Kubernetes" /><published>2023-10-14T22:00:00+00:00</published><updated>2023-10-14T22:00:00+00:00</updated><id>https://blog.joshgav.com//posts/orchestrate-platforms-with-kubernetes</id><content type="html" xml:base="https://blog.joshgav.com//posts/orchestrate-platforms-with-kubernetes"><![CDATA[<p><img width="600" alt="well-orchestrated" src="../assets/well-orchestrated.png" /></p>
 
 <p>Sometimes an obvious idea still deserves to be stated explicitly. One such idea
 is that the Kubernetes API and its ever-growing ecosystem of extensions and
@@ -1196,12 +1329,4 @@ repo</a> or on
   <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
   <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
   <li><code class="language-plaintext highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
-</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry><entry><title type="html">Introducing Partly Cloudy</title><link href="https://blog.joshgav.com//posts/welcome-to-partly-cloudy" rel="alternate" type="text/html" title="Introducing Partly Cloudy" /><published>2020-04-17T16:21:49+00:00</published><updated>2020-04-17T16:21:49+00:00</updated><id>https://blog.joshgav.com//posts/welcome-to-partly-cloudy</id><content type="html" xml:base="https://blog.joshgav.com//posts/welcome-to-partly-cloudy"><![CDATA[<p>So called because I’ll be writing posts about cloud-native patterns, practices and tools.</p>
-
-<p>I chose to start by maintaining the site with <a href="https://jekyllrb.com/">Jekyll</a>, though I almost reconsidered upon discovering that the latest version of Jekyll <a href="https://github.com/github/pages-gem/issues/651">isn’t fully supported</a> for automatically-built GitHub Pages sites. That led me to write <a href="https://github.com/joshgav/joshgav.github.io/blob/master/.github/workflows/publish-site.yaml">a GitHub Action to build and publish the site</a>, inspired by <a href="https://sujaykundu.com/blog/post/deploy-jekyll-using-github-pages-and-github-actions">this post</a>. Feeling confident with that in hand, I pushed the first version and was pleasantly surprised to find the GitHub Pages <em>did</em> automatically build the site. Good thing too cause my custom Action originally pushed the built site to the <code class="language-plaintext highlighter-rouge">gh-pages</code> branch, which wouldn’t work for a user’s top-level user site - <code class="language-plaintext highlighter-rouge">joshgav.github.io</code> in my case.</p>
-
-<p>I wasn’t happy with the unpolished feel of the default <code class="language-plaintext highlighter-rouge">minima</code> theme, so I reviewed some others at <a href="https://jekyllthemes.io/">jekyllthemes.io</a>. That site offers Jekyll themes for $$ too; I’m not sure of its business model. In any case it helped me find a simple theme named “<a href="https://github.com/huangyz0918/moving">moving</a>” which I liked. I installed it by editing my config files, testing locally, and pushing the changes to GitHub. But… my site didn’t render and I received an email notification that GitHub Pages only works with <a href="https://pages.github.com/themes/">this subset of Jekyll themes</a>. Great, an opportunity to tweak and use the Action action!</p>
-
-<p>So to use my chosen theme I went back and tweaked my action to listen for pushes to the <code class="language-plaintext highlighter-rouge">source</code> branch and push changes to the <code class="language-plaintext highlighter-rouge">master</code> branch, as required for the “top-level” GitHub Page. It seems to be working now.</p>
-
-<p>Oh, if you’re wondering I chose Jekyll cause it’s an “elder statesman” of static site generation by now and has a community of users and plugin developers. That it’s the official SSG for GitHub Pages also lent it favor.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="info" /><category term="blog" /><summary type="html"><![CDATA[So called because I’ll be writing posts about cloud-native patterns, practices and tools.]]></summary></entry></feed>
+</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry></feed>
