@@ -3,7 +3,7 @@ layout: post
 title: Orchestrate platforms with Kubernetes
 date: 2023-10-14 17:00:00 -0500
 tags: kubernetes platforms operators
-slug: orchestrate-platforms-on-kubernetes
+slug: orchestrate-platforms-with-kubernetes
 ---
 
 <img width=600 alt="well-orchestrated" src="../assets/well-orchestrated.png" />
