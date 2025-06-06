@@ -8,7 +8,7 @@ permalink: /about
 
 {% avatar joshgav %}
 
-- [Resume](https://docs.google.com/document/d/1zxzBNjXjF6G7ycI5s22kzwbJtMuVjpafYvAEu2N1U9g/)
+- [Resume](https://docs.google.com/document/d/19zrVG2CVugp_HxSQJdZY7O98h-sirM7dsSIxavfDzxQ/)
 - [LinkedIn](https://www.linkedin.com/in/joshgav/)
 - [GitHub](https://github.com/joshgav)
 - [Twitter](https://twitter.com/joshugav)
