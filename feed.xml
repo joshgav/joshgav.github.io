@@ -1,59 +1,79 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2026-07-28T20:25:55+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Manage a fleet with OpenShift Advanced Cluster Management</title><link href="https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm" rel="alternate" type="text/html" title="Manage a fleet with OpenShift Advanced Cluster Management" /><published>2026-07-24T05:00:00+00:00</published><updated>2026-07-24T05:00:00+00:00</updated><id>https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm</id><content type="html" xml:base="https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm"><![CDATA[<blockquote>
-  <p>Herein I will describe how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to manage a fleet of clusters and distribute work to them.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2026-07-28T23:28:01+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">How it works - Open Cluster Management and ACM</title><link href="https://blog.joshgav.com//posts/how-it-works-ocm-acm" rel="alternate" type="text/html" title="How it works - Open Cluster Management and ACM" /><published>2026-07-24T05:00:00+00:00</published><updated>2026-07-24T05:00:00+00:00</updated><id>https://blog.joshgav.com//posts/how-it-works-ocm-acm</id><content type="html" xml:base="https://blog.joshgav.com//posts/how-it-works-ocm-acm"><![CDATA[<blockquote>
+  <p>Describes how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to distribute work as Kubernetes resources across a fleet of clusters.</p>
 </blockquote>
 
 <p><img width="400" style="float:right;" alt="tire-hub-and-spoke" src="../assets/tire-hub-spokes.png" /></p>
 
-<p>When managing a fleet of Kubernetes clusters it eventually becomes desirable to manage them as a unit and apply configuration and packages once to all and/or subsets of clusters. Activities and configurations often managed at fleet level include the following:</p>
+<p>When managing a fleet of Kubernetes clusters it eventually becomes desirable to manage them as a unit and apply configuration and packages once to all and/or subsets of clusters. Activities that may be orchestrated across a fleet of clusters include:</p>
 
 <ul>
-  <li>Work scheduling: deploy and monitor workloads and resources on any cluster</li>
-  <li>Policy enforcement: apply and monitor platform and runtime policies for any cluster</li>
-  <li>Identity and access management: use consistent authentication and authorization rules in all clusters</li>
-  <li>Command and control: inventory and observe resources in all clusters</li>
-  <li>Cluster lifecycle: provision new clusters and update existing ones</li>
+  <li><strong>Work scheduling</strong>: deploy and monitor workloads and resources</li>
+  <li><strong>Policy enforcement</strong>: apply and monitor platform and runtime policies</li>
+  <li><strong>Access management</strong>: apply consistent authentication and authorization rules</li>
+  <li><strong>Command and control</strong>: inventory and observe all resources</li>
+  <li><strong>Cluster lifecycle</strong>: provision, modify and manage clusters</li>
 </ul>
 
-<p>Commonly, a <em>hub-and-spoke</em> topology is implemented to provide this fleet management.
-Work, policy, identity and other configuration are defined in the hub cluster and somehow automatically distributed to selected spokes.</p>
+<p>Commonly, a <em>hub-and-spoke</em> topology is implemented to provide this fleet management. Work, policy, identity and other configuration are defined in the hub cluster and automatically distributed to selected spokes.</p>
 
-<h2 id="ocm">OCM</h2>
+<h2 id="open-cluster-management-ocm">Open Cluster Management (OCM)</h2>
 
-<p>Open Cluster Management (OCM) is a framework for creating such a hub-and-spoke topology and distributing work. The hub cluster runs <em>cluster-manager</em> to register and monitor spoke clusters. Each spoke cluster runs an agent named <em>klusterlet</em> which registers with cluster-manager and pulls <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/"><em>ManifestWork</em></a> resources from a namespace dedicated to it in the hub.</p>
+<p>Open Cluster Management (OCM) is a framework for creating such a hub-and-spoke topology and distributing work. The hub cluster runs <em>ClusterManager</em> to register and monitor spoke clusters. Each spoke cluster runs an agent named <em>Klusterlet</em> which registers with cluster-manager and pulls <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/"><em>ManifestWork</em></a> resources from a namespace dedicated to it in the hub.</p>
 
-<p>Note: A hub-and-spoke topology can be implemented with controllers in the hub actively managing spoke clusters, also known as a “push” model; or with controllers in the spoke clusters <em>pulling</em> and applying configuration from the hub, also known as a “pull” model. The “pull” model generally scales better by distributing some load to each spoke, and OCM emphasizes the pull model for scalability.</p>
-
-<p>The flow at the core of OCM is: Kubernetes resources are wrapped in a <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/">ManifestWork</a> resource and the ManifestWork is placed in a namespace dedicated to a spoke cluster. The klusterlet in the spoke cluster calls the hub’s API server to retrieve this ManifestWork and applies it to itself as AppliedManifestWork.</p>
-
-<p>ManifestWork is an implementation of SIG-Multicluster’s <a href="https://multicluster.sigs.k8s.io/concepts/work-api/">Work API</a>. In a way it’s like a basic “GitOps” workflow - declare the resource and have it reconciled in the spoke cluster automatically.</p>
-
-<p>One way of using OCM is to craft ManifestWorks and place them in selected namespaces as described <a href="https://open-cluster-management.io/docs/scenarios/deploy-kubernetes-resources/">here</a>. <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestworkreplicaset/">ManifestWorkReplicaSet</a> is a feature in development to make such distribution easier.</p>
-
-<p>Some commands for inspection:</p>
+<p>For inspection:</p>
 
 <ul>
-  <li>See all ManifestWorks published for a spoke cluster: <code class="language-plaintext highlighter-rouge">clusteradm get works --cluster &lt;cluster-name&gt;</code> or <code class="language-plaintext highlighter-rouge">oc get manifestworks.work.open-cluster-management.io -n &lt;cluster-name&gt;</code>.</li>
-  <li>Find works that have been applied in a spoke cluster with <code class="language-plaintext highlighter-rouge">oc get appliedmanifestworks</code>.</li>
-  <li>View logs showing the klusterlet pulling its work with <code class="language-plaintext highlighter-rouge">oc logs -n open-cluster-management-agent deployments/klusterlet-agent</code>.</li>
+  <li>Explore the ClusterManager resource on the hub cluster: <code class="language-plaintext highlighter-rouge">oc get clustermanagers cluster-manager</code> and <code class="language-plaintext highlighter-rouge">clusteradm get hub-info</code>.</li>
+  <li>Explore the Klusterlet resource on a spoke cluster: <code class="language-plaintext highlighter-rouge">oc get klusterlet klusterlet</code> and <code class="language-plaintext highlighter-rouge">clusteradm get klusterlet-info</code></li>
+  <li>In OpenShift find the pods running ClusterManager in namespace ‘multicluster-engine’: <code class="language-plaintext highlighter-rouge">oc get pods -l app=cluster-manager -n multicluster-engine</code></li>
+  <li>In OpenShift find the pods running Klusterlet in namespace ‘open-cluster-management-agent’: <code class="language-plaintext highlighter-rouge">oc get pods -l app=klusterlet -n open-cluster-management-agent</code></li>
+</ul>
+
+<p>Note, a hub-and-spoke topology can be implemented with controllers in the hub actively applying resources to spoke clusters via their API servers, also known as a “push” model; or with controllers in the spoke clusters <em>pulling</em> work to itself and applying from within the spoke cluster, also known as a “pull” model. The “pull” model generally scales better by distributing some load to each spoke, and OCM emphasizes the pull model for scalability.</p>
+
+<p>To review, the flow at the core of OCM is: Kubernetes resources are wrapped in a <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/">ManifestWork</a> resource and the ManifestWork is placed in a namespace dedicated to a spoke cluster. The klusterlet in the spoke cluster calls the hub’s API server to retrieve this ManifestWork and applies it to itself as AppliedManifestWork.</p>
+
+<p>ManifestWork is an implementation of SIG-Multicluster’s <a href="https://multicluster.sigs.k8s.io/concepts/work-api/">Work API</a>. It is similar to a “GitOps” workflow - declare the resource in the right way and it is reconciled in the spoke cluster automatically.</p>
+
+<p>And indeed, one way of using OCM is to craft ManifestWorks and place them in selected namespaces as described <a href="https://open-cluster-management.io/docs/scenarios/deploy-kubernetes-resources/">here</a>. In fact, <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestworkreplicaset/">ManifestWorkReplicaSet</a> is a feature in development to make such distribution easier.</p>
+
+<p>Some commands for inspecting ManifestWorks:</p>
+
+<ul>
+  <li>View all ManifestWorks published for a spoke cluster: <code class="language-plaintext highlighter-rouge">clusteradm get works --cluster &lt;cluster-name&gt;</code> or <code class="language-plaintext highlighter-rouge">oc get manifestworks -n &lt;cluster-name&gt;</code></li>
+  <li>View works that have been applied in a spoke cluster with <code class="language-plaintext highlighter-rouge">oc get appliedmanifestworks</code></li>
+  <li>View logs showing the klusterlet pulling its work with <code class="language-plaintext highlighter-rouge">oc logs -n open-cluster-management-agent -l app=klusterlet-agent</code>.</li>
 </ul>
 
 <h2 id="multicluster-engine-mce-and-advanced-cluster-management-acm">MultiCluster Engine (MCE) and Advanced Cluster Management (ACM)</h2>
 
-<p>In OpenShift, OCM is installed by the MultiClusterEngine (MCE) operator and custom resource as implemented in <a href="https://github.com/stolostron/backplane-operator">stolostron/backplane-operator</a>. MCE installs OCM, several OCM AddOns used in cluster-lifecycle, and cluster-lifecycle operators such as Hive, cluster-api-installer, and HyperShift - find the full list <a href="https://github.com/stolostron/backplane-operator/blob/main/docs/available-components.md">here</a>.</p>
+<p>In OpenShift, OCM is installed by the MultiClusterEngine (MCE) operator and custom resource as implemented in <a href="https://github.com/stolostron/backplane-operator">stolostron/backplane-operator</a>. MCE installs OCM’s ClusterManager, several OCM AddOns used in cluster lifecycle, and cluster-lifecycle-related operators such as Hive, cluster-api-installer, and HyperShift - find the full list <a href="https://github.com/stolostron/backplane-operator/blob/main/docs/available-components.md">here</a>.</p>
 
-<p>MultiClusterEngine is often installed as a component of <strong>Advanced Cluster Management</strong>, which provides many more OCM addons. ACM is installed by the MultiClusterHub operator and custom resource as implemented in <a href="https://github.com/stolostron/multiclusterhub-operator">stolostron/multiclusterhub-operator</a>. It includes all of MCE plus AddOns for workload scheduling with ArgoCD, policy application with Gatekeeper, multicluster observability with Grafana, cross-cluster resource search, cross-cluster networking with Submariner, and hub disaster recovery with Velero/OADP. The full list is <a href="https://github.com/stolostron/multiclusterhub-operator">here</a>.</p>
+<p>MultiClusterEngine is often installed as a component of <strong>Advanced Cluster Management</strong>, which provides many more OCM addons. ACM is installed by the MultiClusterHub (MCH) operator and custom resource as implemented in <a href="https://github.com/stolostron/multiclusterhub-operator">stolostron/multiclusterhub-operator</a>. It includes all of MCE plus AddOns for workload scheduling with ArgoCD, policy application with its own framework, multicluster observability with spoke-side collectors, cross-cluster resource indexing and search, cross-cluster networking with Submariner, and hub disaster recovery with Velero/OADP. The full list is <a href="https://github.com/stolostron/multiclusterhub-operator">here</a>.</p>
 
-<p>The simplest way to manage the components installed by MCE and ACM is to edit the <code class="language-plaintext highlighter-rouge">MultiClusterEngine</code> and <code class="language-plaintext highlighter-rouge">MultiClusterHub</code> resources respectively.</p>
+<p>The simplest way to manage the components installed by MCE and ACM is to edit the <code class="language-plaintext highlighter-rouge">MultiClusterEngine</code> and <code class="language-plaintext highlighter-rouge">MultiClusterHub</code> resources respectively using <code class="language-plaintext highlighter-rouge">oc edit multiclusterengine multiclusterengine</code> and <code class="language-plaintext highlighter-rouge">oc edit multiclusterhub multiclusterhub</code>.</p>
 
-<h2 id="ocm-addons">OCM Addons</h2>
+<h2 id="ocm-addons">OCM AddOns</h2>
 
-<p>While it’s possible to work with ManifestWork directly, AddOns are a key feature of OCM that abstract ManifestWorks into higher-level CRDs managed by special controllers. AddOns are installed via independent Helm charts or using the MCE and MCH CRs mentioned above. To quickly see available and enabled AddOns run <code class="language-plaintext highlighter-rouge">clusteradm get addon --output table</code>.</p>
+<p>While it’s possible to work with ManifestWork directly, AddOns are a key feature of OCM that abstract ManifestWorks into higher-level CRDs managed by special controllers named “addon managers”. These controllers are installed via independent Helm charts or in OpenShift using the MCE and MCH CRs mentioned above and are registered and advertised by applying a <a href="https://open-cluster-management.io/docs/developer-guides/addon/#clustermanagementaddon">ClusterManagementAddOn</a> resource.</p>
 
-<p>AddOn managers are responsible for managing several component types. They deploy hub-side components like proxy ingress servers and GitOps controllers. They deploy spoke-side components like proxy clients and search indexers. And they watch for custom CRDs to dynamically reconcile into ManifestWorks to be put to spoke clusters.</p>
+<p>AddOn managers are responsible for managing several component types. They deploy <em>hub-side components</em> like proxy ingress servers and GitOps controllers. They deploy <em>spoke-side components</em> (named addon agents) like proxy clients and search indexers. And they watch for <em>custom CRDs</em> to dynamically reconcile into ManifestWorks to be put to spoke clusters.</p>
 
-<p>The <strong>Governance Policy Framework</strong> is an example of several AddOns that together publish controllers in both hub and spoke clusters and handle custom CRDs like <code class="language-plaintext highlighter-rouge">CertificatePolicy</code>, <code class="language-plaintext highlighter-rouge">ConfigurationPolicy</code> and <code class="language-plaintext highlighter-rouge">OperatorPolicy</code>.</p>
+<p>AddOns are activated for spokes by applying a <a href="https://open-cluster-management.io/docs/developer-guides/addon/#enable-the-add-on-for-a-managed-cluster">ManagedClusterAddOn</a> resource in their designated hub namespace. This triggers the controller to deploy an initial ManifestWork for the addon agent into the cluster’s designated namespace.</p>
 
-<p><strong>Cluster Proxy</strong> is another AddOn. It deploys a ManifestWork with a Deployment, Secrets and other resources to configure a Konnectivity client in the managed cluster. This communicates with a hub-side proxy server which it also configures. You can find the deployed resources yourself in a simple hub cluster with <code class="language-plaintext highlighter-rouge">oc get manifestwork -n local-cluster addon-cluster-proxy-deploy-0</code>. <code class="language-plaintext highlighter-rouge">cluster-proxy</code> also watches the high-level CRD <code class="language-plaintext highlighter-rouge">ManagedProxyConfiguration</code> and updates its deployments.</p>
+<p>For inspection</p>
+<ul>
+  <li>List available AddOns in your hub with <code class="language-plaintext highlighter-rouge">clusteradm get addon --output table</code> or <code class="language-plaintext highlighter-rouge">oc get clustermanagementaddons</code></li>
+  <li>AddOn managers typically run as deployments in <code class="language-plaintext highlighter-rouge">multicluster-engine</code> and <code class="language-plaintext highlighter-rouge">open-cluster-management</code> namespaces</li>
+  <li>List AddOns installed in spokes from the hub with <code class="language-plaintext highlighter-rouge">oc get managedclusteraddons -A</code></li>
+  <li>List ManifestWorks in the cluster with <code class="language-plaintext highlighter-rouge">oc get manifestwork -A</code></li>
+</ul>
+
+<h3 id="example-addons">Example AddOns</h3>
+
+<p>The <strong>Governance Policy Framework</strong> is an example of several AddOns that together publish controllers in both hub and spoke clusters and handle custom CRDs like <code class="language-plaintext highlighter-rouge">CertificatePolicy</code>, <code class="language-plaintext highlighter-rouge">ConfigurationPolicy</code> and <code class="language-plaintext highlighter-rouge">OperatorPolicy</code>. It is installed by default with ACM and is described further <a href="https://open-cluster-management.io/docs/getting-started/integration/policy-controllers/">here</a>.</p>
+
+<p><strong>Cluster Proxy</strong> is another typical AddOn described <a href="https://open-cluster-management.io/docs/getting-started/integration/cluster-proxy/">here</a>. It deploys and configures a hub-side proxy server and spoke-side proxy clients using <a href="https://github.com/kubernetes-sigs/apiserver-network-proxy">Konnectivity</a> and publishes and watches a <code class="language-plaintext highlighter-rouge">ManagedProxyConfiguration</code> CRD to configure these components.</p>
 
 <p>The following AddOns are available in a basic ACM cluster:</p>
 
@@ -91,7 +111,7 @@ Work, policy, identity and other configuration are defined in the hub cluster an
     </tr>
     <tr>
       <td>governance-standalone-hub-templating</td>
-      <td>?</td>
+      <td>templating engine used in hub (?)</td>
     </tr>
     <tr>
       <td>hypershift-addon</td>
@@ -107,7 +127,7 @@ Work, policy, identity and other configuration are defined in the hub cluster an
     </tr>
     <tr>
       <td>submariner</td>
-      <td>connect managed clusters into a flat network</td>
+      <td>connect managed clusters into a common network</td>
     </tr>
     <tr>
       <td>volsync</td>
@@ -122,7 +142,7 @@ Work, policy, identity and other configuration are defined in the hub cluster an
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>OCM is a valuable framework for distributing work across a fleet. It is pull-oriented for scalability, standards-compliant for compatibility, and extensible for flexibility and ease of use.</p>
+<p>OCM is a useful framework for distributing work across a fleet. It is pull-oriented for scalability, standards-compliant for compatibility, and extensible for flexibility and ease of use. It is OpenShift’s framework of choice for distributing work across a fleet of clusters.</p>
 
 <h2 id="resources">Resources</h2>
 
@@ -132,7 +152,7 @@ Work, policy, identity and other configuration are defined in the hub cluster an
   <li><a href="https://github.com/open-cluster-management-io">https://github.com/open-cluster-management-io</a></li>
   <li><a href="https://github.com/stolostron">https://github.com/stolostron</a></li>
   <li><a href="https://john-tucker.medium.com/open-cluster-management-ocm-by-example-77a920eac7dd">https://john-tucker.medium.com/open-cluster-management-ocm-by-example-77a920eac7dd</a></li>
-</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="openshift" /><category term="acm" /><category term="ocm" /><category term="gitops" /><summary type="html"><![CDATA[Herein I will describe how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to manage a fleet of clusters and distribute work to them.]]></summary></entry><entry><title type="html">Why Red Hat OpenShift on AWS - ROSA</title><link href="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws" rel="alternate" type="text/html" title="Why Red Hat OpenShift on AWS - ROSA" /><published>2023-10-22T11:00:00+00:00</published><updated>2023-10-22T11:00:00+00:00</updated><id>https://blog.joshgav.com//posts/why-openshift-rosa-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws"><![CDATA[<p><img style="float:right;margin:15px" width="200" alt="ROSA logo" src="../assets/rosa/rosa-logo.png" /></p>
+</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="openshift" /><category term="ACM" /><category term="OCM" /><category term="multicluster" /><summary type="html"><![CDATA[Describes how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to distribute work as Kubernetes resources across a fleet of clusters.]]></summary></entry><entry><title type="html">Why Red Hat OpenShift on AWS - ROSA</title><link href="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws" rel="alternate" type="text/html" title="Why Red Hat OpenShift on AWS - ROSA" /><published>2023-10-22T11:00:00+00:00</published><updated>2023-10-22T11:00:00+00:00</updated><id>https://blog.joshgav.com//posts/why-openshift-rosa-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws"><![CDATA[<p><img style="float:right;margin:15px" width="200" alt="ROSA logo" src="../assets/rosa/rosa-logo.png" /></p>
 
 <p>For my daily research and development I primarily use the managed OpenShift
 service on AWS known as <a href="https://aws.amazon.com/rosa/">ROSA</a>. It provides a
