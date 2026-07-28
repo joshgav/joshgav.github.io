@@ -1,4 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2025-06-07T00:00:32+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Why Red Hat OpenShift on AWS - ROSA</title><link href="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws" rel="alternate" type="text/html" title="Why Red Hat OpenShift on AWS - ROSA" /><published>2023-10-22T11:00:00+00:00</published><updated>2023-10-22T11:00:00+00:00</updated><id>https://blog.joshgav.com//posts/why-openshift-rosa-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws"><![CDATA[<p><img style="float:right;margin:15px" width="200" alt="ROSA logo" src="../assets/rosa/rosa-logo.png" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2026-07-28T20:22:56+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">Manage a fleet with OpenShift Advanced Cluster Management</title><link href="https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm" rel="alternate" type="text/html" title="Manage a fleet with OpenShift Advanced Cluster Management" /><published>2026-07-24T05:00:00+00:00</published><updated>2026-07-24T05:00:00+00:00</updated><id>https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm</id><content type="html" xml:base="https://blog.joshgav.com//posts/manage-fleet-with-acm-ocm"><![CDATA[<h1 id="manage-a-fleet-with-openshift-advanced-cluster-management">Manage a fleet with OpenShift Advanced Cluster Management</h1>
+
+<blockquote>
+  <p>Herein I will describe how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to manage a fleet of clusters and distribute work to them.</p>
+</blockquote>
+
+<p><img width="400" style="float:right;" alt="tire-hub-and-spoke" src="../assets/tire-hub-spokes.png" /></p>
+
+<p>When managing a fleet of Kubernetes clusters it eventually becomes desirable to manage them as a unit and apply configuration and packages once to all and/or subsets of clusters. Activities and configurations often managed at fleet level include the following:</p>
+
+<ul>
+  <li>Work scheduling: deploy and monitor workloads and resources on any cluster</li>
+  <li>Policy enforcement: apply and monitor platform and runtime policies for any cluster</li>
+  <li>Identity and access management: use consistent authentication and authorization rules in all clusters</li>
+  <li>Command and control: inventory and observe resources in all clusters</li>
+  <li>Cluster lifecycle: provision new clusters and update existing ones</li>
+</ul>
+
+<p>Commonly, a <em>hub-and-spoke</em> topology is implemented to provide this fleet management.
+Work, policy, identity and other configuration are defined in the hub cluster and somehow automatically distributed to selected spokes.</p>
+
+<h2 id="ocm">OCM</h2>
+
+<p>Open Cluster Management (OCM) is a framework for creating such a hub-and-spoke topology and distributing work. The hub cluster runs <em>cluster-manager</em> to register and monitor spoke clusters. Each spoke cluster runs an agent named <em>klusterlet</em> which registers with cluster-manager and pulls <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/"><em>ManifestWork</em></a> resources from a namespace dedicated to it in the hub.</p>
+
+<p>Note: A hub-and-spoke topology can be implemented with controllers in the hub actively managing spoke clusters, also known as a “push” model; or with controllers in the spoke clusters <em>pulling</em> and applying configuration from the hub, also known as a “pull” model. The “pull” model generally scales better by distributing some load to each spoke, and OCM emphasizes the pull model for scalability.</p>
+
+<p>The flow at the core of OCM is: Kubernetes resources are wrapped in a <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestwork/">ManifestWork</a> resource and the ManifestWork is placed in a namespace dedicated to a spoke cluster. The klusterlet in the spoke cluster calls the hub’s API server to retrieve this ManifestWork and applies it to itself as AppliedManifestWork.</p>
+
+<p>ManifestWork is an implementation of SIG-Multicluster’s <a href="https://multicluster.sigs.k8s.io/concepts/work-api/">Work API</a>. In a way it’s like a basic “GitOps” workflow - declare the resource and have it reconciled in the spoke cluster automatically.</p>
+
+<p>One way of using OCM is to craft ManifestWorks and place them in selected namespaces as described <a href="https://open-cluster-management.io/docs/scenarios/deploy-kubernetes-resources/">here</a>. <a href="https://open-cluster-management.io/docs/concepts/work-distribution/manifestworkreplicaset/">ManifestWorkReplicaSet</a> is a feature in development to make such distribution easier.</p>
+
+<p>Some commands for inspection:</p>
+
+<ul>
+  <li>See all ManifestWorks published for a spoke cluster: <code class="language-plaintext highlighter-rouge">clusteradm get works --cluster &lt;cluster-name&gt;</code> or <code class="language-plaintext highlighter-rouge">oc get manifestworks.work.open-cluster-management.io -n &lt;cluster-name&gt;</code>.</li>
+  <li>Find works that have been applied in a spoke cluster with <code class="language-plaintext highlighter-rouge">oc get appliedmanifestworks</code>.</li>
+  <li>View logs showing the klusterlet pulling its work with <code class="language-plaintext highlighter-rouge">oc logs -n open-cluster-management-agent deployments/klusterlet-agent</code>.</li>
+</ul>
+
+<h2 id="multicluster-engine-mce-and-advanced-cluster-management-acm">MultiCluster Engine (MCE) and Advanced Cluster Management (ACM)</h2>
+
+<p>In OpenShift, OCM is installed by the MultiClusterEngine (MCE) operator and custom resource as implemented in <a href="https://github.com/stolostron/backplane-operator">stolostron/backplane-operator</a>. MCE installs OCM, several OCM AddOns used in cluster-lifecycle, and cluster-lifecycle operators such as Hive, cluster-api-installer, and HyperShift - find the full list <a href="https://github.com/stolostron/backplane-operator/blob/main/docs/available-components.md">here</a>.</p>
+
+<p>MultiClusterEngine is often installed as a component of <strong>Advanced Cluster Management</strong>, which provides many more OCM addons. ACM is installed by the MultiClusterHub operator and custom resource as implemented in <a href="https://github.com/stolostron/multiclusterhub-operator">stolostron/multiclusterhub-operator</a>. It includes all of MCE plus AddOns for workload scheduling with ArgoCD, policy application with Gatekeeper, multicluster observability with Grafana, cross-cluster resource search, cross-cluster networking with Submariner, and hub disaster recovery with Velero/OADP. The full list is <a href="https://github.com/stolostron/multiclusterhub-operator">here</a>.</p>
+
+<p>The simplest way to manage the components installed by MCE and ACM is to edit the <code class="language-plaintext highlighter-rouge">MultiClusterEngine</code> and <code class="language-plaintext highlighter-rouge">MultiClusterHub</code> resources respectively.</p>
+
+<h2 id="ocm-addons">OCM Addons</h2>
+
+<p>While it’s possible to work with ManifestWork directly, AddOns are a key feature of OCM that abstract ManifestWorks into higher-level CRDs managed by special controllers. AddOns are installed via independent Helm charts or using the MCE and MCH CRs mentioned above. To quickly see available and enabled AddOns run <code class="language-plaintext highlighter-rouge">clusteradm get addon --output table</code>.</p>
+
+<p>AddOn managers are responsible for managing several component types. They deploy hub-side components like proxy ingress servers and GitOps controllers. They deploy spoke-side components like proxy clients and search indexers. And they watch for custom CRDs to dynamically reconcile into ManifestWorks to be put to spoke clusters.</p>
+
+<p>The <strong>Governance Policy Framework</strong> is an example of several AddOns that together publish controllers in both hub and spoke clusters and handle custom CRDs like <code class="language-plaintext highlighter-rouge">CertificatePolicy</code>, <code class="language-plaintext highlighter-rouge">ConfigurationPolicy</code> and <code class="language-plaintext highlighter-rouge">OperatorPolicy</code>.</p>
+
+<p><strong>Cluster Proxy</strong> is another AddOn. It deploys a ManifestWork with a Deployment, Secrets and other resources to configure a Konnectivity client in the managed cluster. This communicates with a hub-side proxy server which it also configures. You can find the deployed resources yourself in a simple hub cluster with <code class="language-plaintext highlighter-rouge">oc get manifestwork -n local-cluster addon-cluster-proxy-deploy-0</code>. <code class="language-plaintext highlighter-rouge">cluster-proxy</code> also watches the high-level CRD <code class="language-plaintext highlighter-rouge">ManagedProxyConfiguration</code> and updates its deployments.</p>
+
+<p>The following AddOns are available in a basic ACM cluster:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>application-manager</td>
+      <td>deploy applications to spoke clusters using channels and subscriptions (deprecated)</td>
+    </tr>
+    <tr>
+      <td>cert-policy-controller</td>
+      <td>apply CertificatePolicy resources to spoke clusters</td>
+    </tr>
+    <tr>
+      <td>cluster-proxy</td>
+      <td>enable hub cluster to communicate with spoke clusters via proxy</td>
+    </tr>
+    <tr>
+      <td>config-policy-controller</td>
+      <td>apply ConfigurationPolicy resources to spoke clusters</td>
+    </tr>
+    <tr>
+      <td>gitops-addon</td>
+      <td>apply ArgoCD ApplicationSets to spoke clusters via pull model</td>
+    </tr>
+    <tr>
+      <td>governance-policy-framework</td>
+      <td>apply typed manifests to managed clusters</td>
+    </tr>
+    <tr>
+      <td>governance-standalone-hub-templating</td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td>hypershift-addon</td>
+      <td>integrate OCM with hosted control plane clusters</td>
+    </tr>
+    <tr>
+      <td>managed-serviceaccount</td>
+      <td>share a serviceaccount from managed clusters to hub</td>
+    </tr>
+    <tr>
+      <td>search-collector</td>
+      <td>gather resources from managed cluster for fast search from hub</td>
+    </tr>
+    <tr>
+      <td>submariner</td>
+      <td>connect managed clusters into a flat network</td>
+    </tr>
+    <tr>
+      <td>volsync</td>
+      <td>backup persistent volumes between clusters</td>
+    </tr>
+    <tr>
+      <td>work-manager</td>
+      <td>provides high-level structures for execution on managed clusters</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>OCM is a valuable framework for distributing work across a fleet. It is pull-oriented for scalability, standards-compliant for compatibility, and extensible for flexibility and ease of use.</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li>https://open-cluster-management.io/docs/</li>
+  <li>https://codewiki.google/github.com/open-cluster-management-io/ocm</li>
+  <li>https://john-tucker.medium.com/open-cluster-management-ocm-by-example-77a920eac7dd</li>
+</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="openshift" /><category term="acm" /><category term="ocm" /><category term="gitops" /><summary type="html"><![CDATA[Manage a fleet with OpenShift Advanced Cluster Management]]></summary></entry><entry><title type="html">Why Red Hat OpenShift on AWS - ROSA</title><link href="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws" rel="alternate" type="text/html" title="Why Red Hat OpenShift on AWS - ROSA" /><published>2023-10-22T11:00:00+00:00</published><updated>2023-10-22T11:00:00+00:00</updated><id>https://blog.joshgav.com//posts/why-openshift-rosa-on-aws</id><content type="html" xml:base="https://blog.joshgav.com//posts/why-openshift-rosa-on-aws"><![CDATA[<p><img style="float:right;margin:15px" width="200" alt="ROSA logo" src="../assets/rosa/rosa-logo.png" /></p>
 
 <p>For my daily research and development I primarily use the managed OpenShift
 service on AWS known as <a href="https://aws.amazon.com/rosa/">ROSA</a>. It provides a
@@ -1234,98 +1368,4 @@ repo</a> or on
 
 <h2 id="summary">Summary</h2>
 
-<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">How container streaming (exec, port-forward) works in Kubernetes</title><link href="https://blog.joshgav.com//posts/container-streaming" rel="alternate" type="text/html" title="How container streaming (exec, port-forward) works in Kubernetes" /><published>2020-09-16T16:30:00+00:00</published><updated>2020-09-16T16:30:00+00:00</updated><id>https://blog.joshgav.com//posts/container-streaming</id><content type="html" xml:base="https://blog.joshgav.com//posts/container-streaming"><![CDATA[<h1 id="overview-of-kubelet">Overview of Kubelet</h1>
-
-<p>Kubernetes’ <strong>kubelet</strong> is a server and controller which runs on every cluster node as an agent to allocate compute, storage and network resources for workloads described by <strong>PodSpec</strong>s retrieved from the API server. Not only does the kubelet manage pods for Kubernetes in “connected” mode, but it can also (or alternatively) read PodSpecs from the local filesystem or an HTTP endpoint in “standalone” mode. In short, the kubelet is an independent implementation of PodSpec.</p>
-
-<blockquote>
-  <p>For more on kubelet’s standalone mode check out <a href="https://coreos.com/blog/introducing-the-kubelet-in-coreos.html">this article</a> and <a href="https://github.com/kelseyhightower/standalone-kubelet-tutorial">this tutorial</a> from Kelsey Hightower.</p>
-</blockquote>
-
-<p>Kubelet handles the heavy lifting of provisioning virtual networks, allocating and attaching block storage and running container images by calling a <strong>container runtime</strong> like Docker via Kubelet’s Container Runtime Interface (CRI), as defined in <a href="https://github.com/kubernetes/cri-api/blob/master/pkg/apis/runtime/v1alpha2/api.proto">this protobuf spec</a>. A shim for CRI from Docker’s native API is <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet/dockershim">included</a> in the kubelet, or you can follow <a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">these instructions</a> to install and use another runtime like CRI-O.</p>
-
-<p>Amongst the procedures offered by CRI’s <a href="https://github.com/kubernetes/cri-api/blob/205a053b09eb766d86191392b3e6bd94df6ceb0c/pkg/apis/runtime/v1alpha2/api.proto#L33-L110">RuntimeService</a> one finds <strong>Exec</strong>, <strong>Attach</strong> and <strong>PortForward</strong>, likely familiar to anyone who works with containers. These ultimately are core to the <code class="language-plaintext highlighter-rouge">kubectl exec ...</code>, <code class="language-plaintext highlighter-rouge">kubectl run -it ...</code>, <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> and even the new <code class="language-plaintext highlighter-rouge">kubectl [alpha] debug ...</code> commands that container developers know and love. Following is how these commands and procedures work together to connect your terminal to a process in a worker node.</p>
-
-<h1 id="exec">exec</h1>
-
-<p>First let’s walk through what happens when you run <code class="language-plaintext highlighter-rouge">kubectl exec -it ${pod_name} sh --container ${container_name}</code> to run a shell in the context of an existing container. We’ll borrow and refer to the following diagram from <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20191205-container-streaming-requests.md">this k8s enhancement proposal</a>.</p>
-
-<p><img src="https://raw.githubusercontent.com/kubernetes/enhancements/master/keps/sig-node/1558-streaming-proxy-redirects/kubelet-proxied-streaming-request-sequence.png" style="margin-left: 40px;" /></p>
-
-<h2 id="1-client">1. client</h2>
-
-<p>Based on its arguments, <code class="language-plaintext highlighter-rouge">kubectl exec</code> builds a URL for and opens an HTTP/2 connection with the API server. The local terminal’s standard I/O streams (stdin, stdout, stderr) are connected to this transport. The URL formed for the API server is <code class="language-plaintext highlighter-rouge">http[s]://${api_server}/ns/${pod_namespace}/pods/${pod_name}/exec?stdin=true&amp;stdout=true&amp;stderr=true&amp;tty=true&amp;container=${container_name}&amp;command=sh</code>.</p>
-
-<h3 id="source-refs">Source refs:</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kubectl exec</code> [<a href="https://github.com/kubernetes/kubectl/blob/d70ead5fcaa0e8f8246715584147ba3bfd081411/pkg/cmd/exec/exec.go">1</a>]</li>
-</ul>
-
-<h2 id="2-apiserver">2. apiserver</h2>
-
-<p>The corev1/pods APIService accepts the incoming request and handles it per <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/registry/core/pod">its registration</a>. Specifically, it discovers the address and port of the Node/Kubelet running the indicated container and opens a streaming proxy connection to it. This stream is bound to the streams from the incoming request.</p>
-
-<p>The URL for the kubelet server is of form <code class="language-plaintext highlighter-rouge">http[s]://${node_ip}:${kubelet_port}/${subresource}/${pod_namespace}/${pod_name}/${container_name}</code> where <code class="language-plaintext highlighter-rouge">${subresource}</code> can be <code class="language-plaintext highlighter-rouge">exec</code>, <code class="language-plaintext highlighter-rouge">attach</code>, <code class="language-plaintext highlighter-rouge">portforward</code> or a few others.</p>
-
-<h3 id="source-refs-1">Source refs:</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">registry/core/pod.streamLocation</code> [<a href="https://github.com/kubernetes/kubernetes/blob/9621ac6ec7eddccdf007c043272c81b23408704b/pkg/registry/core/pod/strategy.go#L506-L511">1</a>]</li>
-</ul>
-
-<h2 id="3-kubelet">3. kubelet</h2>
-
-<p>The kubelet provides its own API server which accepts the incoming request from the API server and forwards it to the container runtime. The kubelet then continues to proxy I/O streams between the API server and the container runtime. An option exists to hand off the stream with the container runtime directly to the API server (rather than continuing to proxy it through kubelet), but it has been deprecated.</p>
-
-<p>The exec, attach, port-forward and logs actions are handled by Kubelet’s “debugging handlers.” They can be disabled by setting <a href="https://github.com/kubernetes/kubelet/blob/f87179761b5b3b817cf86fdf2e31801c61a8db7e/config/v1beta1/types.go#L255-L262">EnableDebuggingHandlers</a> to <code class="language-plaintext highlighter-rouge">false</code> in the global kubelet configuration, or by setting the flag <code class="language-plaintext highlighter-rouge">--enable-debugging-handlers=false</code> on an individual kubelet. <strong>Note</strong> that this will disable container logs via <code class="language-plaintext highlighter-rouge">kubectl logs</code> as well!</p>
-
-<h3 id="source-refs-2">Source refs:</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/server/NewServer(enableDebuggingHandlers)</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L243-L253">1</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L411">2</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.getExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/3d52b8b5d60e1f74f4207f1d046734878297e354/pkg/kubelet/server/server.go#L795-L821">3</a>]</li>
-</ul>
-
-<h2 id="4-cri">4. CRI</h2>
-
-<p>Finally the container runtime - or runtime shim in Docker’s case - receives the request from kubelet and takes the steps necessary to create and execute a process in the namespaces and cgroups of the target container. In Docker this is achieved by calling <a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">github.com/moby/moby/client#Client.ContainerExecCreate</a>.</p>
-
-<p>In truth <code class="language-plaintext highlighter-rouge">exec</code> itself can be executed without a persistent connection, in which case you wouldn’t be able to send stdin or receive stdout from the executed command. When you specify <code class="language-plaintext highlighter-rouge">-i -t</code> with <code class="language-plaintext highlighter-rouge">exec</code> an attach action is executed immediately after exec to provide a persistent connection.</p>
-
-<h3 id="source-refs-3">Source refs:</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming.NewServer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L125-L133">1</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/server.serveExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/server.go#L265-L297">2</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/remotecommand/ServeExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/remotecommand/exec.go#L44">3</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/dockershim/NativeExecHandler.ExecInContainer</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/exec.go#L64">4</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/dockershim/libdocker/kubeDockerClient.StartExec</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/libdocker/kube_docker_client.go#L461">5</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">moby/moby/client/Client.ContainerExecCreate</code> [<a href="https://pkg.go.dev/github.com/moby/moby/client#Client.ContainerExecCreate">6</a>]</li>
-</ul>
-
-<h1 id="port-forward">port-forward</h1>
-
-<p>Whereas exec and attach work in the context of a container, port-forward communicates with the “pod”, or more specifically with the pod’s network namespace. In Kubelet’s built-in Docker CRI shim, port forwarding is accomplished with the following command. The “sandbox” in CRI represents the pod context.</p>
-
-<p><code class="language-plaintext highlighter-rouge">nsenter -t ${sandbox_pid} -n socat - TCP4:localhost:${target_port}</code></p>
-
-<h3 id="source-refs-4">Source Refs</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/cri/streaming/portforward.ServePortForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/cri/streaming/portforward/portforward.go#L36-L53">1</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelete/dockershim/streamingRuntime.portForward</code> [<a href="https://github.com/kubernetes/kubernetes/blob/e83412c331ae72718a84623870c420e6daf58a25/pkg/kubelet/dockershim/docker_streaming_others.go">2</a>]</li>
-</ul>
-
-<h1 id="logs">logs</h1>
-
-<p>Requests for container logs also pass through the kubelet to the CRI and are streamed back to the client.</p>
-
-<h3 id="source-refs-5">Source Refs</h3>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.InstallDebuggingHandlers</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L482-L488">1</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">kubelet/server/server.getContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fd9828b02a786d4fa8d2add04c37e33a616d0087/pkg/kubelet/server/server.go#L595-L661">2</a>]</li>
-  <li><code class="language-plaintext highlighter-rouge">dockershim/dockerService.GetContainerLogs</code> [<a href="https://github.com/kubernetes/kubernetes/blob/fe1aeff2d2341e3d9a553534c814ad40f8219e35/pkg/kubelet/dockershim/docker_legacy_service.go#L49-L92">3</a>]</li>
-</ul>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="kubernetes" /><category term="kubelet" /><category term="exec" /><summary type="html"><![CDATA[Overview of Kubelet]]></summary></entry></feed>
+<p>Platform teams promise to multiply the efficiency of application service teams by centralizing knowledge about and management of shared application capabilities like identity and observability. Help both platform and application teams succeed by providing platform capability development and delivery frameworks to guide them.</p>]]></content><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><category term="platform" /><category term="infrastructure" /><category term="architecture" /><summary type="html"><![CDATA[]]></summary></entry></feed>
