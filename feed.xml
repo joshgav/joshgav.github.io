@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2026-07-29T14:28:39+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">How it works - Open Cluster Management and ACM</title><link href="https://blog.joshgav.com//posts/how-it-works-ocm-acm" rel="alternate" type="text/html" title="How it works - Open Cluster Management and ACM" /><published>2026-07-28T05:00:00+00:00</published><updated>2026-07-28T05:00:00+00:00</updated><id>https://blog.joshgav.com//posts/how-it-works-ocm-acm</id><content type="html" xml:base="https://blog.joshgav.com//posts/how-it-works-ocm-acm"><![CDATA[<blockquote>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://blog.joshgav.com//feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.joshgav.com//" rel="alternate" type="text/html" hreflang="en" /><updated>2026-07-29T14:36:26+00:00</updated><id>https://blog.joshgav.com//feed.xml</id><title type="html">Partly Cloudy</title><subtitle>A blog about cloud infrastructure and cloud-native application patterns and practices.</subtitle><author><name>Josh Gavant</name><email>joshgavant@gmail.com</email></author><entry><title type="html">How it works - Open Cluster Management and ACM</title><link href="https://blog.joshgav.com//posts/how-it-works-ocm-acm" rel="alternate" type="text/html" title="How it works - Open Cluster Management and ACM" /><published>2026-07-28T05:00:00+00:00</published><updated>2026-07-28T05:00:00+00:00</updated><id>https://blog.joshgav.com//posts/how-it-works-ocm-acm</id><content type="html" xml:base="https://blog.joshgav.com//posts/how-it-works-ocm-acm"><![CDATA[<blockquote>
   <p>Describes how Open Cluster Management (OCM) works and how OpenShift’s MultiCluster Engine (MCE) and Advanced Cluster Management (ACM) build on it to distribute work as Kubernetes resources across a fleet of clusters.</p>
 </blockquote>
 
@@ -23,6 +23,10 @@
 <p>Note, a hub-and-spoke topology can be implemented with controllers in the hub actively applying resources to spoke clusters via their API servers, also known as a “push” model; or with controllers in the spoke clusters <em>pulling</em> work to themselves and applying it <em>from within</em> the spoke cluster, also known as a “pull” model. The pull model generally scales better by distributing some load to each spoke. It is also more secure since the push model requires storing credentials for each spoke in the hub and opening inbound ports to spoke services. OCM emphasizes the pull model.</p>
 
 <p>For inspection:</p>
+
+<blockquote>
+  <p>Note: Install <code class="language-plaintext highlighter-rouge">clusteradm</code> as described <a href="https://open-cluster-management.io/docs/getting-started/quick-start/#install-clusteradm-cli-tool">here</a>.</p>
+</blockquote>
 
 <ul>
   <li>On the hub, explore the ClusterManager resource: <code class="language-plaintext highlighter-rouge">oc get clustermanagers cluster-manager</code> and <code class="language-plaintext highlighter-rouge">clusteradm get hub-info</code>.</li>
@@ -151,11 +155,7 @@
 <h2 id="resources">Resources</h2>
 
 <ul>
-  <li><a href="https://open-cluster-management.io/docs/">https://open-cluster-management.io/docs/</a>
-    <ul>
-      <li>https://open-cluster-management.io/docs/getting-started/quick-start/#install-clusteradm-cli-tool</li>
-    </ul>
-  </li>
+  <li><a href="https://open-cluster-management.io/docs/">https://open-cluster-management.io/docs/</a></li>
   <li><a href="https://codewiki.google/github.com/open-cluster-management-io/ocm">https://codewiki.google/github.com/open-cluster-management-io/ocm</a></li>
   <li><a href="https://github.com/open-cluster-management-io">https://github.com/open-cluster-management-io</a></li>
   <li><a href="https://github.com/stolostron">https://github.com/stolostron</a></li>
